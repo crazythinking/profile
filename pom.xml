@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.engining.pg</groupId>
+		<artifactId>pg-parent</artifactId>
+		<version>3.2.0-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>net.engining.profile</groupId>
+	<artifactId>profile-parent</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Profile 用户权限管理支持库</name>
+	
+	<properties>
+		<pg.version>3.2.0-SNAPSHOT</pg.version>
+		<control.version>1.1.0-SNAPSHOT</control.version>
+		<profile.version>4.0.0-SNAPSHOT</profile.version>
+	</properties>
+	
+	<modules>
+		<module>profile-dict</module>
+		<module>profile-param-model</module>
+		<module>profile-sdk</module>
+	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+			<!-- 自身框架依赖 -->
+			<dependency>
+				<groupId>net.engining.pg</groupId>
+				<artifactId>pg-parent</artifactId>
+				<version>${pg.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.engining.control</groupId>
+				<artifactId>control-parent</artifactId>
+				<version>${control.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		
+			<!-- 自身项目依赖 -->
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-dict</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-param-model</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-sdk</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
