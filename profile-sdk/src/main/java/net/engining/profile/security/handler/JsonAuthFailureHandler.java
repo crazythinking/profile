@@ -12,9 +12,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.web.BaseResponseBean;
-import net.engining.pg.web.WebCommonResponse;
-import net.engining.pg.web.WebCommonResponseBuilder;
+import net.engining.pg.web.NewWebCommonResponseBuilder;
+import net.engining.pg.web.bean.DefaultResponseHeader;
 
 /**
  * 用户身份验证失败时的处理
@@ -30,15 +31,14 @@ public class JsonAuthFailureHandler implements AuthenticationFailureHandler {
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		
 		BaseResponseBean baseResponseBean = new BaseResponseBean();
-		baseResponseBean.setReturnCode(WebCommonResponse.CODE_UNKNOW_FAIL);
-		baseResponseBean.setReturnDesc(exception.getMessage());
+		baseResponseBean.setReturnCode(ErrorCode.UnknowFail.getValue());
+		baseResponseBean.setReturnDesc(ErrorCode.UnknowFail.getLabel());
 		
 		mapper.writeValue(response.getOutputStream(), 
-				new WebCommonResponseBuilder<BaseResponseBean>()
+				new NewWebCommonResponseBuilder<DefaultResponseHeader,BaseResponseBean>()
 					.build()
-					.setStatusCode(WebCommonResponse.CODE_UNKNOW_FAIL)
-					.setStatusDesc(exception.getMessage())
-					.setTimestamp()
+					.setStatusCode(ErrorCode.UnknowFail.getValue())
+					.setStatusDesc(ErrorCode.UnknowFail.getLabel())
 					.setResponseData(baseResponseBean)
 					);
 		

@@ -12,9 +12,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.web.BaseResponseBean;
-import net.engining.pg.web.WebCommonResponse;
-import net.engining.pg.web.WebCommonResponseBuilder;
+import net.engining.pg.web.NewWebCommonResponseBuilder;
+import net.engining.pg.web.bean.DefaultResponseHeader;
 
 public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
 	private ObjectMapper mapper = new ObjectMapper();
@@ -26,15 +27,12 @@ public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
 		response.setStatus(HttpStatus.OK.value());
 		
 		BaseResponseBean baseResponseBean = new BaseResponseBean();
-		baseResponseBean.setReturnCode(WebCommonResponse.CODE_OK);
-		baseResponseBean.setReturnDesc(WebCommonResponse.DESC_SUCCESS);
 		
 		mapper.writeValue(response.getOutputStream(), 
-				new WebCommonResponseBuilder<BaseResponseBean>()
+				new NewWebCommonResponseBuilder<DefaultResponseHeader,BaseResponseBean>()
 					.build()
-					.setStatusCode(WebCommonResponse.CODE_OK)
-					.setStatusDesc(WebCommonResponse.DESC_SUCCESS)
-					.setTimestamp()
+					.setStatusCode(ErrorCode.Success.getValue())
+					.setStatusDesc(ErrorCode.Success.getLabel())
 					.setResponseData(baseResponseBean)
 					);
 		
