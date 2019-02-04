@@ -1,12 +1,13 @@
 package net.engining.profile.security;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import net.engining.pg.parameter.ParameterFacility;
+import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.entity.model.*;
+import net.engining.profile.param.SecurityControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,20 +15,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import net.engining.pg.parameter.ParameterFacility;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
-import net.engining.profile.param.SecurityControl;
+import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 基于当前Profile项目的数据结构对 {@link UserDetailsService}的一个实现
