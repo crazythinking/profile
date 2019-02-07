@@ -4,4 +4,4 @@
 .settings
 target
 /logs/
-/*.iml
+*.iml
