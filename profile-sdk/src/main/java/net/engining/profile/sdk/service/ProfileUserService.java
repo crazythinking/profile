@@ -2,6 +2,7 @@ package net.engining.profile.sdk.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -48,7 +48,7 @@ public class ProfileUserService{
 
 	/**
 	 * 根据分支机构编码查找机构下的用户对象
-	 * @param userId 用户登陆Id
+	 * @param branchId
 	 * @param range
 	 * @param orgId
 	 * @return

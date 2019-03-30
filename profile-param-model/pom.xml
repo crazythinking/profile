@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>profile-param-model</artifactId>
-	<name>Profile - 参数组件</name>
+	<name>Profile - 参数定义组件(param-model)</name>
 
 	<dependencies>
 		<dependency>

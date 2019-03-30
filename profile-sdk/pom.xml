@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>profile-sdk</artifactId>
-	<name>Profile - SDK</name>
+	<name>Profile - 软件开发包(SDK)</name>
 
 	<dependencies>
 		<!-- 自身框架依赖 -->
