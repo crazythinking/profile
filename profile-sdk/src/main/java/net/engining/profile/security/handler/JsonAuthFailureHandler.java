@@ -2,7 +2,7 @@ package net.engining.profile.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.engining.pg.support.core.exception.ErrorCode;
-import net.engining.pg.web.CommonResponseBuilder;
+import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 用户身份验证失败时的处理
+ * 返回Json格式的spring security框架用户身份验证失败后处理
  *
  * @author luxue
  */
@@ -28,10 +28,10 @@ public class JsonAuthFailureHandler implements AuthenticationFailureHandler {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         mapper.writeValue(response.getOutputStream(),
-                new CommonResponseBuilder()
+                new CommonWithHeaderResponseBuilder<Void, Void>()
                         .build()
-                        .setReturnCode(ErrorCode.Restricted.getValue())
-                        .setReturnDesc(ErrorCode.Restricted.getLabel())
+                        .setStatusCode(ErrorCode.Restricted.getValue())
+                        .setStatusDesc(ErrorCode.Restricted.getLabel())
 
         );
 
