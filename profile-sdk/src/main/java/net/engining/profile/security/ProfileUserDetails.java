@@ -1,14 +1,17 @@
 package net.engining.profile.security;
 
-import java.util.Collection;
-import java.util.Set;
-
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.util.Collection;
+import java.util.Set;
+
+/**
+ * 扩展Spring Security的User对象
+ * @author Eric Lu
+ */
 public class ProfileUserDetails extends User {
 
 	private static final long serialVersionUID = 1L;

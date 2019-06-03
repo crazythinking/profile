@@ -91,8 +91,9 @@ public class ClientUser implements Serializable {
 	{
 		for (String authority : authorities)
 		{
-			if (!this.authorities.contains(authority.toString()))
+			if (!this.authorities.contains(authority.toString())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -106,8 +107,9 @@ public class ClientUser implements Serializable {
 	{
 		for (Enum<?> authority : authorities)
 		{
-			if (!getAuthorities().contains(authority.name()))
+			if (!getAuthorities().contains(authority.name())) {
 				return false;
+			}
 		}
 		
 		return true;
@@ -122,8 +124,9 @@ public class ClientUser implements Serializable {
 	{
 		for (String authority : authorities)
 		{
-			if (getAuthorities().contains(authority))
+			if (getAuthorities().contains(authority)) {
 				return true;
+			}
 		}
 		
 		return false;
@@ -138,8 +141,9 @@ public class ClientUser implements Serializable {
 	{
 		for (Enum<?> authority : authorities)
 		{
-			if (getAuthorities().contains(authority.name()))
+			if (getAuthorities().contains(authority.name())) {
 				return true;
+			}
 		}
 		return false;
 	}

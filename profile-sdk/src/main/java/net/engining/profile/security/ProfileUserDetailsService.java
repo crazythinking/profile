@@ -48,8 +48,9 @@ public class ProfileUserDetailsService implements UserDetailsService {
 				.where(qProfileUser.userId.eq(username))
 				.fetchOne();
 		
-		if (profileUser == null)
+		if (profileUser == null) {
 			throw new UsernameNotFoundException(String.format("无法找到用户,%s", username));
+		}
 		
 		QProfileUserRole qUserRole = QProfileUserRole.profileUserRole;
 		QProfileRoleAuth qRoleAuth = QProfileRoleAuth.profileRoleAuth;
@@ -73,8 +74,11 @@ public class ProfileUserDetailsService implements UserDetailsService {
 		
 		//检查安全控制项内，如果要求首次登录必须修改密码，则不给操作权限
 		Optional<SecurityControl> control = facility.getUniqueParameter(SecurityControl.class);
-		if(control.isPresent() && control.get().getPwdFirstLoginChgInd() && profileUser.getStatus().equals(StatusDef.N))	//新用户只能先改密码
+		//新用户只能先改密码
+		if(control.isPresent() && control.get().getPwdFirstLoginChgInd() && profileUser.getStatus().equals(StatusDef.N))
+		{
 			grantedAuthorities.clear();
+		}
 		
 		//这里将用户的权限存入了{@link UserDetails}
 		StatusDef status = profileUser.getStatus();
