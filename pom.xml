@@ -22,7 +22,6 @@
 	
 	<modules>
 		<module>profile-dict</module>
-		<module>profile-param-model</module>
 		<module>profile-sdk</module>
 	</modules>
 	
@@ -55,11 +54,6 @@
 			<dependency>
 				<groupId>net.engining.profile</groupId>
 				<artifactId>profile-dict</artifactId>
-				<version>${profile.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.engining.profile</groupId>
-				<artifactId>profile-param-model</artifactId>
 				<version>${profile.version}</version>
 			</dependency>
 			<dependency>

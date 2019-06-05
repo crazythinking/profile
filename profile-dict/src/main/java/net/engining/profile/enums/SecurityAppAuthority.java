@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.engining.profile.enums;
 
 import net.engining.pg.support.meta.EnumInfo;

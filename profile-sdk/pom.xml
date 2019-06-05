@@ -37,10 +37,6 @@
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-dict</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.engining.profile</groupId>
-			<artifactId>profile-param-model</artifactId>
-		</dependency>
 
 		<!-- Spring Security -->
 		<dependency>
