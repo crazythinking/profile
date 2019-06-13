@@ -10,6 +10,10 @@
 	
 	<artifactId>profile-dict</artifactId>
 	<name>Profile - Dictionary</name>
+
+	<properties>
+		<pmd.skip>true</pmd.skip>
+	</properties>
 	
 	<dependencies>
 		<dependency>
