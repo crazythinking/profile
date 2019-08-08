@@ -94,6 +94,7 @@ CREATE TABLE PROFILE_SECOPER_LOG
 	LOG_ID INT NOT NULL AUTO_INCREMENT COMMENT '日志序号',
 	-- ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL COMMENT 'PU_ID : ###uuid2###',
+	BEOPERATED_ID VARCHAR(64) COMMENT '被操作用户ID',
 	-- ///
 	-- @net.engining.profile.enums.OperationType
 	OPER_TYPE VARCHAR(2) NOT NULL COMMENT '操作业务类型 : ///
