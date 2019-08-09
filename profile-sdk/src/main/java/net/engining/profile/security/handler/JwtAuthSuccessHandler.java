@@ -58,7 +58,7 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 //		WebUser webUser = customerInfoService.fetchCustomerByPuId(profileUserDetails.getPuId());
 		
 		//记录安全日志
-		securityLoggerService.logSecuOperation(profileUserDetails.getPuId(), OperationType.LG, WebCommonUtils.getIpAddress(request), new Date());
+		securityLoggerService.logSecuOperation(profileUserDetails.getPuId(), OperationType.LG, WebCommonUtils.getIpAddress(request), new Date(),null);
 		
 		//生成JWT，并存入Header
 		if(StringUtils.isNotBlank(commonProperties.getJwtSignKey())){
