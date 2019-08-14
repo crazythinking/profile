@@ -42,7 +42,7 @@ CREATE TABLE PROFILE_MENU
 	MNAME VARCHAR(20) NOT NULL,
 	-- 菜单路径
 	PATH_URL VARCHAR(500) NOT NULL,
-	-- 上级菜单ID
+	-- 上级菜单ID : 0表示顶级菜单
 	PARENT_ID INT DEFAULT 0 NOT NULL,
 	-- 序号
 	SORTN INT NOT NULL,
@@ -58,14 +58,14 @@ CREATE TABLE PROFILE_MENU
 );
 
 
--- 密码维护历史表
+-- 密码维护历史表 : 记录每个用户的密码历史，以便判断密码重复。
 CREATE TABLE PROFILE_PWD_HIST
 (
 	-- ID
 	ID INT NOT NULL,
-	-- PU_ID
+	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL,
-	-- 密码
+	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
 	PASSWORD VARCHAR(300) NOT NULL,
 	-- 密码建立时间
 	PWD_CRE_TIME TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -110,9 +110,12 @@ CREATE TABLE PROFILE_SECOPER_LOG
 (
 	-- 日志序号
 	LOG_ID INT NOT NULL,
-	-- PU_ID
+	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL,
-	-- 操作业务类型
+	-- 被操作用户ID
+	BEOPERATED_ID VARCHAR(64),
+	-- 操作业务类型 : ///
+	-- @net.engining.profile.enums.OperationType
 	OPER_TYPE VARCHAR(2) NOT NULL,
 	-- IP地址
 	OPER_IP VARCHAR(30) NOT NULL,
@@ -127,7 +130,7 @@ CREATE TABLE PROFILE_SECOPER_LOG
 -- 用户信息表
 CREATE TABLE PROFILE_USER
 (
-	-- PU_ID
+	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL,
 	-- 机构号
 	ORG_ID VARCHAR(12) NOT NULL,
@@ -137,9 +140,12 @@ CREATE TABLE PROFILE_USER
 	USER_ID VARCHAR(40) NOT NULL,
 	-- 姓名
 	NAME VARCHAR(40) NOT NULL,
-	-- 密码
+	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
 	PASSWORD VARCHAR(300) NOT NULL,
-	-- 状态
+	-- 状态 : ///
+	-- N|新增
+	-- A|活动
+	-- L|锁定
 	STATUS VARCHAR(1) NOT NULL,
 	-- EMAIL
 	EMAIL VARCHAR(128),
@@ -164,7 +170,7 @@ CREATE TABLE PROFILE_USER_ROLE
 	ID INT NOT NULL,
 	-- 角色ID
 	ROLE_ID VARCHAR(20) NOT NULL,
-	-- PU_ID
+	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL,
 	PRIMARY KEY (ID)
 );
