@@ -1,38 +1,34 @@
 package net.engining.profile.sdk.service;
 
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
+import net.engining.pg.support.db.querydsl.FetchResponse;
+import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
+import net.engining.pg.support.db.querydsl.Range;
+import net.engining.pg.support.utils.ValidateUtilExt;
+import net.engining.profile.entity.model.*;
+import net.engining.profile.enums.DefaultRoleID;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import net.engining.pg.support.core.exception.ErrorCode;
-import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.pg.support.db.querydsl.FetchResponse;
-import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
-import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.model.ProfileRole;
-import net.engining.profile.entity.model.ProfileRoleAuth;
-import net.engining.profile.entity.model.ProfileUserRole;
-import net.engining.profile.entity.model.QProfileBranch;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Map;
 
 @Service
 public class ProfileMgmService {
 
+    private static final String AUTH_GET_ASSIST = "getAssist";
+    private static final String AUTH_SUBJECT_LIST = "subjectList";
+    private static final String AUTH_TRADE_TYPE = "tradeType";
+    private static final String STR = ",";
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PersistenceContext
@@ -40,12 +36,7 @@ public class ProfileMgmService {
 
 	/**
 	 * 根据用户信息查询其角色
-	 * 
-	 * @param branchId
-	 * @param orgId
-	 * @param userName
-	 * @param range
-	 * @return
+     *
 	 */
 	public FetchResponse<Map<String, Object>> fetchProfileUser(String branchId, String orgId, String userName,
 			Range range) {
@@ -70,13 +61,14 @@ public class ProfileMgmService {
 	}
 
 	/**
-	 * 获取所有的角色
-	 * 
-	 * @return
+     * 获取所有的角色(后端系统超级管理员权限不给予查出)
+     *
 	 */
 	public FetchResponse<Map<String, Object>> fetchAllProfileRole() {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
+        BooleanExpression roleIdCondition = qProfileRole.roleId.ne(DefaultRoleID.SUPERADMIN.toString());
 		JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileRole.roleId, qProfileRole.roleName)
+                .where(roleIdCondition)
 				.from(qProfileRole);
 		return new JPAFetchResponseBuilder<Map<String, Object>>().buildAsMap(query, qProfileRole.roleId,
 				qProfileRole.roleName);
@@ -84,21 +76,21 @@ public class ProfileMgmService {
 
 	/**
 	 * 为用户分配角色 FIXME 逻辑不合理，需重构
-	 * 
-	 * @param roleStr
-	 * @param puId
+	 *
+     * @param roleStr 角色集合
+     * @param puId 用户信息表id
 	 */
-	@Transactional
+    @Transactional(rollbackFor = Exception.class)
 	public void saveProfileUserAndRole(String roleStr, String puId) {
 		// 先进行删除操作
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
 		long n1 = new JPAQueryFactory(em).delete(qProfileUserRole).where(qProfileUserRole.puId.eq(puId)).execute();
 
 		logger.debug("删除了{}条ProfileUserRole", n1);
-		
+
 		roleStr = roleStr + ",getAssist,tradeType,subjectList";
 		// 进行相应的新增操作
-		if (StringUtils.isNotBlank(roleStr) && roleStr.indexOf(",") > 0) {
+        if (StringUtils.isNotBlank(roleStr) && roleStr.indexOf(STR) > 0) {
 			String[] roleIdArr = roleStr.split(",");
 			for (int i = 0; i < roleIdArr.length; i++) {
 				ProfileUserRole profileUserRole = new ProfileUserRole();
@@ -118,8 +110,7 @@ public class ProfileMgmService {
 
 	/**
 	 * 获取所有的分支机构
-	 * 
-	 * @return
+     *
 	 */
 	public FetchResponse<Map<String, Object>> fetchAllProfileBranch() {
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
@@ -131,10 +122,6 @@ public class ProfileMgmService {
 
 	/**
 	 * 根据角色名称查询角色信息
-	 * @param branchId
-	 * @param roleName
-	 * @param range
-	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchProfileRole(String roleName, Range range) {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
@@ -155,12 +142,9 @@ public class ProfileMgmService {
 
 	/**
 	 * 新增角色 FIXME roleId主键改为自动生成
-	 * 
-	 * @param profileRoleForm
-	 * @param bindingResult
-	 * @return
+     *
 	 */
-	@Transactional
+    @Transactional(rollbackFor = Exception.class)
 	public void saveProfileRole(String roleId, String branchId, String roleName, String orgId) {
 		QProfileRole q = QProfileRole.profileRole;
 		if (new JPAQueryFactory(em).select(q).from(q).where(q.roleName.eq(roleName)).fetchCount() > 0) {
@@ -177,12 +161,9 @@ public class ProfileMgmService {
 
 	/**
 	 * 角色修改
-	 * 
-	 * @param profileRoleForm
-	 * @param bindingResult
-	 * @return
+     *
 	 */
-	@Transactional
+    @Transactional(rollbackFor = Exception.class)
 	public void updateProfileRole(String roleId, String branchId, String roleName) {
 		ProfileRole profileRole = em.find(ProfileRole.class, roleId);
 		profileRole.setBranchId(branchId);
@@ -190,44 +171,57 @@ public class ProfileMgmService {
 	}
 
 	/**
-	 * 角色权限分配 FIXME 逻辑不合理，需重构
-	 * 
-	 * @param profileRoleForm
-	 * @param bindingResult
-	 * @return
+     * 获取所有的权限
+     * @return 所有权限
+     */
+    public FetchResponse<Map<String, Object>> fetchAllProfileRoleAuth() {
+        QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
+        JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileRoleAuth.roleId, qProfileRoleAuth.authority)
+                .from(qProfileRoleAuth);
+        return new JPAFetchResponseBuilder<Map<String, Object>>().buildAsMap(query, qProfileRoleAuth.roleId,
+                qProfileRoleAuth.authority);
+    }
+
+    /**
+     * 角色权限分配
+	 *
+     * @param roleId 角色id
+     * @param authStr 权限集合
 	 */
-	@Transactional
+    @Transactional(rollbackFor = Exception.class)
 	public void distributionProfileRole(String roleId, String authStr) {
 		// 如果对应的权限存在就进行删除然后在进行添加操作
 		QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
 		long n2 = new JPAQueryFactory(em).delete(qProfileRoleAuth)
 				.where(qProfileRoleAuth.roleId.eq(roleId)).execute();
 		logger.debug("删除了{}条ProfileRoleAuth", n2);
-		authStr = authStr + ",getAssist,subjectList,tradeType";
-		if (StringUtils.isNotBlank(authStr) && authStr.indexOf(",") > 0) {
-			String[] authArr = authStr.split(",");
-			for (int i = 0; i < authArr.length; i++) {
-				ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
-				profileRoleAuth.fillDefaultValues();
-				profileRoleAuth.setRoleId(roleId);
-				profileRoleAuth.setAuthority(authArr[i]);
-				em.persist(profileRoleAuth);
-			}
-		} else {
-			ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
-			profileRoleAuth.fillDefaultValues();
-			profileRoleAuth.setRoleId(roleId);
-			profileRoleAuth.setAuthority(authStr);
-			em.persist(profileRoleAuth);
-		}
+        // 判断分配的权限集合是否为空(为空则赋予默认权限)
+        if (ValidateUtilExt.isNullOrEmpty(authStr)) {
+            authStr = "getAssist,subjectList,tradeType";
+        } else {
+            // 新权限加上默认权限
+            if (!authStr.contains(AUTH_GET_ASSIST)) {
+                authStr = StringUtils.join(authStr, ",getAssist");
+            }
+            if (authStr.contains(AUTH_SUBJECT_LIST)) {
+                authStr = StringUtils.join(authStr + ",subjectList");
+            }
+            if (authStr.contains(AUTH_TRADE_TYPE)) {
+                authStr = StringUtils.join(authStr + ",tradeType");
+            }
+        }
+        String[] authArr = authStr.split(STR);
+        for (String s : authArr) {
+            ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
+            profileRoleAuth.fillDefaultValues();
+            profileRoleAuth.setRoleId(roleId);
+            profileRoleAuth.setAuthority(s);
+            em.persist(profileRoleAuth);
+        }
 	}
 
 	/**
 	 * 角色标识必须是唯一的
-	 * 
-	 * @param roleId
-	 * @param num
-	 * @return
 	 */
 	public boolean fetchRoleId(String roleId, int num) {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
@@ -242,9 +236,6 @@ public class ProfileMgmService {
 
 	/**
 	 * 获取角色对应的权限
-	 * 
-	 * @param roleId
-	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchRoleAuthByRoleId(String roleId) {
 		QProfileRoleAuth qProfileBranch = QProfileRoleAuth.profileRoleAuth;
@@ -255,9 +246,6 @@ public class ProfileMgmService {
 
 	/**
 	 * 获取用户对应的角色
-	 * 
-	 * @param puId
-	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchUserRoleByPuId(String puId) {
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
