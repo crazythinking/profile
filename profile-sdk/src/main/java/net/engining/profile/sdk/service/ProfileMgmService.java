@@ -127,6 +127,7 @@ public class ProfileMgmService {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
 		BooleanExpression w = null;
+		BooleanExpression roleIdCondition = qProfileRole.roleId.ne(DefaultRoleID.SUPERADMIN.toString());
 		if (StringUtils.isNotBlank(roleName)) {
 			w = qProfileRole.roleName.like("%" + roleName + "%");
 			w.and(qProfileBranch.branchId.eq(qProfileRole.branchId));
@@ -134,7 +135,7 @@ public class ProfileMgmService {
 		
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(qProfileRole.roleId, qProfileBranch.branchName, qProfileRole.roleName)
-				.from(qProfileRole, qProfileBranch).where(w);
+				.from(qProfileRole, qProfileBranch).where(w,roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().range(range).buildAsMap(query, qProfileRole.roleId,
 				qProfileBranch.branchName, qProfileRole.roleName);
