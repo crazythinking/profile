@@ -134,7 +134,7 @@ public class ProfileMgmService {
 		}
 		
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
-				.select(qProfileRole.roleId, qProfileBranch.branchName, qProfileRole.roleName)
+				.select(qProfileRole.roleId, qProfileBranch.branchName,qProfileBranch.branchId,qProfileRole.roleName)
 				.from(qProfileRole, qProfileBranch).where(w,roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().range(range).buildAsMap(query, qProfileRole.roleId,
