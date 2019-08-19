@@ -138,7 +138,7 @@ public class ProfileMgmService {
 				.from(qProfileRole, qProfileBranch).where(w,roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().range(range).buildAsMap(query, qProfileRole.roleId,
-				qProfileBranch.branchName, qProfileRole.roleName);
+				qProfileBranch.branchName,qProfileBranch.branchId, qProfileRole.roleName);
 	}
 
 	/**
