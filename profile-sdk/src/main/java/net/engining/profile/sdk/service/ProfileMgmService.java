@@ -151,6 +151,9 @@ public class ProfileMgmService {
 		if (new JPAQueryFactory(em).select(q).from(q).where(q.roleName.eq(roleName)).fetchCount() > 0) {
 			throw new ErrorMessageException(ErrorCode.CheckError, "添加角色失败:角色名已存在");
 		}
+		if (new JPAQueryFactory(em).select(q).from(q).where(q.roleId.eq(roleId)).fetchCount()>0){
+			throw new ErrorMessageException(ErrorCode.CheckError, "添加角色失败：角色ID已存在");
+		}
 		ProfileRole profileRole = new ProfileRole();
 		profileRole.fillDefaultValues();
 		profileRole.setOrgId(orgId);
