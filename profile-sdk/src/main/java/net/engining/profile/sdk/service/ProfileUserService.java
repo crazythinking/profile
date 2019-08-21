@@ -10,7 +10,6 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.entity.model.QProfilePwdHist;
 import net.engining.profile.entity.model.QProfileUser;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -59,7 +57,7 @@ public class ProfileUserService{
 		if(!Strings.isNullOrEmpty(branchId)){
 			query.where(q.branchId.eq(branchId.trim()).and(q.orgId.eq(orgId)));
 		}
-		if (ValidateUtilExt.isNotNullOrEmpty(name)){
+		if (!Strings.isNullOrEmpty(name)){
 			query.where(q.name.like("%"+name+"%"));
 		}
 		return new JPAFetchResponseBuilder<Map<String, Object>>()
