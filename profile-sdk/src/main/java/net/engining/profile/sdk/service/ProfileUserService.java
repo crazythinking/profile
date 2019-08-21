@@ -10,6 +10,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.entity.model.QProfilePwdHist;
 import net.engining.profile.entity.model.QProfileUser;
@@ -44,20 +45,23 @@ public class ProfileUserService{
 	private ParameterFacility parameterFacility;
 
 	/**
-	 * 根据分支机构编码查找机构下的用户对象
+	 * 根据分支机构编码,用户id,用户姓名（模糊）查找机构下的用户对象
 	 * @param userId 用户登陆Id
 	 * @param range
 	 * @param orgId
 	 * @return
 	 */
-	public FetchResponse<Map<String,Object>> fetchUsers4Branch(String branchId, String orgId,Range range) {
+	public FetchResponse<Map<String,Object>> fetchUsers4Branch(String branchId,String name,String orgId,Range range) {
 		QProfileUser q = QProfileUser.profileUser;
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(q.puId,q.branchId,q.name,q.email,q.orgId,q.pwdExpDate,q.pwdTries,q.status,q.userId).from(q)
 				.orderBy(q.branchId.asc(),q.userId.asc());
-		if(!Strings.isNullOrEmpty(branchId))
+		if(!Strings.isNullOrEmpty(branchId)){
 			query.where(q.branchId.eq(branchId.trim()).and(q.orgId.eq(orgId)));
-		
+		}
+		if (ValidateUtilExt.isNotNullOrEmpty(name)){
+			query.where(q.name.like("%"+name+"%"));
+		}
 		return new JPAFetchResponseBuilder<Map<String, Object>>()
 			.range(range)
 			.buildAsMap(query,q.puId,q.branchId,q.name,q.email,q.orgId,q.pwdExpDate,q.pwdTries,q.status,q.userId);
