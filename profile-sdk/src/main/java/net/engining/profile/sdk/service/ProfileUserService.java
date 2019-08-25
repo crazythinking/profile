@@ -10,6 +10,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
 import org.apache.commons.lang3.StringUtils;
@@ -45,13 +46,10 @@ public class ProfileUserService{
 	 * @param range
 	 * @return
 	 */
-	public Map<String, Object> fetchUsers4Branch(String branchId,String name,String orgId,Range range) {
+	public List<Map<String, Object>> fetchUsers4Branch(String branchId,String name,String orgId,Range range) {
 		QProfileUser q = QProfileUser.profileUser;
 		QProfileUserRole r = QProfileUserRole.profileUserRole;
 		QProfileRole p = QProfileRole.profileRole;
-		List list = new JPAQueryFactory(em)
-				.select(p.roleName).from(q, r, p)
-				.where(q.puId.eq(r.puId), r.roleId.eq(p.roleId)).fetch();
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(q.puId,q.branchId,q.name,q.email,q.orgId,q.pwdExpDate,q.pwdTries,q.status,q.userId).from(q)
 				.orderBy(q.branchId.asc(),q.userId.asc());
@@ -61,17 +59,32 @@ public class ProfileUserService{
 		if (!Strings.isNullOrEmpty(name)){
 			query.where(q.name.like("%"+name+"%"));
 		}
-		Map<String, Object> map = new HashMap(16);
-		map.put("puId", q.puId);
-		map.put("branchId", q.branchId);
-		map.put("name", q.name);
-		map.put("email", q.email);
-		map.put("orgId", q.orgId);
-		map.put("pwdExpDate", q.pwdExpDate);
-		map.put("pwdTries", q.pwdTries);
-		map.put("status", q.status);
-		map.put("roleName", list);
-		return map;
+		JPAQuery<Tuple> jpaQuery = new JPAQueryFactory(em)
+				.select(p.roleName, q.userId).from(q, r, p)
+				.where(q.puId.eq(r.puId), r.roleId.eq(p.roleId));
+		List list = new ArrayList();
+		FetchResponse<Tuple> buildQue = new JPAFetchResponseBuilder<Tuple>().range(range).build(jpaQuery);
+		FetchResponse<Tuple> build = new JPAFetchResponseBuilder<Tuple>().range(range).build(query);
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		for (Tuple tuple : build.getData()) {
+			Map<String, Object> map = new HashMap(16);
+			map.put("puId", tuple.get(q.puId));
+			map.put("branchId", tuple.get(q.branchId));
+			map.put("name", tuple.get(q.name));
+			map.put("email", tuple.get(q.email));
+			map.put("orgId", tuple.get(q.orgId));
+			map.put("pwdExpDate", tuple.get(q.pwdExpDate));
+			map.put("pwdTries", tuple.get(q.pwdTries));
+			map.put("status", tuple.get(q.status));
+			map.put("userId", tuple.get(q.userId));
+			for(Tuple que : buildQue.getData()){
+				if(ValidateUtilExt.isNotNullOrEmpty(q.userId) && que.get(q.userId).equals(tuple.get(q.userId))){
+					map.put("roleName", list.add(que.get(p.roleName)));
+				}
+			}
+			mapList.add(map);
+		}
+		return mapList;
 	}
 /**
  * 根据userId查询用户信息
