@@ -79,9 +79,10 @@ public class ProfileUserService{
 			map.put("userId", tuple.get(q.userId));
 			for(Tuple que : buildQue.getData()){
 				if(ValidateUtilExt.isNotNullOrEmpty(q.userId) && que.get(q.userId).equals(tuple.get(q.userId))){
-					map.put("roleName", list.add(que.get(p.roleName)));
+					list.add(que.get(p.roleName));
 				}
 			}
+			map.put("roleName", list);
 			mapList.add(map);
 		}
 		return mapList;
