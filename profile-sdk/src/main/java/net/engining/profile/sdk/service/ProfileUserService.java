@@ -10,10 +10,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.QProfilePwdHist;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProfileUserService{
@@ -44,13 +39,19 @@ public class ProfileUserService{
 
 	/**
 	 * 根据分支机构编码,用户id,用户姓名（模糊）查找机构下的用户对象
-	 * @param userId 用户登陆Id
-	 * @param range
+	 * @param branchId
+	 * @param name
 	 * @param orgId
+	 * @param range
 	 * @return
 	 */
-	public FetchResponse<Map<String,Object>> fetchUsers4Branch(String branchId,String name,String orgId,Range range) {
+	public Map<String, Object> fetchUsers4Branch(String branchId,String name,String orgId,Range range) {
 		QProfileUser q = QProfileUser.profileUser;
+		QProfileUserRole r = QProfileUserRole.profileUserRole;
+		QProfileRole p = QProfileRole.profileRole;
+		List list = new JPAQueryFactory(em)
+				.select(p.roleName).from(q, r, p)
+				.where(q.puId.eq(r.puId), r.roleId.eq(p.roleId)).fetch();
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(q.puId,q.branchId,q.name,q.email,q.orgId,q.pwdExpDate,q.pwdTries,q.status,q.userId).from(q)
 				.orderBy(q.branchId.asc(),q.userId.asc());
@@ -60,9 +61,17 @@ public class ProfileUserService{
 		if (!Strings.isNullOrEmpty(name)){
 			query.where(q.name.like("%"+name+"%"));
 		}
-		return new JPAFetchResponseBuilder<Map<String, Object>>()
-			.range(range)
-			.buildAsMap(query,q.puId,q.branchId,q.name,q.email,q.orgId,q.pwdExpDate,q.pwdTries,q.status,q.userId);
+		Map<String, Object> map = new HashMap(16);
+		map.put("puId", q.puId);
+		map.put("branchId", q.branchId);
+		map.put("name", q.name);
+		map.put("email", q.email);
+		map.put("orgId", q.orgId);
+		map.put("pwdExpDate", q.pwdExpDate);
+		map.put("pwdTries", q.pwdTries);
+		map.put("status", q.status);
+		map.put("roleNmme", list);
+		return map;
 	}
 /**
  * 根据userId查询用户信息
