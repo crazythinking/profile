@@ -70,7 +70,7 @@ public class ProfileUserService{
 		map.put("pwdExpDate", q.pwdExpDate);
 		map.put("pwdTries", q.pwdTries);
 		map.put("status", q.status);
-		map.put("roleNmme", list);
+		map.put("roleName", list);
 		return map;
 	}
 /**
