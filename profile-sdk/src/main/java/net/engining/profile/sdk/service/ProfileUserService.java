@@ -59,11 +59,6 @@ public class ProfileUserService{
 		if (!Strings.isNullOrEmpty(name)){
 			query.where(q.name.like("%"+name+"%"));
 		}
-		JPAQuery<Tuple> jpaQuery = new JPAQueryFactory(em)
-				.select(p.roleName, q.userId, q.puId).from(q, r, p)
-				.where(q.puId.eq(r.puId), r.roleId.eq(p.roleId));
-		List list = new ArrayList();
-		FetchResponse<Tuple> buildQue = new JPAFetchResponseBuilder<Tuple>().range(range).build(jpaQuery);
 		FetchResponse<Tuple> build = new JPAFetchResponseBuilder<Tuple>().range(range).build(query);
 		List<Map<String, Object>> mapList = new ArrayList<>();
 		for (Tuple tuple : build.getData()) {
@@ -77,11 +72,9 @@ public class ProfileUserService{
 			map.put("pwdTries", tuple.get(q.pwdTries));
 			map.put("status", tuple.get(q.status));
 			map.put("userId", tuple.get(q.userId));
-			for(Tuple que : buildQue.getData()){
-				if(ValidateUtilExt.isNotNullOrEmpty(q.userId) && que.get(q.userId).equals(tuple.get(q.userId)) && que.get(q.puId).equals(tuple.get(q.puId))){
-					list.add(que.get(p.roleName));
-				}
-			}
+			List<String> list = new JPAQueryFactory(em)
+					.select(p.roleName).from(r, p)
+					.where(r.puId.eq(tuple.get(q.puId)),r.roleId.eq(p.roleId)).fetch();
 			map.put("roleName", list);
 			mapList.add(map);
 		}
