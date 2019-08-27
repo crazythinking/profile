@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -77,35 +78,37 @@ public class ProfileMgmService {
 	/**
 	 * 为用户分配角色 FIXME 逻辑不合理，需重构
 	 *
-     * @param roleStr 角色集合
+     * @param roleId 角色集合
      * @param puId 用户信息表id
 	 */
     @Transactional(rollbackFor = Exception.class)
-	public void saveProfileUserAndRole(String roleStr, String puId) {
+	public void saveProfileUserAndRole(String puId, List<String> roleId) {
 		// 先进行删除操作
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
 		long n1 = new JPAQueryFactory(em).delete(qProfileUserRole).where(qProfileUserRole.puId.eq(puId)).execute();
 
 		logger.debug("删除了{}条ProfileUserRole", n1);
 
-		roleStr = roleStr + ",getAssist,tradeType,subjectList";
-		// 进行相应的新增操作
-        if (StringUtils.isNotBlank(roleStr) && roleStr.indexOf(STR) > 0) {
-			String[] roleIdArr = roleStr.split(",");
-			for (int i = 0; i < roleIdArr.length; i++) {
+//		roleStr = roleStr + ",getAssist,tradeType,subjectList";
+//		// 进行相应的新增操作
+//        if (StringUtils.isNotBlank(roleStr) && roleStr.indexOf(STR) > 0) {
+//			String[] roleIdArr = roleStr.split(",");
+//			for (int i = 0; i < roleIdArr.length; i++) {
+//				ProfileUserRole profileUserRole = new ProfileUserRole();
+//				profileUserRole.fillDefaultValues();
+//				profileUserRole.setPuId(puId);
+//				profileUserRole.setRoleId(roleIdArr[i]);
+//				em.persist(profileUserRole);
+//			}
+//		} else {
+			for(String s : roleId){
 				ProfileUserRole profileUserRole = new ProfileUserRole();
 				profileUserRole.fillDefaultValues();
 				profileUserRole.setPuId(puId);
-				profileUserRole.setRoleId(roleIdArr[i]);
+				profileUserRole.setRoleId(s);
 				em.persist(profileUserRole);
 			}
-		} else {
-			ProfileUserRole profileUserRole = new ProfileUserRole();
-			profileUserRole.fillDefaultValues();
-			profileUserRole.setPuId(puId);
-			profileUserRole.setRoleId(roleStr);
-			em.persist(profileUserRole);
-		}
+//		}
 	}
 
 	/**

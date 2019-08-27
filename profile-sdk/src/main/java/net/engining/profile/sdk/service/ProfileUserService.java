@@ -13,6 +13,7 @@ import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
+import net.engining.profile.sdk.service.bean.UserRoleBean;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +74,17 @@ public class ProfileUserService{
 			userManagerBean.setPwdTries(tuple.get(q.pwdTries));
 			userManagerBean.setStatus(tuple.get(q.status));
 			userManagerBean.setUserId(tuple.get(q.userId));
-			List<String> list = new JPAQueryFactory(em)
-					.select(p.roleName).from(r, p)
+			List<Tuple> list = new JPAQueryFactory(em)
+					.select(p.roleId, p.roleName).from(r, p)
 					.where(r.puId.eq(tuple.get(q.puId)),r.roleId.eq(p.roleId)).fetch();
-			userManagerBean.setRoleName(list);
+			List<UserRoleBean> roleBeans = new ArrayList<>();
+			for(Tuple tup : list){
+				UserRoleBean userRoleBean = new UserRoleBean();
+				userRoleBean.setRoleId(tup.get(p.roleId));
+				userRoleBean.setRoleName(tup.get(p.roleName));
+				roleBeans.add(userRoleBean);
+			}
+			userManagerBean.setRoleList(roleBeans);
 			mapList.add(userManagerBean);
 		}
 		fetchResponse.setData(mapList);

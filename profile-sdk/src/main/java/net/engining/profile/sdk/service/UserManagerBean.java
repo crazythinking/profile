@@ -1,6 +1,7 @@
 package net.engining.profile.sdk.service;
 
 import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.sdk.service.bean.UserRoleBean;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class UserManagerBean implements Serializable {
 
     private Integer pwdTries;
 
-    private List<String> roleName;
+    private List<UserRoleBean> roleList;
 
     public String getPuId() {
         return puId;
@@ -107,11 +108,11 @@ public class UserManagerBean implements Serializable {
         this.pwdTries = pwdTries;
     }
 
-    public List<String> getRoleName() {
-        return roleName;
+    public List<UserRoleBean> getRoleList() {
+        return roleList;
     }
 
-    public void setRoleName(List<String> roleName) {
-        this.roleName = roleName;
+    public void setRoleList(List<UserRoleBean> roleList) {
+        this.roleList = roleList;
     }
 }
