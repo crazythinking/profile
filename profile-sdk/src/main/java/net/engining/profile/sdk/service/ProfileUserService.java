@@ -80,6 +80,8 @@ public class ProfileUserService{
 			mapList.add(userManagerBean);
 		}
 		fetchResponse.setData(mapList);
+		fetchResponse.setRowCount(range.getLength());
+		fetchResponse.setStart(range.getStart());
 		return fetchResponse;
 	}
 /**
