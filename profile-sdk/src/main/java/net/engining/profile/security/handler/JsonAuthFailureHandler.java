@@ -3,6 +3,7 @@ package net.engining.profile.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
+import net.engining.profile.sdk.service.bean.ErrorCodeDef;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -30,8 +31,8 @@ public class JsonAuthFailureHandler implements AuthenticationFailureHandler {
         mapper.writeValue(response.getOutputStream(),
                 new CommonWithHeaderResponseBuilder<Void, Void>()
                         .build()
-                        .setStatusCode(ErrorCode.Restricted.getValue())
-                        .setStatusDesc(ErrorCode.Restricted.getLabel())
+                        .setStatusCode(ErrorCodeDef.CheckError.getValue())
+                        .setStatusDesc(ErrorCodeDef.CheckError.getLabel())
 
         );
 
