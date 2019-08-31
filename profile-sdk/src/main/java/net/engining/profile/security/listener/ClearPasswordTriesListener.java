@@ -1,17 +1,16 @@
 package net.engining.profile.security.listener;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.security.ProfileUserDetails;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.security.ProfileUserDetails;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * 登录成功重置密码错误次数
@@ -25,7 +24,7 @@ public class ClearPasswordTriesListener implements ApplicationListener<Authentic
 	private EntityManager entityManager;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
 		checkArgument(event.getAuthentication().getPrincipal() instanceof UserDetails);
 		ProfileUserDetails ud = (ProfileUserDetails)event.getAuthentication().getPrincipal();

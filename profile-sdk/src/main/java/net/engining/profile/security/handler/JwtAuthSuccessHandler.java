@@ -5,6 +5,7 @@ import com.google.common.base.Joiner;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.engining.gm.config.props.GmCommonProperties;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.profile.enums.OperationType;
@@ -36,29 +37,34 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Autowired
 	GmCommonProperties commonProperties;
-	
+
 	/**
 	 * JWT secret key
 	 */
 	private String signingKey = WebCommonUtils.SE_JWT_SIGNKEY;
 	
 	private long expirationMills = 30 * 60 * 1000;
+
+	private String issuer = "PROFILE";
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+										Authentication authentication)throws IOException, ServletException {
 		
 		ProfileUserDetails profileUserDetails = (ProfileUserDetails)authentication.getPrincipal();
 		//Collection 转为逗号分隔String
 		String authorities = Joiner.on(",").join(authentication.getAuthorities());
-//		String roles = Joiner.on(",").join(profileUserDetails.getRoles());
-		
-		// 获取用户其他基本信息主键
-//		WebUser webUser = customerInfoService.fetchCustomerByPuId(profileUserDetails.getPuId());
-		
+
 		//记录安全日志
-		securityLoggerService.logSecuOperation(profileUserDetails.getPuId(), OperationType.LG, WebCommonUtils.getIpAddress(request), new Date(),null);
+		securityLoggerService.logSecuOperation(
+				profileUserDetails.getPuId(),
+				OperationType.LG,
+				WebCommonUtils.getIpAddress(request),
+				new Date(),
+				null
+		);
 		
 		//生成JWT，并存入Header
 		if(StringUtils.isNotBlank(commonProperties.getJwtSignKey())){
@@ -67,6 +73,9 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 		if(commonProperties.getJwtExpirationMills() >= 0L){
 			expirationMills = commonProperties.getJwtExpirationMills();
 		}
+		if (ValidateUtilExt.isNotNullOrEmpty(commonProperties.getJwtIssuer())){
+			issuer = commonProperties.getJwtIssuer();
+		}
 
 		String token = Jwts.builder()
 				//代表这个JWT的主体，即它的所有人
@@ -74,7 +83,7 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 				//代表这个JWT的签发时间
 				.setIssuedAt(new Date())
 				//代表这个JWT的签发主体
-				.setIssuer("SCCC-ACCOUNTING-MGM")
+				.setIssuer(issuer)
 				//代表这个JWT生效的开始时间，意味着在这个时间之前验证JWT是会失败的；
 				.setNotBefore(new Date())
 				//代表这个JWT的过期时间

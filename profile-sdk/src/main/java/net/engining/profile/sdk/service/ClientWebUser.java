@@ -1,20 +1,22 @@
 package net.engining.profile.sdk.service;
 
-import java.io.Serializable;
+import net.engining.pg.web.bean.AbstractWebUser;
+import net.engining.profile.entity.enums.StatusDef;
+
 import java.util.HashSet;
 import java.util.Map;
 
 /**
  * 用来在客户端保存和传递当前登录信息的对象。
- * 为了避免与 服务端的User命名重复，加上Client前缀。
+ *
  * @author chenjun.li
  *
  */
-public class ClientUser implements Serializable {
+public class ClientWebUser extends AbstractWebUser {
 
 	private static final long serialVersionUID = 1L;
 
-	private String id;
+	private String loginId;
 	
 	private String name;
 	
@@ -28,16 +30,26 @@ public class ClientUser implements Serializable {
 	private Map<String, Object> props; 
 	
 	/**
-	 * 该用户所属的用户组，key为groupId，value为name
+	 * 该用户所属的用户角色，key为roleId，value为roleName
 	 */
-	private Map<Integer, String> groups;
-	
-	public String getId() {
-		return id;
+	private Map<String, String> roles;
+
+	private StatusDef status;
+
+	public StatusDef getStatus() {
+		return status;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setStatus(StatusDef status) {
+		this.status = status;
+	}
+
+	public String getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
 	}
 
 	public String getName() {
@@ -56,12 +68,12 @@ public class ClientUser implements Serializable {
 		this.authorities = authorities;
 	}
 
-	public Map<Integer, String> getGroups() {
-		return groups;
+	public Map<String, String> getRoles() {
+		return roles;
 	}
 
-	public void setGroups(Map<Integer, String> groups) {
-		this.groups = groups;
+	public void setRoles(Map<String, String> roles) {
+		this.roles = roles;
 	}
 
 	public Map<String, Object> getProps() {
