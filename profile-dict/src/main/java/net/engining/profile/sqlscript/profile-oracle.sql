@@ -81,7 +81,7 @@ CREATE TABLE PROFILE_PWD_HIST
 	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
 	PASSWORD VARCHAR2(300) NOT NULL,
 	-- 密码建立时间
-	PWD_CRE_TIME TIMESTAMP NOT NULL,
+	PWD_CRE_TIME TIMESTAMP DEFAULT NOW() NOT NULL,
 	-- 乐观锁版本号
 	JPA_VERSION NUMBER(10,0) NOT NULL,
 	PRIMARY KEY (ID)
@@ -133,7 +133,7 @@ CREATE TABLE PROFILE_SECOPER_LOG
 	-- IP地址
 	OPER_IP VARCHAR2(30) NOT NULL,
 	-- 操作时间
-	OPER_TIME TIMESTAMP NOT NULL,
+	OPER_TIME TIMESTAMP DEFAULT NOW() NOT NULL,
 	-- 乐观锁版本号
 	JPA_VERSION NUMBER(10,0) NOT NULL,
 	PRIMARY KEY (LOG_ID)
@@ -150,7 +150,7 @@ CREATE TABLE PROFILE_USER
 	-- 分支编码
 	BRANCH_ID VARCHAR2(9),
 	-- 登陆ID
-	USER_ID VARCHAR2(40) NOT NULL,
+	USER_ID VARCHAR2(40) NOT NULL UNIQUE,
 	-- 姓名
 	NAME VARCHAR2(40) NOT NULL,
 	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
@@ -167,7 +167,7 @@ CREATE TABLE PROFILE_USER
 	-- 密码错误次数
 	PWD_TRIES NUMBER(10,0) NOT NULL,
 	-- 修改时间
-	MTN_TIMESTAMP TIMESTAMP ,
+	MTN_TIMESTAMP TIMESTAMP DEFAULT NOW(),
 	-- 修改用户
 	MTN_USER VARCHAR2(40),
 	-- 乐观锁版本号

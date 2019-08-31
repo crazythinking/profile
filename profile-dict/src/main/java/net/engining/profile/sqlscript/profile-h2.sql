@@ -65,7 +65,7 @@ CREATE TABLE PROFILE_PWD_HIST
 	ID INT NOT NULL,
 	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL,
-	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
+	-- 密码
 	PASSWORD VARCHAR(300) NOT NULL,
 	-- 密码建立时间
 	PWD_CRE_TIME TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -137,10 +137,10 @@ CREATE TABLE PROFILE_USER
 	-- 分支编码
 	BRANCH_ID VARCHAR(9),
 	-- 登陆ID
-	USER_ID VARCHAR(40) NOT NULL,
+	USER_ID VARCHAR(40) NOT NULL UNIQUE,
 	-- 姓名
 	NAME VARCHAR(40) NOT NULL,
-	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
+	-- 密码
 	PASSWORD VARCHAR(300) NOT NULL,
 	-- 状态 : ///
 	-- N|新增
