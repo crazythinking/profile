@@ -38,7 +38,7 @@ import java.util.Optional;
  *
  * @author binarier
  */
-public class ProfileUserDetailsService implements UserDetailsService {
+public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
     @PersistenceContext
     private EntityManager em;
@@ -47,6 +47,9 @@ public class ProfileUserDetailsService implements UserDetailsService {
     private ParameterFacility facility;
 
     private ObjectMapper mapper = new ObjectMapper();
+
+    private  static final String  LOCK= "锁定";
+
 
     /**
      * @param username 用户登陆Id
@@ -61,7 +64,7 @@ public class ProfileUserDetailsService implements UserDetailsService {
                 .from(qProfileUser)
                 .where(qProfileUser.userId.eq(username))
                 .fetchOne();
-        if (("锁定").equals(profileUser.getStatus().getLabel())) {
+        if (LOCK.equals(profileUser.getStatus().getLabel())) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             try {
                 mapper.writeValue(response.getOutputStream(),
@@ -73,7 +76,7 @@ public class ProfileUserDetailsService implements UserDetailsService {
             };
         }
 
-        if (profileUser == null) {
+        if (!ValidateUtilExt.isNotNullOrEmpty(profileUser)) {
             throw new UsernameNotFoundException(String.format("无法找到用户,%s", username));
         }
 
