@@ -63,8 +63,17 @@ public class ProfileUserService {
             query.where(q.name.like("%" + name + "%"));
         }
         FetchResponse<Tuple> build = new JPAFetchResponseBuilder<Tuple>().range(range).build(query);
-        FetchResponse<UserManagerBean> fetchResponse = new FetchResponse<>();
         List<UserManagerBean> mapList = new ArrayList<>();
+        List<String> puIdList = new ArrayList<>();
+        for (Tuple tuple : build.getData()) {
+            puIdList.add(tuple.get(q.puId));
+        }
+        JPAQuery<Tuple> userQuery = new JPAQueryFactory(em).select(p.roleId, p.roleName, r.puId).from(r, p).where(r.roleId.eq(p.roleId));
+        if (ValidateUtilExt.isNotNullOrEmpty(puIdList)) {
+            userQuery.where(r.puId.in(puIdList));
+        }
+        FetchResponse<Tuple> buildUser = new JPAFetchResponseBuilder<Tuple>().build(userQuery);
+        FetchResponse<UserManagerBean> fetchResponse = new FetchResponse<>();
         for (Tuple tuple : build.getData()) {
             UserManagerBean userManagerBean = new UserManagerBean();
             userManagerBean.setPuId(tuple.get(q.puId));
@@ -76,18 +85,12 @@ public class ProfileUserService {
             userManagerBean.setPwdTries(tuple.get(q.pwdTries));
             userManagerBean.setStatus(tuple.get(q.status));
             userManagerBean.setUserId(tuple.get(q.userId));
-            List<String> list = new JPAQueryFactory(em)
-                    .select(r.roleId).from(r)
-                    .where(r.puId.eq(tuple.get(q.puId))).fetch();
             List<UserRoleBean> roleBeansList = new ArrayList<>();
-            if (ValidateUtilExt.isNotNullOrEmpty(list)) {
-                for (String roleId : list) {
+            for(Tuple user : buildUser.getData()){
+                if(tuple.get(q.puId).equals(user.get(q.puId))){
                     UserRoleBean userRoleBean = new UserRoleBean();
-                    userRoleBean.setRoleId(roleId);
-                    String roleName = new JPAQueryFactory(em)
-                            .select(p.roleName).from(p)
-                            .where(p.roleId.eq(roleId)).fetchFirst();
-                    userRoleBean.setRoleName(roleName);
+                    userRoleBean.setRoleId(user.get(p.roleId));
+                    userRoleBean.setRoleName(user.get(p.roleName));
                     roleBeansList.add(userRoleBean);
                 }
             }
