@@ -1,34 +1,24 @@
 package net.engining.profile.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
-import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.pg.web.CommonWithHeaderResponseBuilder;
-import net.engining.pg.web.bean.WebLoginUser;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
-import net.engining.profile.sdk.service.bean.ErrorCodeDef;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -46,35 +36,17 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private ParameterFacility facility;
 
-    private ObjectMapper mapper = new ObjectMapper();
-
-    private  static final String  LOCK= "锁定";
-
-
     /**
      * @param username 用户登陆Id
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         QProfileUser qProfileUser = QProfileUser.profileUser;
         ProfileUser profileUser = new JPAQueryFactory(em)
                 .select(qProfileUser)
                 .from(qProfileUser)
                 .where(qProfileUser.userId.eq(username))
                 .fetchOne();
-        if (LOCK.equals(profileUser.getStatus().getLabel())) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            try {
-                mapper.writeValue(response.getOutputStream(),
-                        new CommonWithHeaderResponseBuilder<Void, Void>()
-                                .build()
-                                .setStatusCode(ErrorCodeDef.CheckErrorA.getValue())
-                                .setStatusDesc(ErrorCodeDef.CheckErrorA.getLabel()));
-            } catch (Exception e) {
-            };
-        }
 
         if (!ValidateUtilExt.isNotNullOrEmpty(profileUser)) {
             throw new UsernameNotFoundException(String.format("无法找到用户,%s", username));
