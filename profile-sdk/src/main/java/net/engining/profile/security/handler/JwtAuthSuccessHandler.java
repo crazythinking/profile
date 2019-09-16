@@ -8,9 +8,7 @@ import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.enums.OperationType;
-import net.engining.profile.sdk.service.bean.ErrorCodeDef;
 import net.engining.profile.security.ProfileSecurityLoggerService;
 import net.engining.profile.security.ProfileUserDetails;
 import org.apache.commons.lang3.StringUtils;
@@ -58,17 +56,6 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 		ProfileUserDetails profileUserDetails = (ProfileUserDetails)authentication.getPrincipal();
 		//Collection 转为逗号分隔String
 		String authorities = Joiner.on(",").join(authentication.getAuthorities());
-
-		if (StatusDef.L.equals(profileUserDetails.getStatus())) {
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			mapper.writeValue(
-					response.getOutputStream(),
-					new CommonWithHeaderResponseBuilder<Void, Void>()
-							.build()
-							.setStatusCode(ErrorCodeDef.CheckErrorA.getValue())
-							.setStatusDesc(ErrorCodeDef.CheckErrorA.getLabel())
-			);
-		}
 
 		//记录安全日志
 		securityLoggerService.logSecuOperation(

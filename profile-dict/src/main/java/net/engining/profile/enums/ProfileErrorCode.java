@@ -1,17 +1,28 @@
-package net.engining.profile.sdk.service.bean;
+package net.engining.profile.enums;
 
 import net.engining.pg.support.enums.BaseEnum;
 
-public enum ErrorCodeDef  implements BaseEnum<String> {
+/**
+ * @author
+ */
 
-    CheckError("9200","用户名密码错误"),
+public enum ProfileErrorCode implements BaseEnum<String> {
 
-    CheckErrorA("9100","账户限制");
+    /**
+     *
+     */
+    Error9200("9200","用户名或密码错误"),
+
+    /**
+     *
+     */
+    Error9100("9100","账户被锁");
+
     private final String value;
 
     private final String label;
 
-    ErrorCodeDef(String value, String label) {
+    ProfileErrorCode(String value, String label) {
         this.value = value;
         this.label = label;
     }
