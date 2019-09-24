@@ -87,7 +87,7 @@ public class ProfileUserService {
             userManagerBean.setUserId(tuple.get(q.userId));
             List<UserRoleBean> roleBeansList = new ArrayList<>();
             for(Tuple user : buildUser.getData()){
-                if(tuple.get(q.puId).equals(user.get(q.puId))){
+                if(tuple.get(q.puId).equals(user.get(r.puId))){
                     UserRoleBean userRoleBean = new UserRoleBean();
                     userRoleBean.setRoleId(user.get(p.roleId));
                     userRoleBean.setRoleName(user.get(p.roleName));
