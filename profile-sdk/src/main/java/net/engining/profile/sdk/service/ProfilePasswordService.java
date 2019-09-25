@@ -41,7 +41,7 @@ public class ProfilePasswordService{
 	 * @param operUser 操作人员系统登陆Id，可以为Null，为Null时，自动填入"System"; 为"Owner"时，表示用户自己;
 	 * @throws ErrorMessageException
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void changePassword(String puId, String oldPassword, String newPassword, String operUser) throws ErrorMessageException {
 		
 		SecurityControl control = parameterFacility.getUniqueParameter(SecurityControl.class).get();
@@ -60,7 +60,6 @@ public class ProfilePasswordService{
 		ProfileUser user = em.find(ProfileUser.class, puId);
 		checkNotNull(user);
 		
-//		UserDetails ud = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (!passwordEncoder.matches(oldPassword, user.getPassword()))
 		{
 			throw new ErrorMessageException(ErrorCode.CheckError,  "原密码不正确");

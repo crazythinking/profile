@@ -41,7 +41,7 @@ public class PasswordTriesListener implements ApplicationListener<Authentication
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
 
 		String userId = (String)event.getAuthentication().getPrincipal();
