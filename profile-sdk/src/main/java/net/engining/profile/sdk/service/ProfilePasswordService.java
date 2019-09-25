@@ -16,12 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
-public class ProfilePasswordService{
-	private Logger logger = LoggerFactory.getLogger(getClass());
+public class ProfilePasswordService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PersistenceContext
 	private EntityManager em;
@@ -46,16 +47,33 @@ public class ProfilePasswordService{
 		
 		SecurityControl control = parameterFacility.getUniqueParameter(SecurityControl.class).get();
 
-		if (control != null && control.complexPwdInd != null && control.complexPwdInd)
-		{
-			String value = newPassword;
-			if (!value.matches(".*[a-z].*")||
-				!value.matches(".*[A-Z].*")||
-				!value.matches(".*\\d.*"))
-			{
-				throw new ErrorMessageException(ErrorCode.CheckError, "密码必须由大、小写字母及数字组成");
-			}
-		}
+        if (ValidateUtilExt.isNotNullOrEmpty(control) && control.complexPwdInd != null && control.complexPwdInd) {
+            // 根据参数决定是否校验复杂度
+            boolean isWellFormed = true;
+            StringBuilder hint = new StringBuilder(HINT_PREFIX);
+            boolean isfirstMismatch = true;
+            for (PasswordPattern pattern : control.passwordPatterns) {
+                if (!newPassword.matches(pattern.pattern)) {
+                    // 除了第一个提示短语，之后的需要先加顿号分隔
+                    if (isfirstMismatch) {
+                        isfirstMismatch = false;
+                    } else {
+                        hint.append("、");
+                    }
+                    hint.append(pattern.message);
+                    if (pattern.mustMatch) {
+                        // 密码不合规
+                        isWellFormed = false;
+                    }
+                } else {
+                    // 累积复杂度权重
+                    complexity += pattern.weights;
+                }
+            }
+            if (!isWellFormed) {
+                throw new ErrorMessageException(ErrorCode.CheckError, hint.toString());
+            }
+        }
 
 		ProfileUser user = em.find(ProfileUser.class, puId);
 		checkNotNull(user);
