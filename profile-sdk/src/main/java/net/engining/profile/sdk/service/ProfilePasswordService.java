@@ -16,6 +16,9 @@ import java.util.Date;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * @author Eric Lu
+ */
 @Service
 public class ProfilePasswordService {
     private Logger logger = LoggerFactory.getLogger(getClass());
