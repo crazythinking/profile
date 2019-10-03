@@ -10,6 +10,8 @@ import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.security.validator.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,12 +23,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * 权限安全服务，通过DB提供安全服务
  * @author Eric Lu
  */
 @Service
 public class ProfileSecurityService {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PersistenceContext
 	private EntityManager em;
@@ -149,7 +155,41 @@ public class ProfileSecurityService {
 	}
 
 	/**
-	 * 修改密码
+	 * 用户修改自己的登陆密码
+	 *
+	 * @param puId     用户登陆表主键
+	 * @param operUser 操作人员系统登陆Id，可以为Null，为Null时，自动填入"System"; 为"Owner"时，表示用户自己;
+	 * @throws ErrorMessageException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void changeMyPassword(String puId, String oldPassword, String newPassword, String operUser) throws ErrorMessageException {
+
+		ProfileUser user = em.find(ProfileUser.class, puId);
+
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "原密码不正确");
+		}
+
+		SecurityControl control = parameterFacility.loadUniqueParameter(SecurityControl.class);
+
+		// 密码修改校验
+		for (SecurityControlValidator passwordValidator : newPasswordValidators) {
+			passwordValidator.validate(user, newPassword, control);
+		}
+
+		checkNotNull(user);
+
+		user.setMtnTimestamp(new Date());
+		user.setMtnUser(operUser);
+		user.setPassword(passwordEncoder.encode(newPassword));
+		user.setPwdTries(0);
+		user.setStatus(StatusDef.A);
+
+		logger.info("操作员{}，修改了用户{}的密码！", operUser, user.getUserId());
+	}
+
+	/**
+	 * 首次登陆修改密码
 	 * @param username
 	 * @param password
 	 * @throws ErrorMessageException
@@ -215,7 +255,7 @@ public class ProfileSecurityService {
 	 *            密码
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	private void addPasswordHistory(String puId, String password) {
+	void addPasswordHistory(String puId, String password) {
 		ProfilePwdHist pwdHist = new ProfilePwdHist();
 		pwdHist.setPuId(puId);
 		pwdHist.setPassword(password);
