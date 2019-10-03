@@ -3,8 +3,10 @@ package net.engining.profile.sdk.service;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.param.PasswordPattern;
 import net.engining.profile.param.SecurityControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * @author Eric Lu
+ */
 @Service
 public class ProfilePasswordService {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -34,6 +38,10 @@ public class ProfilePasswordService {
 	private PasswordEncoder passwordEncoder;
 	
 	public final String resetPwdStr = "";
+
+	private static final String HINT_PREFIX = "密码必须";
+
+	private int complexity = 0;
 	
 	/**
 	 * 修改登陆密码
@@ -97,7 +105,7 @@ public class ProfilePasswordService {
 	 * @param puId
 	 * @param operUser
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void resetPassword(String puId, String operUser){
 		ProfileUser user = em.find(ProfileUser.class, puId);
 		checkNotNull(user);
