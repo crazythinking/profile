@@ -62,7 +62,7 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
                 .distinct()
                 .fetch();
 
-        //TODO 这里可能有问题，只存了权限标识
+        //存权限标识
         Collection<GrantedAuthority> grantedAuthorities = Collections2.transform(authorities, new Function<String, GrantedAuthority>() {
 
             @Override
