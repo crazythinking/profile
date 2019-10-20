@@ -12,12 +12,12 @@ import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
+import net.engining.profile.sdk.service.bean.MenuDef;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -30,6 +30,7 @@ public class ProfileMgmService {
     private static final String AUTH_SUBJECT_LIST = "subjectList";
     private static final String AUTH_TRADE_TYPE = "tradeType";
     private static final String STR = ",";
+	private static final String STRS = "";
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PersistenceContext
@@ -207,22 +208,31 @@ public class ProfileMgmService {
             authStr = "getAssist,subjectList,tradeType";
         } else {
             // 新权限加上默认权限
-            if (!authStr.contains(AUTH_GET_ASSIST)) {
-                authStr = StringUtils.join(authStr, ",getAssist");
-            }
-            if (authStr.contains(AUTH_SUBJECT_LIST)) {
+//            if (!authStr.contains(AUTH_GET_ASSIST)) {
+//                authStr = StringUtils.join(authStr, ",getAssist");
+//            }
+            if (!authStr.contains(AUTH_SUBJECT_LIST)) {
                 authStr = StringUtils.join(authStr + ",subjectList");
             }
-            if (authStr.contains(AUTH_TRADE_TYPE)) {
+            if (!authStr.contains(AUTH_TRADE_TYPE)) {
                 authStr = StringUtils.join(authStr + ",tradeType");
             }
         }
         String[] authArr = authStr.split(STR);
         for (String s : authArr) {
+        	if(s.equals(STRS)){
+        		continue;
+			}
             ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
             profileRoleAuth.fillDefaultValues();
             profileRoleAuth.setRoleId(roleId);
             profileRoleAuth.setAuthority(s);
+            for(MenuDef menuDef:MenuDef.values()){
+				if(menuDef.getValue().equals(s)){
+					profileRoleAuth.setAutuUri(menuDef.getLabel());
+				}
+			}
+
             em.persist(profileRoleAuth);
         }
 	}
