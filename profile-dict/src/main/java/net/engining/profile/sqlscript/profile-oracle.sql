@@ -52,7 +52,7 @@ CREATE TABLE PROFILE_MENU
 	-- 机构号
 	ORG_ID VARCHAR2(12),
 	-- 菜单名称
-	MNAME VARCHAR2(20) NOT NULL,
+	MNAME VARCHAR2(100) NOT NULL,
 	-- 菜单路径
 	PATH_URL VARCHAR2(500) NOT NULL,
 	-- 上级菜单ID : 0表示顶级菜单
@@ -78,7 +78,7 @@ CREATE TABLE PROFILE_PWD_HIST
 	ID NUMBER(10,0) NOT NULL,
 	-- PU_ID : ###uuid2###
 	PU_ID VARCHAR2(64) NOT NULL,
-	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
+	-- 密码
 	PASSWORD VARCHAR2(300) NOT NULL,
 	-- 密码建立时间
 	PWD_CRE_TIME TIMESTAMP NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE PROFILE_USER
 	USER_ID VARCHAR2(40) NOT NULL UNIQUE,
 	-- 姓名
 	NAME VARCHAR2(40) NOT NULL,
-	-- 密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
+	-- 密码
 	PASSWORD VARCHAR2(300) NOT NULL,
 	-- 状态 : ///
 	-- N|新增
@@ -218,7 +218,7 @@ COMMENT ON COLUMN PROFILE_MENU.JPA_VERSION IS '乐观锁版本号';
 COMMENT ON TABLE PROFILE_PWD_HIST IS '密码维护历史表 : 记录每个用户的密码历史，以便判断密码重复。';
 COMMENT ON COLUMN PROFILE_PWD_HIST.ID IS 'ID';
 COMMENT ON COLUMN PROFILE_PWD_HIST.PU_ID IS 'PU_ID : ###uuid2###';
-COMMENT ON COLUMN PROFILE_PWD_HIST.PASSWORD IS '密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}';
+COMMENT ON COLUMN PROFILE_PWD_HIST.PASSWORD IS '密码';
 COMMENT ON COLUMN PROFILE_PWD_HIST.PWD_CRE_TIME IS '密码建立时间';
 COMMENT ON COLUMN PROFILE_PWD_HIST.JPA_VERSION IS '乐观锁版本号';
 COMMENT ON TABLE PROFILE_ROLE IS '角色定义表';
@@ -246,7 +246,7 @@ COMMENT ON COLUMN PROFILE_USER.ORG_ID IS '机构号';
 COMMENT ON COLUMN PROFILE_USER.BRANCH_ID IS '分支编码';
 COMMENT ON COLUMN PROFILE_USER.USER_ID IS '登陆ID';
 COMMENT ON COLUMN PROFILE_USER.NAME IS '姓名';
-COMMENT ON COLUMN PROFILE_USER.PASSWORD IS '密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}';
+COMMENT ON COLUMN PROFILE_USER.PASSWORD IS '密码';
 COMMENT ON COLUMN PROFILE_USER.STATUS IS '状态 : ///
 N|新增
 A|活动
