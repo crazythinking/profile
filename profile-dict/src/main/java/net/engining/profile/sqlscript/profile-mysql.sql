@@ -39,7 +39,7 @@ CREATE TABLE PROFILE_MENU
 (
 	ID INT NOT NULL AUTO_INCREMENT COMMENT 'ID',
 	ORG_ID VARCHAR(12) COMMENT '机构号',
-	MNAME VARCHAR(20) NOT NULL COMMENT '菜单名称',
+	MNAME VARCHAR(100) NOT NULL COMMENT '菜单名称',
 	PATH_URL VARCHAR(500) NOT NULL COMMENT '菜单路径',
 	-- 0表示顶级菜单
 	PARENT_ID INT DEFAULT 0 NOT NULL COMMENT '上级菜单ID : 0表示顶级菜单',
@@ -58,8 +58,7 @@ CREATE TABLE PROFILE_PWD_HIST
 	ID INT NOT NULL AUTO_INCREMENT COMMENT 'ID',
 	-- ###uuid2###
 	PU_ID VARCHAR(64) NOT NULL COMMENT 'PU_ID : ###uuid2###',
-	-- 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
-	PASSWORD VARCHAR(300) NOT NULL COMMENT '密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}',
+	PASSWORD VARCHAR(300) NOT NULL COMMENT '密码',
 	PWD_CRE_TIME TIMESTAMP DEFAULT NOW() NOT NULL COMMENT '密码建立时间',
 	JPA_VERSION INT NOT NULL COMMENT '乐观锁版本号',
 	PRIMARY KEY (ID)
@@ -115,8 +114,7 @@ CREATE TABLE PROFILE_USER
 	BRANCH_ID VARCHAR(9) COMMENT '分支编码',
 	USER_ID VARCHAR(40) NOT NULL COMMENT '登陆ID',
 	NAME VARCHAR(40) NOT NULL COMMENT '姓名',
-	-- 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}
-	PASSWORD VARCHAR(300) NOT NULL COMMENT '密码 : 密码，存放256位SHA1值，并且带用户名salt，按org.springframework.security.authentication.encoding.ShaPasswordEncoder(256)的算法，salt后的密码为password{username}',
+	PASSWORD VARCHAR(300) NOT NULL COMMENT '密码',
 	-- ///
 	-- N|新增
 	-- A|活动
