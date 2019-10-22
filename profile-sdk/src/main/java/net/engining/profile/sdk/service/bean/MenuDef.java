@@ -10,21 +10,31 @@ public enum MenuDef implements BaseEnum<String> {
     /**
      * 核销处理
      */
-    WriteOffProce("WriteOffProce","38,39,40"),
+    WriteOffProce("WriteOffProce", "38,39,40"),
     /**
      * 核销综合处理
      */
-    WriteOffCompre("WriteOffCompre","39,39"),
+    WriteOffCompre("WriteOffCompre", "39,39"),
 
     /**
      * 核销资产减值
      */
 
-    WriteOffImpa("WriteOffImpa","38,40"),
+    WriteOffImpa("WriteOffImpa", "38,40"),
     /**
      * 用户管理
      */
     ProfileUser("ProfileUser", "1,2,3,4"),
+    /**
+     * 用户维护
+     */
+    Maintenance("Maintenance", "1,2"),
+
+    mainAdd("mainAdd", "1,2"),
+
+    mainSearch("mainSearch", "1,2"),
+
+    mainSave("mainSave", "1,2"),
     /**
      * 角色管理
      */
@@ -444,11 +454,11 @@ public enum MenuDef implements BaseEnum<String> {
     addData("addData", "15,19"),
 
     /**
-     *功能描述
-     *
+     * 功能描述
+     * <p>
      * 总账查询
      */
-    legerQueryOnTheDay("legerQueryOnTheDay","26,31"),
+    legerQueryOnTheDay("legerQueryOnTheDay", "26,31"),
 
 
     /**
