@@ -203,21 +203,6 @@ public class ProfileMgmService {
 		long n2 = new JPAQueryFactory(em).delete(qProfileRoleAuth)
 				.where(qProfileRoleAuth.roleId.eq(roleId)).execute();
 		logger.debug("删除了{}条ProfileRoleAuth", n2);
-        // 判断分配的权限集合是否为空(为空则赋予默认权限)
-        if (ValidateUtilExt.isNullOrEmpty(authStr)) {
-            authStr = "getAssist,subjectList,tradeType";
-        } else {
-            // 新权限加上默认权限
-//            if (!authStr.contains(AUTH_GET_ASSIST)) {
-//                authStr = StringUtils.join(authStr, ",getAssist");
-//            }
-            if (!authStr.contains(AUTH_SUBJECT_LIST)) {
-                authStr = StringUtils.join(authStr + ",subjectList");
-            }
-            if (!authStr.contains(AUTH_TRADE_TYPE)) {
-                authStr = StringUtils.join(authStr + ",tradeType");
-            }
-        }
         String[] authArr = authStr.split(STR);
         for (String s : authArr) {
         	if(s.equals(STRS)){
