@@ -28,33 +28,31 @@ public enum MenuDef implements BaseEnum<String> {
     /**
      * 用户维护
      */
-    Maintenance("Maintenance", "1,2"),
+    Maintenance("Maintenance", "1,3"),
 
-    mainAdd("mainAdd", "1,2"),
-
-    mainSearch("mainSearch", "1,2"),
-
-    mainSave("mainSave", "1,2"),
+//    mainAdd("mainAdd", "1,2"),
+//
+//    mainSearch("mainSearch", "1,2"),
+//
+//    mainSave("mainSave", "1,2"),
     /**
      * 角色管理
      */
-    ProfileRole("ProfileRole", "1,5"),
+    ProfileRole("ProfileRole", "1,2"),
     /**
      * 用户登记薄详情查询
      */
-    userRegistrySearch("userRegistrySearch", "1,4"),
+    userRegistrySearch("userRegistrySearch", "1,5"),
     /**
      * 用户登记薄查询Excel
      */
-    userRegistryExport("userRegistryExport", "1,4"),
+    userRegistryExport("userRegistryExport", "1,5"),
     /**
      * 密码规则确认
+     *
      */
-    passwordRuleManager("passwordRuleManager", "1,3"),
-    /**
-     * 密码规则查询
-     */
-    passwordRuleSearch("passwordRuleSearch", "1,3"),
+    PasswordRule("PasswordRule","1,4"),
+
     // 价税分离参数设置
     /**
      * 价税分离更新
@@ -130,6 +128,8 @@ public enum MenuDef implements BaseEnum<String> {
      * 查询套型详情
      */
     queryTxnDetail("queryTxnDetail", "6,10"),
+
+    copyTxnDetail("copyTxnDetail","6,10"),
     /**
      * 获取记账码关联数据
      */
@@ -308,11 +308,13 @@ public enum MenuDef implements BaseEnum<String> {
      */
     vodtlAssSumQuery("vodtlAssSumQuery", "26,30"),
 
+    vodtlAssSumExcelQuery("vodtlAssSumExcelQuery","26,30"),
+
     // FIXME: 2019/9/12 辅助余额表查询
     /**
      * 科目对应辅助核算项
      */
-    getAssist("getAssist", "26,30"),
+//    getAssist("getAssist", "26,30"),
 
     // FIXME: 2019/9/12 总账查询
     /**
@@ -332,6 +334,8 @@ public enum MenuDef implements BaseEnum<String> {
      * 每日计提下载文件
      */
     dailyAccrualfileDownload("dailyAccrualfileDownload", "26,32"),
+
+    OnlineQuery("OnlineQuery","26,34"),
     // FIXME: 2019/9/12 综合记账查询
     /**
      * 综合记账查询
