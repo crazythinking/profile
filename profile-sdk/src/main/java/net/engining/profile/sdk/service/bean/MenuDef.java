@@ -49,6 +49,7 @@ public enum MenuDef implements BaseEnum<String> {
     userRegistryExport("userRegistryExport", "1,5"),
     /**
      * 密码规则确认
+     * 密码规则确认
      *
      */
     PasswordRule("PasswordRule","1,4"),
@@ -240,29 +241,29 @@ public enum MenuDef implements BaseEnum<String> {
     /**
      * 试算平衡导出、试算平衡、获取业务日期
      */
-    trialBanlance("trialBanlance", "20,21"),
+    Trialbalance("Trialbalance", "20,21"),
 
     // FIXME: 2019/9/12 总分核对
     /**
      * 总分核对，总分核对导出
      */
-    totalScoreCheck("totalScoreCheck", "20,22"),
+    TotalScoreChecks("TotalScoreChecks", "20,22"),
     /**
      * 获取所有末级科目
      */
-    getAllLastSubjectCd("getAllLastSubjectCd", "20,22"),
 
     // FIXME: 2019/9/12 明细核对
     /**
      * 明细核对、明细核对导出
      */
-    detailCheck("detailCheck", "20,23"),
-
+    ClearingAccount("ClearingAccount", "20,24"),
     // FIXME: 2019/9/12 扎账查询
     /**
      * 扎账查询
      */
-    settleAccountListInquiry("settleAccountListInquiry", "20,25"),
+    TransactionDetailsCheck("TransactionDetailsCheck","20,23"),
+
+    RollingAccountInquiry("RollingAccountInquiry","20,25"),
 
     // FIXME: 2019/9/12 清算科目试算
     /**
@@ -335,6 +336,8 @@ public enum MenuDef implements BaseEnum<String> {
      */
     dailyAccrualfileDownload("dailyAccrualfileDownload", "26,32"),
 
+    ComprehensiveBookkeepingQuery("ComprehensiveBookkeepingQuery","26,33"),
+
     OnlineQuery("OnlineQuery","26,34"),
     // FIXME: 2019/9/12 综合记账查询
     /**
@@ -353,6 +356,9 @@ public enum MenuDef implements BaseEnum<String> {
     /**
      * 获取Trans报表统计信息
      */
+    ReportQuery("ReportQuery","35,36,37"),
+    TRANSReportQuery("TRANSReportQuery","35,36"),
+    CRFReportQuery("CRFReportQuery","35,37"),
     getSum("getSum", "35,36"),
     insertPollingTaskForTrans("insertPollingTaskForTrans", "35,36"),
     /**
@@ -473,7 +479,7 @@ public enum MenuDef implements BaseEnum<String> {
     /**
      * 上传下载
      */
-    uploadFile("upLoadFile", "47,48");
+    UpLoader("UpLoader", "47,48");
 
     private final String value;
 
