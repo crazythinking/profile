@@ -30,11 +30,6 @@ public enum MenuDef implements BaseEnum<String> {
      */
     Maintenance("Maintenance", "1,3"),
 
-//    mainAdd("mainAdd", "1,2"),
-//
-//    mainSearch("mainSearch", "1,2"),
-//
-//    mainSave("mainSave", "1,2"),
     /**
      * 角色管理
      */
@@ -49,7 +44,7 @@ public enum MenuDef implements BaseEnum<String> {
     userRegistryExport("userRegistryExport", "1,5"),
     /**
      * 密码规则确认
-     * 密码规则确认
+     *
      *
      */
     PasswordRule("PasswordRule","1,4"),
