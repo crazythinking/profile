@@ -1,37 +1,27 @@
 package net.engining.profile.sdk.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.model.ProfileRole;
-import net.engining.profile.entity.model.ProfileRoleAuth;
-import net.engining.profile.entity.model.ProfileUserRole;
-import net.engining.profile.entity.model.QProfileBranch;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.entity.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Service
 public class ProfileRoleService {
@@ -127,7 +117,7 @@ public class ProfileRoleService {
 	}
 
 	public List<String> getProfileRoleAuths(String roleId) {
-		List<String> auths = new ArrayList<String>();
+		List<String> auths = Lists.newLinkedList();
 
 		QProfileRoleAuth q = QProfileRoleAuth.profileRoleAuth;
 		List<ProfileRoleAuth> current = new JPAQueryFactory(em).select(q).from(q).where(q.roleId.eq(roleId)).fetch();
@@ -144,7 +134,7 @@ public class ProfileRoleService {
 	 * @param roles
 	 *            Map<key, value>; key=roleId, value=puId
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteProfileUserRoles(Map<String, String> roles) {
 		QProfileUserRole q = QProfileUserRole.profileUserRole;
 		JPAQuery<ProfileUserRole> query = new JPAQueryFactory(em).select(q).from(q);
@@ -152,8 +142,9 @@ public class ProfileRoleService {
 		for (Entry<String, String> userRole : roles.entrySet()) {
 			ProfileUserRole profileUserRole = query
 					.where(q.roleId.eq(userRole.getKey()).and(q.puId.eq(userRole.getValue()))).fetchOne();
-			if (profileUserRole != null)
+			if (profileUserRole != null) {
 				em.remove(profileUserRole);
+			}
 		}
 
 	}
@@ -166,7 +157,7 @@ public class ProfileRoleService {
 		return new JPAFetchResponseBuilder<ProfileUserRole>().range(range).build(query);
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void addProfileUserRole(ProfileUserRole userRole) throws ErrorMessageException {
 		userRole.fillDefaultValues();
 		QProfileUserRole q = QProfileUserRole.profileUserRole;
@@ -182,12 +173,17 @@ public class ProfileRoleService {
 	public Map<String, String> getUserIds(String roleId) {
 		QProfileUser qProfileUser = QProfileUser.profileUser;
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
-		List<String> puIds = new JPAQueryFactory(em).select(qProfileUserRole.puId).from(qProfileUserRole).where(qProfileUserRole.roleId.eq(roleId)).fetch();
+		List<String> puIds = new JPAQueryFactory(em)
+				.select(qProfileUserRole.puId).
+						from(qProfileUserRole)
+				.where(qProfileUserRole.roleId.eq(roleId))
+				.fetch();
 		JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileUser.puId, qProfileUser.name).from(qProfileUser);
-		if (puIds.size() != 0)
+		if (puIds.size() != 0) {
 			query.where(qProfileUser.puId.notIn(puIds));
+		}
 		List<Tuple> tuples = query.fetch();
-		LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
+		HashMap<String, String> result = Maps.newHashMapWithExpectedSize(tuples.size());
 		for (Tuple t : tuples) {
 			result.put(t.get(qProfileUser.puId), t.get(qProfileUser.name));
 		}
@@ -197,9 +193,12 @@ public class ProfileRoleService {
 
 	public Map<String, String> getBranchIds() {
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
-		List<Tuple> tuples = new JPAQueryFactory(em).select(qProfileBranch.branchId, qProfileBranch.branchName).from(qProfileBranch).fetch();
+		List<Tuple> tuples = new JPAQueryFactory(em)
+				.select(qProfileBranch.branchId, qProfileBranch.branchName)
+				.from(qProfileBranch)
+				.fetch();
 
-		LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
+		HashMap<String, String> result = Maps.newHashMapWithExpectedSize(tuples.size());
 
 		for (Tuple t : tuples) {
 			result.put(t.get(qProfileBranch.branchId), t.get(qProfileBranch.branchName));

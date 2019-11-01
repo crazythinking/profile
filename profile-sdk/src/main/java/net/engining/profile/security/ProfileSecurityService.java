@@ -1,5 +1,6 @@
 package net.engining.profile.security;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -37,11 +38,11 @@ public class ProfileSecurityService {
 	@PersistenceContext
 	private EntityManager em;
 
-	private List<SecurityControlValidator> usernameValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> usernameValidators = Lists.newArrayList();
 
-	private List<SecurityControlValidator> authenticationValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> authenticationValidators = Lists.newArrayList();
 
-	private List<SecurityControlValidator> newPasswordValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> newPasswordValidators = Lists.newArrayList();
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -237,7 +238,7 @@ public class ProfileSecurityService {
 				.distinct()
 				.fetch();
 
-		HashMap<String, String> map = Maps.newHashMap();
+		HashMap<String, String> map = Maps.newHashMapWithExpectedSize(result.size());
 		for (Tuple tuple : result) {
 			map.put(tuple.get(qUser.userId), tuple.get(qUser.name));
 		}

@@ -1,6 +1,7 @@
 package net.engining.profile.sdk.service;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.profile.entity.enums.StatusDef;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class ProfileRuntimeService {
         cu.setRoles(roles);
         cu.setLoginId(ud.getUsername());
         cu.setName(ud.getUsername());
-        cu.setProps(new HashMap<>(16));
+        cu.setProps(Maps.newHashMapWithExpectedSize(16));
 
         cu.setStatus(ud.getStatus());
         Optional<SecurityControl> control = facility.getUniqueParameter(SecurityControl.class);

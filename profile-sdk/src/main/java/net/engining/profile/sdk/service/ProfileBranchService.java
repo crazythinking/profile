@@ -1,41 +1,25 @@
 package net.engining.profile.sdk.service;
 
-import java.text.MessageFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.model.ProfileBranch;
-import net.engining.profile.entity.model.ProfileBranchKey;
-import net.engining.profile.entity.model.ProfilePwdHist;
-import net.engining.profile.entity.model.ProfileRole;
-import net.engining.profile.entity.model.ProfileRoleAuth;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.ProfileUserRole;
-import net.engining.profile.entity.model.QProfileBranch;
-import net.engining.profile.entity.model.QProfilePwdHist;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.entity.model.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProfileBranchService{
@@ -128,15 +112,15 @@ public class ProfileBranchService{
 	 */
 	public Map<String, String> fetchBranchNamesByOrg(String orgId) {
 		QProfileBranch q = QProfileBranch.profileBranch;
-		QueryResults<Tuple> queryResults = new JPAQueryFactory(em)
+		List<Tuple> queryResults = new JPAQueryFactory(em)
 				.select(q.branchId, q.branchName)
 				.from(q)
 				.where(q.orgId.eq(orgId))
-				.fetchResults();
+				.fetch();
+
+		HashMap<String, String> result = Maps.newHashMapWithExpectedSize(queryResults.size());
 		
-		LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
-		
-		for (Tuple t : queryResults.getResults())
+		for (Tuple t : queryResults)
 		{
 			result.put(t.get(q.branchId), t.get(q.branchName));
 		}

@@ -1,6 +1,7 @@
 package net.engining.profile.sdk.service;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProfileUserService {
@@ -63,8 +66,8 @@ public class ProfileUserService {
             query.where(q.name.like("%" + name + "%"));
         }
         FetchResponse<Tuple> build = new JPAFetchResponseBuilder<Tuple>().range(range).build(query);
-        List<UserManagerBean> mapList = new ArrayList<>();
-        List<String> puIdList = new ArrayList<>();
+        List<UserManagerBean> mapList = Lists.newArrayList();
+        List<String> puIdList = Lists.newArrayList();
         for (Tuple tuple : build.getData()) {
             puIdList.add(tuple.get(q.puId));
         }
@@ -85,7 +88,7 @@ public class ProfileUserService {
             userManagerBean.setPwdTries(tuple.get(q.pwdTries));
             userManagerBean.setStatus(tuple.get(q.status));
             userManagerBean.setUserId(tuple.get(q.userId));
-            List<UserRoleBean> roleBeansList = new ArrayList<>();
+            List<UserRoleBean> roleBeansList = Lists.newLinkedList();
             for(Tuple user : buildUser.getData()){
                 if(tuple.get(q.puId).equals(user.get(r.puId))){
                     UserRoleBean userRoleBean = new UserRoleBean();
