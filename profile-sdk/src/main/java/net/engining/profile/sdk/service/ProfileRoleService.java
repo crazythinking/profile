@@ -38,7 +38,7 @@ public class ProfileRoleService {
 		return new JPAFetchResponseBuilder<ProfileRole>().range(range).build(query);
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteProfileRoles(List<String> roleIds) {
 
 		QProfileRole qProfileRole = QProfileRole.profileRole;
@@ -74,7 +74,7 @@ public class ProfileRoleService {
 	}
 
 	//FIXME 感觉逻辑有问题
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void updateProfileRole(ProfileRole role, List<String> authorities) throws ErrorMessageException {
 
 		QProfileRole qProfileRole = QProfileRole.profileRole;
@@ -102,7 +102,7 @@ public class ProfileRoleService {
 		}
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void addProfileRole(ProfileRole role) throws ErrorMessageException {
 
 		role.fillDefaultValues();

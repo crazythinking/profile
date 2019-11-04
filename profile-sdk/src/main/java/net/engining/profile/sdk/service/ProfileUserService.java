@@ -129,7 +129,7 @@ public class ProfileUserService {
      *
      * @param puIds
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteProfileUsers(List<String> puIds) {
         QProfileUser qProfileUser = QProfileUser.profileUser;
         QProfilePwdHist qProfilePwdHist = QProfilePwdHist.profilePwdHist;
@@ -186,7 +186,7 @@ public class ProfileUserService {
     /**
      * @param user
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateProfileUser(ProfileUser user) {
 
         ProfileUser orginUser = em.find(ProfileUser.class, user.getPuId());
@@ -198,7 +198,7 @@ public class ProfileUserService {
 //		orginUser.setUserId(user.getUserId());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addProfileUser(ProfileUser user) throws ErrorMessageException {
 
         Optional<SecurityControl> sc = parameterFacility.getUniqueParameter(SecurityControl.class);

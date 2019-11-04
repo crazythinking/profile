@@ -64,7 +64,7 @@ public class ProfileBranchService{
 	}
 
 	
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void updateBranch(ProfileBranch branch) throws ErrorMessageException {
 		
 		QProfileBranch q = QProfileBranch.profileBranch;
@@ -132,7 +132,7 @@ public class ProfileBranchService{
 	 * @param branch
 	 * @throws ErrorMessageException
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void addbranch(ProfileBranch branch) throws ErrorMessageException {
 		ProfileBranchKey profileBranchKey = new ProfileBranchKey(branch.getOrgId(), branch.getBranchId());
 		
@@ -147,7 +147,7 @@ public class ProfileBranchService{
 	 * 清空分支机构下的所有Profiles信息; //TODO 如下删除效率低，重构
 	 * @param branchIds
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteProfileBranch(List<String> branchIds, String orgId) {
 		QProfilePwdHist qProfilePwdHist = QProfilePwdHist.profilePwdHist;
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
