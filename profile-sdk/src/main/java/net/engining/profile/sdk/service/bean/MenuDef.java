@@ -7,6 +7,12 @@ import net.engining.pg.support.enums.BaseEnum;
  */
 public enum MenuDef implements BaseEnum<String> {
 
+
+    /**
+     * 监控
+     */
+    Monitor("Monitor", "49,50"),
+
     /**
      * 核销处理
      */
