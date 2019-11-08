@@ -39,6 +39,10 @@ public enum OperationType implements BaseEnum<String> {
 	 */
 	QU("QU","查询用户"),
 	/**
+	 * 分配
+	 */
+	GN("GN","分配角色"),
+	/**
 	 * 修改
 	 */
 	UP("UP","修改用户")
