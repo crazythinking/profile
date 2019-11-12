@@ -22,6 +22,8 @@ public class UserManagerBean implements Serializable {
 
     private String branchId;
 
+    private String branchName;
+
     private String userId;
 
     private String name;
@@ -115,4 +117,8 @@ public class UserManagerBean implements Serializable {
     public void setRoleList(List<UserRoleBean> roleList) {
         this.roleList = roleList;
     }
+
+    public String getBranchName() { return branchName; }
+
+    public void setBranchName(String branchName) { this.branchName = branchName; }
 }

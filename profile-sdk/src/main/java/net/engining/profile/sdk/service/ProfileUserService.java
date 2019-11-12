@@ -56,8 +56,9 @@ public class ProfileUserService {
         QProfileUser q = QProfileUser.profileUser;
         QProfileUserRole r = QProfileUserRole.profileUserRole;
         QProfileRole p = QProfileRole.profileRole;
+        QProfileBranch branch = QProfileBranch.profileBranch;
         JPAQuery<Tuple> query = new JPAQueryFactory(em)
-                .select(q.puId, q.branchId, q.name, q.email, q.orgId, q.pwdExpDate, q.pwdTries, q.status, q.userId).from(q)
+                .select(q.puId, q.branchId, q.name, q.email, q.orgId, q.pwdExpDate, q.pwdTries, q.status, q.userId,branch.branchName).from(q,branch)
                 .orderBy(q.branchId.asc(), q.userId.asc());
         if (!Strings.isNullOrEmpty(branchId)) {
             query.where(q.branchId.eq(branchId.trim()).and(q.orgId.eq(orgId)));
@@ -65,6 +66,7 @@ public class ProfileUserService {
         if (!Strings.isNullOrEmpty(name)) {
             query.where(q.name.like("%" + name + "%"));
         }
+        query.where(branch.branchId.eq(q.branchId));
         FetchResponse<Tuple> build = new JPAFetchResponseBuilder<Tuple>().range(range).build(query);
         List<UserManagerBean> mapList = Lists.newArrayList();
         List<String> puIdList = Lists.newArrayList();
@@ -88,6 +90,7 @@ public class ProfileUserService {
             userManagerBean.setPwdTries(tuple.get(q.pwdTries));
             userManagerBean.setStatus(tuple.get(q.status));
             userManagerBean.setUserId(tuple.get(q.userId));
+            userManagerBean.setBranchName(tuple.get(branch.branchName));
             List<UserRoleBean> roleBeansList = Lists.newLinkedList();
             for(Tuple user : buildUser.getData()){
                 if(tuple.get(q.puId).equals(user.get(r.puId))){
@@ -195,6 +198,7 @@ public class ProfileUserService {
         orginUser.setEmail(user.getEmail());
         orginUser.setMtnUser(user.getMtnUser());
         orginUser.setStatus(user.getStatus());
+        orginUser.setBranchId(user.getBranchId());
 //		orginUser.setUserId(user.getUserId());
     }
 
