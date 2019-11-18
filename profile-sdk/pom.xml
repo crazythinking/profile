@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>net.engining.profile</groupId>
 		<artifactId>profile-parent</artifactId>
-		<version>4.0.1-SNAPSHOT</version>
+		<version>4.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -27,14 +27,15 @@
 			<artifactId>pg-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>net.engining.gm</groupId>
+			<artifactId>gm-config</artifactId>
+		</dependency>
+
 		<!-- 自身依赖 -->
 		<dependency>
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-dict</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.profile</groupId>
-			<artifactId>profile-param-model</artifactId>
 		</dependency>
 
 		<!-- Spring Security -->
@@ -56,9 +57,14 @@
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.3</version>
+			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
 		</dependency>
 	</dependencies>
 	<build>

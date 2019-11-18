@@ -3,24 +3,25 @@
 	<parent>
 		<groupId>net.engining.project</groupId>
 		<artifactId>project-parent</artifactId>
-		<version>3.4-SNAPSHOT</version>
+		<version>3.4.RELEASE</version>
 	</parent>
 	
 	<groupId>net.engining.profile</groupId>
 	<artifactId>profile-parent</artifactId>
-	<version>4.0.1-SNAPSHOT</version>
+	<version>4.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Profile 用户权限管理支持库</name>
 	
 	<properties>
-		<pg.version>3.4.0-SNAPSHOT</pg.version>
-		<control.version>1.1.2-SNAPSHOT</control.version>
-		<profile.version>4.0.1-SNAPSHOT</profile.version>
+		<pmd.skip>true</pmd.skip>
+		<pg.version>3.4.0.RELEASE</pg.version>
+		<gm.version>1.3.1.RELEASE</gm.version>
+		<control.version>1.1.2.RELEASE</control.version>
+		<profile.version>4.0.2-SNAPSHOT</profile.version>
 	</properties>
 	
 	<modules>
 		<module>profile-dict</module>
-		<module>profile-param-model</module>
 		<module>profile-sdk</module>
 	</modules>
 	
@@ -41,6 +42,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>net.engining.gm</groupId>
+				<artifactId>gm-parent</artifactId>
+				<version>${gm.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		
 			<!-- 自身项目依赖 -->
 			<dependency>
@@ -50,14 +58,19 @@
 			</dependency>
 			<dependency>
 				<groupId>net.engining.profile</groupId>
-				<artifactId>profile-param-model</artifactId>
-				<version>${profile.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.engining.profile</groupId>
 				<artifactId>profile-sdk</artifactId>
 				<version>${profile.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${maven-pmd-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>

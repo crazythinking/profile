@@ -1,60 +1,48 @@
 package net.engining.profile.security;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import net.engining.pg.parameter.ParameterFacility;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
+import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.entity.model.*;
+import net.engining.profile.param.SecurityControl;
+import net.engining.profile.security.validator.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
 
-import net.engining.pg.parameter.ParameterFacility;
-import net.engining.pg.support.core.exception.ErrorCode;
-import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.ProfilePwdHist;
-import net.engining.profile.entity.model.ProfileRole;
-import net.engining.profile.entity.model.ProfileRoleAuth;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
-import net.engining.profile.param.SecurityControl;
-import net.engining.profile.security.validator.PasswordComplexityValidator;
-import net.engining.profile.security.validator.PasswordExpireValidator;
-import net.engining.profile.security.validator.PasswordReuseCountValidator;
-import net.engining.profile.security.validator.SecurityControlValidator;
-import net.engining.profile.security.validator.UsernameFormatValidator;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 权限安全服务，通过DB提供安全服务
- * 
+ * @author Eric Lu
  */
 @Service
 public class ProfileSecurityService {
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@PersistenceContext
 	private EntityManager em;
 
-	private List<SecurityControlValidator> usernameValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> usernameValidators = Lists.newArrayList();
 
-	private List<SecurityControlValidator> authenticationValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> authenticationValidators = Lists.newArrayList();
 
-	private List<SecurityControlValidator> newPasswordValidators = new ArrayList<SecurityControlValidator>();
+	private List<SecurityControlValidator> newPasswordValidators = Lists.newArrayList();
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -71,7 +59,7 @@ public class ProfileSecurityService {
 	 * @param password
 	 * @throws ErrorMessageException
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void createNewUser(ProfileUser userInfo, String password) throws ErrorMessageException {
 		SecurityControl securityControl = parameterFacility.loadUniqueParameter(SecurityControl.class);
 		// 用户名校验
@@ -86,7 +74,7 @@ public class ProfileSecurityService {
 		userInfo.setPwdExpDate(getExpiredDate(Calendar.getInstance().getTime(), securityControl.pwdExpireDays));
 		// 用户所属机构
 		// 用户状态为新用户
-		// FIXME 暂时由页面决定用户状态，后续再讨论
+		// TODO 暂时由页面决定用户状态，后续再讨论
 		// userInfo.setStatus(StatusDef.N);
 		// 加密密码
 		userInfo.setPassword(passwordEncoder.encode(password));
@@ -111,11 +99,11 @@ public class ProfileSecurityService {
 		newPasswordValidators.add(applicationContext.getBean(PasswordReuseCountValidator.class));
 	}
 
-	@Transactional
 	public ProfileUser getUserInfo(String puId) throws ErrorMessageException {
 		ProfileUser user = em.find(ProfileUser.class, puId);
-		if (user == null)
+		if (user == null) {
 			throw new ErrorMessageException(ErrorCode.BadRequest, "无效用户:" + puId);
+		}
 		return user;
 	}
 
@@ -161,22 +149,58 @@ public class ProfileSecurityService {
 	 */
 	public void unlockUser(String username) throws ErrorMessageException {
 		ProfileUser user = em.find(ProfileUser.class, username);
-		if (user == null)
+		if (user == null) {
 			throw new ErrorMessageException(ErrorCode.BadRequest, "无效用户:" + username);
+		}
 		user.setStatus(StatusDef.A);
 	}
 
 	/**
-	 * 修改密码
+	 * 用户修改自己的登陆密码
+	 *
+	 * @param puId     用户登陆表主键
+	 * @param operUser 操作人员系统登陆Id，可以为Null，为Null时，自动填入"System"; 为"Owner"时，表示用户自己;
+	 * @throws ErrorMessageException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void changeMyPassword(String puId, String oldPassword, String newPassword, String operUser) throws ErrorMessageException {
+
+		ProfileUser user = em.find(ProfileUser.class, puId);
+
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "原密码不正确");
+		}
+
+		SecurityControl control = parameterFacility.loadUniqueParameter(SecurityControl.class);
+
+		// 密码修改校验
+		for (SecurityControlValidator passwordValidator : newPasswordValidators) {
+			passwordValidator.validate(user, newPassword, control);
+		}
+
+		checkNotNull(user);
+
+		user.setMtnTimestamp(new Date());
+		user.setMtnUser(operUser);
+		user.setPassword(passwordEncoder.encode(newPassword));
+		user.setPwdTries(0);
+		user.setStatus(StatusDef.A);
+
+		logger.info("操作员{}，修改了用户{}的密码！", operUser, user.getUserId());
+	}
+
+	/**
+	 * 首次登陆修改密码
 	 * @param username
 	 * @param password
 	 * @throws ErrorMessageException
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void changePassword(String username, String password) throws ErrorMessageException {
 		ProfileUser user = em.find(ProfileUser.class, username);
-		if (user == null)
+		if (user == null) {
 			throw new ErrorMessageException(ErrorCode.BadRequest, "无效用户:" + username);
+		}
 
 		// 这个参数是必须有的，所以不做判空操作
 		SecurityControl securityControl = parameterFacility.loadUniqueParameter(SecurityControl.class);
@@ -201,7 +225,6 @@ public class ProfileSecurityService {
 	 * @param auth
 	 * @return
 	 */
-	@Transactional
 	public Map<String, String> getUserByAuthority(String auth) {
 		// 根据auth 找到所有roleId，然后再根据角色找到userId, 根据userId找 username
 		QProfileUserRole qUserRole = QProfileUserRole.profileUserRole;
@@ -215,7 +238,7 @@ public class ProfileSecurityService {
 				.distinct()
 				.fetch();
 
-		HashMap<String, String> map = Maps.newHashMap();
+		HashMap<String, String> map = Maps.newHashMapWithExpectedSize(result.size());
 		for (Tuple tuple : result) {
 			map.put(tuple.get(qUser.userId), tuple.get(qUser.name));
 		}
@@ -232,7 +255,8 @@ public class ProfileSecurityService {
 	 * @param password
 	 *            密码
 	 */
-	private void addPasswordHistory(String puId, String password) {
+	@Transactional(rollbackFor = Exception.class)
+	void addPasswordHistory(String puId, String password) {
 		ProfilePwdHist pwdHist = new ProfilePwdHist();
 		pwdHist.setPuId(puId);
 		pwdHist.setPassword(password);

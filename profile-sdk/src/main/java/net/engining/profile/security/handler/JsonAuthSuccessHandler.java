@@ -2,7 +2,7 @@ package net.engining.profile.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.engining.pg.support.core.exception.ErrorCode;
-import net.engining.pg.web.CommonResponseBuilder;
+import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 返回Json格式的spring security框架用户身份验证成功后处理
+ * @author Eric Lu
+ */
 public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -22,10 +26,10 @@ public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
 
         mapper.writeValue(response.getOutputStream(),
-                new CommonResponseBuilder()
+                new CommonWithHeaderResponseBuilder<Void, Void>()
                         .build()
-                        .setReturnCode(ErrorCode.Success.getValue())
-                        .setReturnDesc(ErrorCode.Success.getLabel())
+                        .setStatusCode(ErrorCode.Success.getValue())
+                        .setStatusDesc(ErrorCode.Success.getLabel())
         );
 
     }
