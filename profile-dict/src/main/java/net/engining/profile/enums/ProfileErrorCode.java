@@ -3,9 +3,9 @@ package net.engining.profile.enums;
 import net.engining.pg.support.enums.BaseEnum;
 
 /**
- * @author
+ *
+ * @author yangxin
  */
-
 public enum ProfileErrorCode implements BaseEnum<String> {
 
     /**
