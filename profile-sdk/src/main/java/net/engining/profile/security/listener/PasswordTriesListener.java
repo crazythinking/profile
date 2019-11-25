@@ -58,7 +58,7 @@ public class PasswordTriesListener implements ApplicationListener<Authentication
 			//计数
 			user.setPwdTries(user.getPwdTries() + 1);
 			
-			//处理账户销定
+			//处理账户锁定
 			SecurityControl sc = parameterFacility.getUniqueParameter(SecurityControl.class).orElse(defaultSecurityControl);
 			
 			if (user.getPwdTries() >= sc.getPwdTries())

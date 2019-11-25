@@ -1,14 +1,14 @@
 package net.engining.profile.param;
 
+import net.engining.pg.support.meta.PropertyInfo;
+
 import java.io.Serializable;
 import java.util.List;
-
-import net.engining.pg.support.meta.PropertyInfo;
 
 /**
  * 安全控制参数
  * 
- * @author Ronny<br/>zhangkun
+ * @author Ronny
  *
  */
 @SuppressWarnings("serial")
