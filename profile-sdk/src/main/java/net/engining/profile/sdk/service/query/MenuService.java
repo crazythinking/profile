@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @author heqingxi
  */
 @Service
-public class MenuService implements InitializingBean {
+public class MenuService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -286,9 +286,9 @@ public class MenuService implements InitializingBean {
         cache.refresh(key);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        initCache();
-    }
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        initCache();
+//    }
 
 }
