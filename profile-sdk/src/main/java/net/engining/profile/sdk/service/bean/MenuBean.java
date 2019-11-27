@@ -12,6 +12,9 @@ public class MenuBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("菜单id")
+    private String id;
+
     @ApiModelProperty("菜单名称")
     private String menu;
 
@@ -29,6 +32,14 @@ public class MenuBean implements Serializable {
 
     @ApiModelProperty("菜单路径")
     private String href;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getParentId() {
         return parentId;

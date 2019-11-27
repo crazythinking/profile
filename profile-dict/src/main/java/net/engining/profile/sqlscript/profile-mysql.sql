@@ -42,7 +42,7 @@ CREATE TABLE PROFILE_MENU
 	-- 接入授权中心对应的client_id
 	APP_CD VARCHAR(50) COMMENT '应用代码 : 接入授权中心对应的client_id',
 	-- 作为Auth的权限标识，以及前端的菜单标识
-	MENU_CD VARCHAR(20) NOT NULL COMMENT '菜单代码 : 作为Auth的权限标识，以及前端的菜单标识',
+	MENU_CD VARCHAR(50) NOT NULL COMMENT '菜单代码 : 作为Auth的权限标识，以及前端的菜单标识',
 	MNAME VARCHAR(100) NOT NULL COMMENT '菜单名称',
 	PATH_URL VARCHAR(500) NOT NULL COMMENT '菜单路径',
 	-- 0表示顶级菜单
