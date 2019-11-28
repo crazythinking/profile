@@ -266,7 +266,7 @@ public class MenuService implements InitializingBean {
     {
         userMenuCache = CacheBuilder.newBuilder()
                 .ticker(ticker)
-                //从访问后过期的时间
+                //当缓存项在指定的时间段内没有被读或写就会被回收
                 .expireAfterAccess(Duration.ofDays(1))
                 //最大条数
                 .maximumSize(100)
