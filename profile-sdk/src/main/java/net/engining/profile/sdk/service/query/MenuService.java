@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -235,6 +236,9 @@ public class MenuService {
     {
         cache = CacheBuilder.newBuilder()
                 .ticker(ticker)
+                //当缓存项在指定的时间段内没有被读或写就会被回收
+                .expireAfterAccess(Duration.ofDays(1))
+                .maximumSize(100)
                 .build(new CacheLoader<String, TreeNode<String, MenuBean>>() {
 
                     @Override
