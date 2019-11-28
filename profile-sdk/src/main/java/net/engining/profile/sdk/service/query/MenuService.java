@@ -20,11 +20,13 @@ import net.engining.profile.sdk.service.bean.MenuBean;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
  * @author heqingxi
  */
 @Service
-public class MenuService {
+public class MenuService implements InitializingBean {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -57,7 +59,11 @@ public class MenuService {
     /**
      * (userId|appName)   -   TreeNode<String, MenuBean>
      */
-    private LoadingCache<String, TreeNode<String, MenuBean>> cache;
+    private LoadingCache<String, TreeNode<String, MenuBean>> userMenuCache;
+    /**
+     * (allMenu|appName)   -   TreeNode<String, MenuBean>
+     */
+    private LoadingCache<String, TreeNode<String, MenuBean>> allMenuCache;
     /**
      * A time source
      */
@@ -83,7 +89,7 @@ public class MenuService {
         TreeNode<String, MenuBean> treeParentNode = null;
         try {
             //从本地缓存获取
-            treeParentNode = cache.get(StringUtils.join(userId,SPLIT,commonProperties.getAppname()));
+            treeParentNode = userMenuCache.get(StringUtils.join(userId,SPLIT,commonProperties.getAppname()));
         } catch (ExecutionException e) {
             treeParentNode = getMenuBeanTreeNode(userId);
         }
@@ -95,7 +101,7 @@ public class MenuService {
         TreeNode<String, MenuBean> treeParentNode = null;
         try {
             //从本地缓存获取
-            treeParentNode = cache.get(StringUtils.join(ALL_MENU_KEY,SPLIT,commonProperties.getAppname()));
+            treeParentNode = allMenuCache.get(StringUtils.join(ALL_MENU_KEY,SPLIT,commonProperties.getAppname()));
         } catch (ExecutionException e) {
             treeParentNode = getAllMenuTreeNode();
         }
@@ -229,12 +235,14 @@ public class MenuService {
     }
 
     /**
-     * 初始化用户权限菜单cache
+     * 初始化全部权限菜单cache
      */
-    public void initCache()
+    public void initAllMenuTreeCache()
     {
-        cache = CacheBuilder.newBuilder()
+        allMenuCache = CacheBuilder.newBuilder()
                 .ticker(ticker)
+                //最大条数
+                .maximumSize(1)
                 .build(new CacheLoader<String, TreeNode<String, MenuBean>>() {
 
                     @Override
@@ -245,13 +253,34 @@ public class MenuService {
                         if (ValidateUtilExt.isNullOrEmpty(userIdKey)) {
                             return null;
                         }
-                        //全部菜单
-                        if (ALL_MENU_KEY.equals(userIdKey)) {
-                            treeNode = getAllMenuTreeNode();
-                        }else {
-                            //用户菜单
-                            treeNode = getMenuBeanTreeNode(userIdKey);
+                        treeNode = getAllMenuTreeNode();
+                        return treeNode;
+                    }
+
+                });
+    }
+    /**
+     * 初始化用户权限菜单cache
+     */
+    public void initUserMenuTreeCache()
+    {
+        userMenuCache = CacheBuilder.newBuilder()
+                .ticker(ticker)
+                //从访问后过期的时间
+                .expireAfterAccess(Duration.ofDays(1))
+                //最大条数
+                .maximumSize(100)
+                .build(new CacheLoader<String, TreeNode<String, MenuBean>>() {
+
+                    @Override
+                    public TreeNode<String, MenuBean> load(String key) throws Exception {
+                        TreeNode<String, MenuBean> treeNode = null;
+                        String[] userId = StringUtils.splitPreserveAllTokens(key,SPLIT);
+                        String userIdKey = userId[0];
+                        if (ValidateUtilExt.isNullOrEmpty(userIdKey)) {
+                            return null;
                         }
+                        treeNode = getMenuBeanTreeNode(userIdKey);
                         return treeNode;
                     }
 
@@ -277,17 +306,29 @@ public class MenuService {
     }
 
     /**
+     * 刷新全部权限菜单cache
+     * @param key allMenu
+     */
+    public void refreshAllMenuCache(String key)
+    {
+        allMenuCache.refresh(key);
+    }
+    /**
      * 刷新用户权限菜单cache
      * @param key userId
      */
-    public void refreshCache(String key)
+    public void refreshUserMenuCache(String key)
     {
-        cache.refresh(key);
+        userMenuCache.refresh(key);
     }
 
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-//        initCache();
-//    }
-
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.debug("初始化菜单树缓存cache...");
+        initAllMenuTreeCache();
+        initUserMenuTreeCache();
+        TreeNode<String, MenuBean> treeParentNode = allMenuCache
+                .get(StringUtils.join(ALL_MENU_KEY,SPLIT,commonProperties.getAppname()));
+        log.debug("菜单树缓存cache加载完成：{}",JSON.toJSONString(treeParentNode));
+    }
 }
