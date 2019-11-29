@@ -96,7 +96,7 @@ public class ProfileMgmController {
      */
     @RequestMapping(value = "/saveProfileUserAndRole", method = RequestMethod.POST)
     @ApiOperation(value = "为用户分配角色", notes = "")
-//    @PreAuthorize("hasAuthority('mainSave')")
+    @PreAuthorize("hasAuthority('SaveProfileUserAndRole')")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileUserAndRole(
             @RequestBody ProfileUserRoleForm profileUserRoleForm, HttpServletRequest request) {
@@ -189,7 +189,7 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileRole')")
+    @PreAuthorize("hasAuthority('UpdateProfileRole')")
     @RequestMapping(value = "/updateProfileRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色修改", notes = "")
     public @ResponseBody
@@ -209,7 +209,7 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileRole')")
+    @PreAuthorize("hasAuthority('DeleteProfileRole')")
     @RequestMapping(value = "/deleteProfileRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色删除", notes = "")
     public @ResponseBody
@@ -229,7 +229,7 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileRole')")
+    @PreAuthorize("hasAuthority('DistributionProfileRole')")
     @RequestMapping(value = "/distributionProfileRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色权限分配", notes = "")
     public @ResponseBody

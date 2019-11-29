@@ -51,7 +51,7 @@ public class ProfileUserController {
     @PersistenceContext
     private EntityManager em;
 
-//    @PreAuthorize("hasAuthority('mainSearch')")
+//    @PreAuthorize("hasAuthority('Users')")
 	@ApiOperation(value="根据机构和分部获取用户列表", notes="")
 	@RequestMapping(value="/users", method= RequestMethod.POST)
 	public @ResponseBody
@@ -62,7 +62,7 @@ public class ProfileUserController {
 				.setResponseData(rsp);
 	}
 
-    @PreAuthorize("hasAuthority('Maintenance')")
+//    @PreAuthorize("hasAuthority('Maintenance')")
 	@ApiOperation(value="根据用户userId获取用户信息", notes="")
 	@RequestMapping(value="/userId", method= RequestMethod.POST)
 	public @ResponseBody
@@ -91,7 +91,7 @@ public class ProfileUserController {
 				.setResponseData(rsp);
 	}
 
-    @PreAuthorize("hasAuthority('Maintenance')")
+//    @PreAuthorize("hasAuthority('PuId')")
 	@ApiOperation(value="获取用户信息", notes="")
 	@RequestMapping(value="/puId", method= RequestMethod.POST)
 	public @ResponseBody
@@ -106,7 +106,7 @@ public class ProfileUserController {
 				.setResponseData(mgmWebUser);
 	}
 
-//    @PreAuthorize("hasAuthority('mainAdd')")
+    @PreAuthorize("hasAuthority('AddUser')")
 	@ApiOperation(value="添加用户", notes="")
     @RequestMapping(value="/addUser", method= RequestMethod.POST)
 	public @ResponseBody
@@ -123,7 +123,7 @@ public class ProfileUserController {
 	}
 
 
-    @PreAuthorize("hasAuthority('Maintenance')")
+    @PreAuthorize("hasAuthority('RemoveUserByPuId')")
 	@ApiOperation(value="删除某个用户", notes="")
     @RequestMapping(value="/removeUserByPuId", method= RequestMethod.POST)
 	public @ResponseBody
@@ -150,7 +150,7 @@ public class ProfileUserController {
 		return new CommonWithHeaderResponseBuilder<Void,Void>().build();
 	}
 
-    @PreAuthorize("hasAuthority('Maintenance')")
+    @PreAuthorize("hasAuthority('UpdateUser')")
 	@ApiOperation(value="更新某个用户", notes="")
     @RequestMapping(value="/updateUser", method= RequestMethod.POST)
 	public @ResponseBody

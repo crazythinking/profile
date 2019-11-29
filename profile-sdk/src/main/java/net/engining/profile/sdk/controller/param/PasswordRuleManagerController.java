@@ -9,6 +9,7 @@ import net.engining.profile.sdk.service.bean.param.PasswordRuleBean;
 import net.engining.profile.sdk.service.bean.param.ResultMessageBean;
 import net.engining.profile.sdk.service.param.PasswordRuleManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,7 +24,7 @@ public class PasswordRuleManagerController {
     @Autowired
     private PasswordRuleManagerService passwordRuleManagerService;
 
-
+    @PreAuthorize("hasAuthority('PasswordRuleManager')")
     @ApiOperation(value = "密码规则确认", notes = "")
     @RequestMapping(value = "/passwordRuleManager", method = RequestMethod.POST)
     @ResponseBody
