@@ -100,7 +100,7 @@ public class UserRegistryService {
         }
         w4 = qProfileUser.userId.eq(profileSecoperLog.beoperatedId);
         w6 = profileBranch.orgId.eq(qProfileUser.branchId);
-;        w7 =profileSecoperLog.operType.notIn(OperationType.LG);
+        w7 =profileSecoperLog.operType.notIn(OperationType.LG);
         // 查询用户登记薄 记录被操作员信息以及操作员变更信息详情信息细节
         JPAQuery<Tuple> query = new JPAQueryFactory(em)
                 .select(qProfileUser.userId, qProfileUser.name, qProfileUser.orgId, qProfileUser.branchId,
