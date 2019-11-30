@@ -1,7 +1,6 @@
 
 /* Drop Tables */
 
-
 /* Create Tables */
 
 -- PROFILE_BRANCH
@@ -42,8 +41,8 @@ CREATE TABLE PROFILE_MENU
 	ORG_ID VARCHAR(12),
 	-- 应用代码 : 接入授权中心对应的client_id
 	APP_CD VARCHAR(50),
-	-- 菜单ID : 接口代码所属菜单ID
-	MENU_ID INT NOT NULL,
+	-- 菜单代码 : 菜单代码,不同app下可以相同
+	MENU_CD VARCHAR(30) NOT NULL,
 	-- 菜单名称
 	MNAME VARCHAR(100) NOT NULL,
 	-- 菜单路径
@@ -61,7 +60,7 @@ CREATE TABLE PROFILE_MENU
 	-- 乐观锁版本号
 	JPA_VERSION INT NOT NULL,
 	PRIMARY KEY (ID),
-	CONSTRAINT UNI_APP_MENU UNIQUE (APP_CD, MENU_ID)
+	CONSTRAINT UNI_APP_MENU UNIQUE (APP_CD, MENU_CD)
 );
 
 
@@ -72,7 +71,7 @@ CREATE TABLE PROFILE_MENU_INTERF
 	ID INT NOT NULL,
 	-- 应用代码 : 接入授权中心对应的client_id
 	APP_CD VARCHAR(50),
-	-- 接口代码 : 作为Auth的权限标识，以及前端的接口标识
+	-- 接口代码 : 作为Auth的权限标识，以及前端的接口标识，不同app下可以相同
 	INTERF_CD VARCHAR(50) NOT NULL,
 	-- 接口名称
 	INAME VARCHAR(100) NOT NULL,
