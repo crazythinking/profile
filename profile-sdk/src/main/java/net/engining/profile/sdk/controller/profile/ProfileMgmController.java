@@ -2,31 +2,27 @@ package net.engining.profile.sdk.controller.profile;
 
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
-import net.engining.profile.entity.model.ProfileSecoperLog;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.enums.OperationType;
 import net.engining.profile.sdk.service.ProfileMgmService;
 import net.engining.profile.sdk.service.ProfileRoleService;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.bean.profile.*;
+import net.engining.profile.security.ProfileSecurityLoggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +46,9 @@ public class ProfileMgmController {
     @Autowired
     private ProfileUserService profileUserService;
 
+    @Autowired
+    private ProfileSecurityLoggerService profileSecurityLoggerService;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -58,7 +57,7 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileUser')")
+//    @PreAuthorize("hasAuthority('ProfileUser')")
     @RequestMapping(value = "/fetchProfileUser", method = RequestMethod.POST)
     @ApiOperation(value = "根据用户信息查询其角色", notes = "")
     public @ResponseBody
@@ -78,11 +77,11 @@ public class ProfileMgmController {
      * 获取所有的角色
      */
 //    @PreAuthorize("hasAuthority('ProfileUser')")
-    @RequestMapping(value = "/fetchAllProfileRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/fetchAllProfileRole", method = RequestMethod.GET)
     @ApiOperation(value = " 获取所有的角色", notes = "")
     public @ResponseBody
-    CommonWithHeaderResponse fetchAllProfileRole() {
-        FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchAllProfileRole();
+    CommonWithHeaderResponse fetchAllProfileRole(@ApiParam("应用代码") String appCd) {
+        FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchAllProfileRole(appCd);
 
         return new CommonWithHeaderResponseBuilder<Void, FetchResponse<Map<String, Object>>>()
                 .build()
@@ -103,9 +102,12 @@ public class ProfileMgmController {
         Date date = new Date();
         profileMgmService.saveProfileUserAndRole(profileUserRoleForm.getPuId(), profileUserRoleForm.getRoleId());
         ProfileUser profileUserInfo = profileUserService.findProfileUserInfo(profileUserRoleForm.getPuId());
-        String userId=profileUserInfo.getUserId();
-        Object puid =getPuid(profileUserRoleForm.getUserId());
-        logSecuOperation(puid.toString(), OperationType.GN, WebCommonUtils.getIpAddress(request),date,userId);
+        profileSecurityLoggerService
+                .logSecuOperation(profileUserInfo.getPuId(),
+                        OperationType.GN,
+                        WebCommonUtils.getIpAddress(request),
+                        date,
+                        profileUserInfo.getUserId());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -158,7 +160,9 @@ public class ProfileMgmController {
     CommonWithHeaderResponse fetchProfileRole(
             @RequestBody ProfileRoleBranch profileRoleBranch) {
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService
-                .fetchProfileRole(profileRoleBranch.getRoleName(), profileRoleBranch.getRange());
+                .fetchProfileRole(profileRoleBranch.getRoleName(),
+                        profileRoleBranch.getAppCd(),
+                        profileRoleBranch.getRange());
 
         return new CommonWithHeaderResponseBuilder<Void, FetchResponse<Map<String, Object>>>()
                 .build()
@@ -170,14 +174,15 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileRole')")
+//    @PreAuthorize("hasAuthority('SaveProfileRole')")
     @RequestMapping(value = "/saveProfileRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色新增", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileRole(
             @RequestBody ProfileRoleSaveUpdateForm profileRoleSaveForm) {
         profileMgmService.saveProfileRole(profileRoleSaveForm.getRoleId(), profileRoleSaveForm.getBranchId(),
-                profileRoleSaveForm.getRoleName(), provider4Organization.getCurrentOrganizationId());
+                profileRoleSaveForm.getRoleName(), provider4Organization.getCurrentOrganizationId(),
+                profileRoleSaveForm.getAppCd());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -197,7 +202,9 @@ public class ProfileMgmController {
             @RequestBody ProfileRoleSaveUpdateForm profileRoleSaveUpdateForm) {
 
         profileMgmService.updateProfileRole(profileRoleSaveUpdateForm.getRoleId(),
-                profileRoleSaveUpdateForm.getBranchId(), profileRoleSaveUpdateForm.getRoleName());
+                profileRoleSaveUpdateForm.getBranchId(),
+                profileRoleSaveUpdateForm.getRoleName(),
+                profileRoleSaveUpdateForm.getAppCd());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -214,10 +221,11 @@ public class ProfileMgmController {
     @ApiOperation(value = "角色删除", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse deleteProfileRole(
-            @RequestBody ProfileRoleDelDisForm profileRoleDelDisForm) {
-        List<String> list = new ArrayList<String>();
-        list.add(profileRoleDelDisForm.getRoleId());
-        profileRoleService.deleteProfileRoles(list);
+            @RequestBody ProfileRoleDelForm profileRoleDelForm) {
+        profileRoleService.deleteProfileRoles(
+                profileRoleDelForm.getRoleId(),
+                profileRoleDelForm.getAppCd()
+        );
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -235,8 +243,9 @@ public class ProfileMgmController {
     public @ResponseBody
     CommonWithHeaderResponse distributionProfileRole(
             @RequestBody ProfileRoleDelDisForm profileRoleDelDisForm) {
+
         profileMgmService.distributionProfileRole(profileRoleDelDisForm.getRoleId(),
-                profileRoleDelDisForm.getAuthStr());
+                profileRoleDelDisForm.getAuthList());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -248,35 +257,19 @@ public class ProfileMgmController {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ProfileRole')")
-    @RequestMapping(value = "/fetchRoleAuth", method = RequestMethod.POST)
+//    @PreAuthorize("hasAuthority('ProfileRole')")
+    @RequestMapping(value = "/fetchRoleAuth", method = RequestMethod.GET)
     @ApiOperation(value = "获取角色对应的权限", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse fetchRoleAuth(
-            @RequestBody ProfileRoleDelDisForm profileRoleDelDisForm) {
-        FetchResponse<Map<String, Object>> fetchResponse = profileMgmService
-                .fetchRoleAuthByRoleId(profileRoleDelDisForm.getRoleId());
-        return new CommonWithHeaderResponseBuilder<Void, FetchResponse<Map<String, Object>>>()
+            @ApiParam("角色id")  String roleId) {
+        List<String> authList = profileMgmService
+                .fetchRoleAuthByRoleId(roleId);
+        FetchRoleAuthResponse fetchResponse = new FetchRoleAuthResponse();
+        fetchResponse.setAuthList(authList);
+        return new CommonWithHeaderResponseBuilder<Void, FetchRoleAuthResponse>()
                 .build()
                 .setResponseData(fetchResponse);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void logSecuOperation(String userNo, OperationType operationType, String opIp, Date opTime, String beOper){
-        ProfileSecoperLog ssCustSecoperLog = new ProfileSecoperLog();
-        ssCustSecoperLog.setPuId(userNo);
-        ssCustSecoperLog.setOperType(operationType);
-        ssCustSecoperLog.setOperIp(opIp);
-        ssCustSecoperLog.setOperTime(opTime);
-        ssCustSecoperLog.setBeoperatedId(beOper);
-        em.persist(ssCustSecoperLog);
-    }
-
-    public Object getPuid(String userId){
-        FetchResponse<Map<String, Object>> rsp = profileUserService.getUserInfoByUserId(userId);
-        List<Map<String, Object>> useData = rsp.getData();
-        Map<String, Object> usetDataMap = useData.get(0);
-        Object puid = usetDataMap.get("puId");
-        return puid;
-    }
 }

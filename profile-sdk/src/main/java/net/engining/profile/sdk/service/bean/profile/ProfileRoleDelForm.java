@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,30 +12,30 @@ import java.util.List;
  * 分配权限表单bean
  * @author yangxing
  */
-public class ProfileRoleDelDisForm implements Serializable{
+public class ProfileRoleDelForm implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    @NotBlank(message = "请输入：角色id")
+    @NotNull(message = "请输入：角色id")
     @ApiModelProperty(value = "角色id", required = true, example="admin")
-    private String roleId;
+    private List<String> roleId;
 
-    @Valid
-    private List<MenuOrAuthInfo> authList;
+    @ApiModelProperty(value = "应用代码", required = false, example="123456")
+    private String appCd;
 
-    public String getRoleId() {
+    public List<String> getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(List<String> roleId) {
         this.roleId = roleId;
     }
 
-    public List<MenuOrAuthInfo> getAuthList() {
-        return authList;
+    public String getAppCd() {
+        return appCd;
     }
 
-    public void setAuthList(List<MenuOrAuthInfo> authList) {
-        this.authList = authList;
+    public void setAppCd(String appCd) {
+        this.appCd = appCd;
     }
 }

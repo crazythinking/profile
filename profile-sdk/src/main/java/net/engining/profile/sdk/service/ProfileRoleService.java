@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * @author
+ */
 @Service
 public class ProfileRoleService {
 	
@@ -31,6 +34,8 @@ public class ProfileRoleService {
 	@PersistenceContext
 	private EntityManager em;
 
+
+
 	public FetchResponse<ProfileRole> fetchRoles(Range range) {
 		QProfileRole q = QProfileRole.profileRole;
 		JPAQuery<ProfileRole> query = new JPAQueryFactory(em).select(q).from(q).orderBy(q.roleId.asc());
@@ -38,8 +43,13 @@ public class ProfileRoleService {
 		return new JPAFetchResponseBuilder<ProfileRole>().range(range).build(query);
 	}
 
+	/**
+	 * 删除角色
+	 * @param roleIds
+	 * @param appCd
+	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteProfileRoles(List<String> roleIds) {
+	public void deleteProfileRoles(List<String> roleIds, String appCd) {
 
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
@@ -73,34 +83,6 @@ public class ProfileRoleService {
 		return em.find(ProfileRole.class, roleId);
 	}
 
-	//FIXME 感觉逻辑有问题
-	@Transactional(rollbackFor = Exception.class)
-	public void updateProfileRole(ProfileRole role, List<String> authorities) throws ErrorMessageException {
-
-		QProfileRole qProfileRole = QProfileRole.profileRole;
-		JPAQuery<ProfileRole> query = new JPAQueryFactory(em)
-				.select(qProfileRole)
-				.from(qProfileRole)
-				.where(qProfileRole.roleId.eq(role.getRoleId()).and(qProfileRole.roleName.ne(role.getRoleName())));
-
-		if (query.fetchCount()>0) {
-			throw new ErrorMessageException(ErrorCode.CheckError, "更新角色信息失败:角色已存在");
-		}
-		em.merge(role);
-
-		QProfileRoleAuth q = QProfileRoleAuth.profileRoleAuth;
-		List<ProfileRoleAuth> current = new JPAQueryFactory(em).select(q).from(q).where(q.roleId.eq(role.getRoleId())).fetch();
-		for (ProfileRoleAuth ra : current) {
-			em.remove(ra);
-		}
-		
-		for (String auth : authorities) {
-			ProfileRoleAuth ra = new ProfileRoleAuth();
-			ra.setRoleId(role.getRoleId());
-			ra.setAuthority(auth);
-			em.persist(ra);
-		}
-	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void addProfileRole(ProfileRole role) throws ErrorMessageException {

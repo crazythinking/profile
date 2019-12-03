@@ -1,5 +1,6 @@
 package net.engining.profile.sdk.service.bean.profile;
 
+import io.swagger.annotations.ApiModelProperty;
 import net.engining.pg.support.db.querydsl.Range;
 
 import javax.validation.constraints.NotBlank;
@@ -19,8 +20,11 @@ public class ProfileUserBranchForm implements Serializable{
 	/**
 	 * 用户姓名
 	 */
+	@ApiModelProperty(value = "用户姓名", required = false, example="admin")
 	private String name;
-	@NotBlank
+
+	@NotBlank(message = "请输入：机构id")
+	@ApiModelProperty(value = "机构id", required = true, example="10000")
 	private String branchId;
 
 	private Range range;

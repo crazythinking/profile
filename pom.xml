@@ -25,6 +25,7 @@
 	<modules>
 		<module>profile-dict</module>
 		<module>profile-sdk</module>
+		<module>profile-config</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -63,7 +64,11 @@
 				<artifactId>profile-sdk</artifactId>
 				<version>${profile.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-config</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>io.springfox</groupId>
 				<artifactId>springfox-swagger2</artifactId>
