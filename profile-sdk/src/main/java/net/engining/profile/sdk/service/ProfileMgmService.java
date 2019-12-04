@@ -1,5 +1,9 @@
 package net.engining.profile.sdk.service;
 
+import com.google.common.base.Ticker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,33 +16,43 @@ import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
-import net.engining.profile.sdk.service.bean.MenuDef;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
 import net.engining.profile.sdk.service.query.MenuService;
 import net.engining.template.config.props.ProfileParamProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author
  */
 @Service
-public class ProfileMgmService {
+public class ProfileMgmService implements InitializingBean {
 
-	private static final String AUTH_GET_ASSIST = "getAssist";
-	private static final String AUTH_SUBJECT_LIST = "subjectList";
-	private static final String AUTH_TRADE_TYPE = "tradeType";
-	private static final String STR = ",";
-	private static final String STRS = "";
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	public static final String AUTH_KEY = "RoleAuth";
+
+	public static final String SPLIT = "|";
+	/**
+	 * A time source
+	 */
+	private Ticker ticker = Ticker.systemTicker();
+	/**
+	 * 没把全部用户的菜单树放缓存是因为，用户过多占太多内存
+	 * (userId|appName)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
+	 */
+	private LoadingCache<String, List<String>> roleAuthCache;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -286,6 +300,10 @@ public class ProfileMgmService {
 			em.persist(profileRoleAuth);
 		});
 
+		//刷新角色已有权限缓存
+		this.refreshUserMenuCache(StringUtils.join(AUTH_KEY,SPLIT,roleId));
+		//TODO 刷新用户菜单权限缓存
+//		menuService.refreshUserMenuCache();
 	}
 
 	/**
@@ -303,9 +321,25 @@ public class ProfileMgmService {
 	}
 
 	/**
-	 * 获取角色对应的权限
+	 * 获取角色对应的权限主方法
+	 * @param roleId
+	 * @return
 	 */
 	public List<String> fetchRoleAuthByRoleId(String roleId) {
+		List<String> authList = null;
+		try {
+			//从本地缓存获取
+			authList = roleAuthCache.get(StringUtils.join(AUTH_KEY,SPLIT,roleId));
+		} catch (ExecutionException e) {
+			authList = getRoleAuthByRoleId(roleId);
+		}
+
+		return authList;
+	}
+	/**
+	 * 获取角色对应的权限
+	 */
+	public List<String> getRoleAuthByRoleId(String roleId) {
 		QProfileRoleAuth qProfileBranch = QProfileRoleAuth.profileRoleAuth;
 		List<String> authList = new JPAQueryFactory(em)
 				.select(qProfileBranch.authority)
@@ -325,6 +359,54 @@ public class ProfileMgmService {
 				.from(qProfileUserRole)
 				.where(qProfileUserRole.puId.eq(puId));
 		return new JPAFetchResponseBuilder<Map<String, Object>>().buildAsMap(query, qProfileUserRole.roleId);
+	}
+
+
+	/**
+	 * 初始化角色已有权限cache
+	 * 同时对本地模式无appcd支持
+	 * RoleAuth|roleid
+	 */
+	public void initRoleAuthCache()
+	{
+		roleAuthCache = CacheBuilder.newBuilder()
+				.ticker(ticker)
+				//当缓存项在指定的时间段内没有被读或写就会被回收
+				.expireAfterAccess(Duration.ofDays(1))
+				//最大条数
+				.maximumSize(100)
+				.build(new CacheLoader<String, List<String>>() {
+
+					@Override
+					public List<String> load(String key) throws Exception {
+						List<String> authList = null;
+						String[] roleId = StringUtils.splitPreserveAllTokens(key,SPLIT);
+						String roleIdKey = roleId[1];
+						if (ValidateUtilExt.isNullOrEmpty(roleIdKey)) {
+							return null;
+						}
+						authList = getRoleAuthByRoleId(roleIdKey);
+						return authList;
+					}
+
+				});
+	}
+
+	/**
+	 * 刷新角色已有权限cache
+	 * 需要在分配角色权限后刷新缓存
+	 * @param key RoleAuth|roleid
+	 */
+	public void refreshUserMenuCache(String key)
+	{
+		roleAuthCache.refresh(key);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		logger.debug("初始化角色已有权限cache...");
+		//初始化角色已有权限cache
+		initRoleAuthCache();
 	}
 
 }

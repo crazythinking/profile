@@ -526,6 +526,8 @@ public class MenuService implements InitializingBean {
     }
     /**
      * 刷新用户权限菜单cache
+     * 需要在分配角色权限后重新刷新缓存
+     * TODO 但是如何通过用户级别去刷新
      * @param key Menu|userId
      */
     public void refreshUserMenuCache(String key)
