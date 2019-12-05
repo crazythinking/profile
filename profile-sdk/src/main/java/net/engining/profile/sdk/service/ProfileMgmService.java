@@ -4,6 +4,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.DbConstants;
@@ -224,17 +225,21 @@ public class ProfileMgmService {
 		//角色表
 		QProfileRole q = QProfileRole.profileRole;
 		BooleanExpression w1 = q.roleId.eq(roleId);
-		if (isAuth){
 
-		}
-
-		//更新角色信息 TODO 需要更新appcd
-		new JPAQueryFactory(em)
+		//更新角色信息
+		JPAUpdateClause roleUpdate = new JPAQueryFactory(em)
 				.update(q)
 				.set(q.roleName,roleName)
 				.set(q.branchId,branchId)
-				.where(w1)
-				.execute();
+				.where(w1);
+
+		//远程oauth模式更新appcd
+		if (isAuth){
+			roleUpdate.set(q.appCd,appCd);
+		}
+
+		roleUpdate.execute();
+
 	}
 
 	/**
