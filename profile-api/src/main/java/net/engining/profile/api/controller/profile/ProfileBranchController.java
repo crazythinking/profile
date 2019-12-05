@@ -60,7 +60,7 @@ public class ProfileBranchController {
 	@RequestMapping(value="/branch/{branchId}",method= RequestMethod.GET)
 	@ApiOperation(value="getBranch", notes="")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
-	public @ResponseBody
+	public
 	CommonWithHeaderResponse getBranch(@PathVariable String branchId) {
 		ProfileBranch branch = profileBranchService.getBranch(provider4Organization.getCurrentOrganizationId(), branchId);
 		ProfileBranchForm profileBranchForm = branchService.profileBranchForm(branch);
@@ -81,7 +81,7 @@ public class ProfileBranchController {
 	@RequestMapping(value="/getBranchNames",method= RequestMethod.GET)
 	@ApiOperation(value="getBranchNames", notes="")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
-	public @ResponseBody
+	public
 	CommonWithHeaderResponse getBranchNames() {
 		Map<String, String> fetchBranchNamesByOrg = profileBranchService.fetchBranchNamesByOrg(provider4Organization.getCurrentOrganizationId());
 		return new CommonWithHeaderResponseBuilder<Void,Map<String, String>>().build()

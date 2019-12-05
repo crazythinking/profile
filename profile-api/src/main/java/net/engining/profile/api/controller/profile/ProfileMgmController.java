@@ -73,8 +73,8 @@ public class ProfileMgmController {
 //    @PreAuthorize("hasAuthority('ProfileUser')")
     @RequestMapping(value = "/fetchAllProfileRole", method = RequestMethod.GET)
     @ApiOperation(value = " 获取所有的角色", notes = "")
-    public @ResponseBody
-    CommonWithHeaderResponse fetchAllProfileRole(@ApiParam("应用代码") String appCd) {
+    public
+    CommonWithHeaderResponse fetchAllProfileRole(@ApiParam("应用代码") @RequestParam(required = false) String appCd) {
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchAllProfileRole(appCd);
 
         return new CommonWithHeaderResponseBuilder<Void, FetchResponse<Map<String, Object>>>()

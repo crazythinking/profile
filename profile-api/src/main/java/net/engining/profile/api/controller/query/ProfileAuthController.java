@@ -45,7 +45,7 @@ public class ProfileAuthController {
     @RequestMapping(value = "/menuAuthorityQuery", method = RequestMethod.GET)
     @ApiOperation(value = "权限菜单信息查询", notes = "")
     public CommonWithHeaderResponse
-    getAuthorityMenu(@ApiParam("应用代码") String appCd) {
+    getAuthorityMenu(@ApiParam("应用代码") @RequestParam(required = false) String appCd) {
         //所有角色
         String menuList = authService.getAuthorityData(appCd);
         return new CommonWithHeaderResponseBuilder<Void, String>()
@@ -81,9 +81,8 @@ public class ProfileAuthController {
 //    @PreAuthorize("hasAuthority('ProfileRole')")
     @RequestMapping(value = "/fetchRoleAuth", method = RequestMethod.GET)
     @ApiOperation(value = "获取角色对应的权限", notes = "")
-    public @ResponseBody
-    CommonWithHeaderResponse fetchRoleAuth(
-            @ApiParam("角色id")  String roleId) {
+    public  CommonWithHeaderResponse fetchRoleAuth(
+            @ApiParam("角色id") @RequestParam String roleId) {
         List<String> authList = authService
                 .fetchRoleAuthByRoleId(roleId);
         FetchRoleAuthResponse fetchResponse = new FetchRoleAuthResponse();
