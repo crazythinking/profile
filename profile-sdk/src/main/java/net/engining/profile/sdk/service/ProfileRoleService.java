@@ -46,37 +46,30 @@ public class ProfileRoleService {
 	/**
 	 * 删除角色
 	 * @param roleIds
-	 * @param appCd
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteProfileRoles(List<String> roleIds, String appCd) {
+	public void deleteProfileRoles(List<String> roleIds) {
 
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
 		QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
 		
-		long n1 = new JPAQueryFactory(em).delete(qProfileUserRole).where(qProfileUserRole.roleId.in(roleIds)).execute();
+		long n1 = new JPAQueryFactory(em)
+				.delete(qProfileUserRole)
+				.where(qProfileUserRole.roleId.in(roleIds))
+				.execute();
 		logger.debug("删除了{}条ProfileUserRole",n1);
-		long n2 = new JPAQueryFactory(em).delete(qProfileRoleAuth).where(qProfileRoleAuth.roleId.in(roleIds)).execute();
+		long n2 = new JPAQueryFactory(em)
+				.delete(qProfileRoleAuth)
+				.where(qProfileRoleAuth.roleId.in(roleIds))
+				.execute();
 		logger.debug("删除了{}条ProfileRoleAuth",n2);
-		long n3 = new JPAQueryFactory(em).delete(qProfileRole).where(qProfileRole.roleId.in(roleIds)).execute();
+		long n3 = new JPAQueryFactory(em)
+				.delete(qProfileRole)
+				.where(qProfileRole.roleId.in(roleIds))
+				.execute();
 		logger.debug("删除了{}条ProfileRole",n3);
 		
-//		for (String roleId : roleIds) {
-//			JPAQuery query = new JPAQuery(em).from(q);
-//			for (ProfileUserRole userRole : query.where(q.roleId.eq(roleId)).list(q)) {
-//				em.remove(userRole);
-//			}
-//			
-//			query = new JPAQuery(em).from(qProfileRoleAuth);
-//			for (ProfileRoleAuth roleAuth : query.where(qProfileRoleAuth.roleId.eq(roleId)).list(qProfileRoleAuth)) {
-//				em.remove(roleAuth);
-//			}
-//
-//			ProfileRole profileRole = em.find(ProfileRole.class, roleId);
-//			if (profileRole != null)
-//				em.remove(profileRole);
-//		}
 	}
 
 	public ProfileRole getProfileRoleInfo(String roleId) {

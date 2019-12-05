@@ -18,11 +18,9 @@ public class ProfileRoleBranch implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@NotBlank(message = "请输入：机构id")
 	@ApiModelProperty(value = "机构id", required = true, example="10000")
 	private String branchId;
 
-	@NotBlank(message = "请输入：角色名称")
 	@ApiModelProperty(value = "角色名称", required = true, example="admin")
 	private String roleName;
 

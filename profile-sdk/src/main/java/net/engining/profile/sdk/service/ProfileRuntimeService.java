@@ -4,6 +4,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.engining.pg.parameter.ParameterFacility;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
 import net.engining.profile.param.SecurityControl;
@@ -26,7 +28,11 @@ public class ProfileRuntimeService {
     private ParameterFacility facility;
 
     public ClientWebUser loadCurrentUser() {
-        ProfileUserDetails ud = (ProfileUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object od = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ( !(od instanceof ProfileUserDetails) ){
+            throw new ErrorMessageException(ErrorCode.SystemError, "用户不存在");
+        }
+        ProfileUserDetails ud = (ProfileUserDetails) od;
         ClientWebUser cu = new ClientWebUser();
         cu.setAuthorities(Sets.newHashSet(
                 //转换成Set<String>

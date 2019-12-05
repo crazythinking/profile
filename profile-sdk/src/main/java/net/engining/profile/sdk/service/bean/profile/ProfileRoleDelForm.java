@@ -20,9 +20,6 @@ public class ProfileRoleDelForm implements Serializable{
     @ApiModelProperty(value = "角色id", required = true, example="admin")
     private List<String> roleId;
 
-    @ApiModelProperty(value = "应用代码", required = false, example="123456")
-    private String appCd;
-
     public List<String> getRoleId() {
         return roleId;
     }
@@ -31,11 +28,4 @@ public class ProfileRoleDelForm implements Serializable{
         this.roleId = roleId;
     }
 
-    public String getAppCd() {
-        return appCd;
-    }
-
-    public void setAppCd(String appCd) {
-        this.appCd = appCd;
-    }
 }

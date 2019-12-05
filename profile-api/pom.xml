@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.engining.profile</groupId>
+		<artifactId>profile-parent</artifactId>
+		<version>4.0.3-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>profile-api</artifactId>
+	<name>Profile - api</name>
+
+	<dependencies>
+
+		<!-- 自身依赖 -->
+		<dependency>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-sdk</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- 切面weave支持；这里默认对spring事务管理通过weave的方式切入，因此涉及到JPA事务管理必须加入；另其他切面支持，需要增加相应配置 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<configuration>
+					<aspectLibraries>
+						<aspectLibrary><!-- 虽然在project-parent中已经加了，但是由于另加了spring-security的切面支持，所以会被覆盖； -->
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-aspects</artifactId>
+						</aspectLibrary>
+						<aspectLibrary>
+							<groupId>org.springframework.security</groupId>
+							<artifactId>spring-security-aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

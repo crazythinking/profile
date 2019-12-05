@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.engining.profile</groupId>
+		<artifactId>profile-parent</artifactId>
+		<version>4.0.3-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>profile-tools-component</artifactId>
+	<name>初始化 component (jar依赖)</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<maven.deploy.skip>false</maven.deploy.skip>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.engining.pg</groupId>
+			<artifactId>pg-parameter-dict</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.pg</groupId>
+			<artifactId>pg-batch-dict</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.gm</groupId>
+			<artifactId>gm-dict</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-dict</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.control</groupId>
+			<artifactId>control-dict</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-dict</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jsr305</artifactId>
+					<groupId>com.google.code.findbugs</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>objenesis</artifactId>
+					<groupId>org.objenesis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.engining.pg</groupId>
+			<artifactId>pg-parameter-help</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>

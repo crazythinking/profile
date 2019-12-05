@@ -1,64 +1,43 @@
 package net.engining.profile.sdk.service;
 
-import com.google.common.base.Ticker;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
+import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
-import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
-import net.engining.profile.sdk.service.query.MenuService;
-import net.engining.template.config.props.ProfileParamProperties;
+import net.engining.profile.sdk.service.query.AuthService;
+import net.engining.profile.config.props.ProfileParamProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author
  */
 @Service
-public class ProfileMgmService implements InitializingBean {
+public class ProfileMgmService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-
-	public static final String AUTH_KEY = "RoleAuth";
-
-	public static final String SPLIT = "|";
-	/**
-	 * A time source
-	 */
-	private Ticker ticker = Ticker.systemTicker();
-	/**
-	 * 没把全部用户的菜单树放缓存是因为，用户过多占太多内存
-	 * (userId|appName)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
-	 */
-	private LoadingCache<String, List<String>> roleAuthCache;
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired
-	MenuService menuService;
+	AuthService authService;
 
 	@Autowired
 	ProfileParamProperties profileParamProperties;
@@ -91,24 +70,25 @@ public class ProfileMgmService implements InitializingBean {
 
 	/**
 	 * 获取所有的角色(后端系统超级管理员权限不给予查出)
+	 * 分配角色时使用
 	 * @param appCd 应用代码
 	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchAllProfileRole(String appCd) {
 		//是否为auth中心模式
-		boolean isAuth = menuService.checkAppCd(appCd);
+		boolean isAuth = authService.checkAppCd(appCd);
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		BooleanExpression roleIdCondition = qProfileRole.roleId.ne(DefaultRoleID.SUPERADMIN.toString());
 		if (isAuth){
 			roleIdCondition.and(qProfileRole.appCd.eq(appCd));
 		}
-
-		JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileRole.roleId, qProfileRole.roleName)
+		JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileRole.roleId, qProfileRole.roleName,
+				qProfileRole.appCd)
 				.from(qProfileRole)
 				.where(roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().buildAsMap(query, qProfileRole.roleId,
-				qProfileRole.roleName);
+				qProfileRole.roleName, qProfileRole.appCd);
 	}
 
 	/**
@@ -151,15 +131,13 @@ public class ProfileMgmService implements InitializingBean {
 	}
 
 	/**
-	 * 根据角色名称查询角色信息
+	 * 查询所有角色信息列表
 	 * @param roleName
 	 * @param appCd
 	 * @param range
 	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchProfileRole(String roleName, String appCd,Range range) {
-		//是否为auth中心模式
-		boolean isAuth = menuService.checkAppCd(appCd);
 
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
@@ -169,19 +147,21 @@ public class ProfileMgmService implements InitializingBean {
 			w = qProfileRole.roleName.like("%" + roleName + "%");
 
 		}
-		if (isAuth){
-			roleIdCondition.and(qProfileRole.appCd.eq(appCd));
+		if (StringUtils.isNotBlank(appCd)) {
+			roleIdCondition.and(qProfileRole.appCd.like("%" + appCd + "%"));
+
 		}
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(qProfileRole.roleId, qProfileBranch.branchName,
-						qProfileBranch.branchId,qProfileRole.roleName)
+						qProfileBranch.branchId,qProfileRole.roleName,
+						qProfileRole.appCd)
 				.from(qProfileRole, qProfileBranch)
 				.where(w,
 						qProfileBranch.branchId.eq(qProfileRole.branchId),
 						roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().range(range).buildAsMap(query, qProfileRole.roleId,
-				qProfileBranch.branchName,qProfileBranch.branchId, qProfileRole.roleName);
+				qProfileBranch.branchName,qProfileBranch.branchId, qProfileRole.roleName, qProfileRole.appCd);
 	}
 
 	/**
@@ -195,30 +175,24 @@ public class ProfileMgmService implements InitializingBean {
 	@Transactional(rollbackFor = Exception.class)
 	public void saveProfileRole(String roleId, String branchId, String roleName, String orgId, String appCd) {
 		//是否为auth中心模式
-		boolean isAuth = menuService.checkAppCd(appCd);
+		boolean isAuth = authService.checkAppCd(appCd);
 
 		QProfileRole q = QProfileRole.profileRole;
 
-		BooleanExpression w1 = q.roleName.eq(roleName);
-		BooleanExpression w2 = q.roleId.eq(roleId);
-
-		if (isAuth){
-			w1.and(q.appCd.eq(appCd));
-			w2.and(q.appCd.eq(appCd));
-		}else {
+		if (!isAuth){
 			//本地profile模式
-			appCd = profileParamProperties.getAppCd();
+			appCd = DbConstants.NULL;
 		}
 
 		long nameCount = new JPAQueryFactory(em)
 				.select(q)
 				.from(q)
-				.where()
+				.where(q.roleName.eq(roleName))
 				.fetchCount();
 		long idCount = new JPAQueryFactory(em)
 				.select(q)
 				.from(q)
-				.where()
+				.where(q.roleId.eq(roleId))
 				.fetchCount();
 		if (nameCount > 0) {
 			throw new ErrorMessageException(ErrorCode.CheckError, "添加角色失败:角色名已存在");
@@ -246,14 +220,15 @@ public class ProfileMgmService implements InitializingBean {
 	@Transactional(rollbackFor = Exception.class)
 	public void updateProfileRole(String roleId, String branchId, String roleName, String appCd) {
 		//是否为auth中心模式
-		boolean isAuth = menuService.checkAppCd(appCd);
+		boolean isAuth = authService.checkAppCd(appCd);
 		//角色表
 		QProfileRole q = QProfileRole.profileRole;
 		BooleanExpression w1 = q.roleId.eq(roleId);
 		if (isAuth){
-			w1.and(q.appCd.eq(appCd));
+
 		}
-		//更新角色信息
+
+		//更新角色信息 TODO 需要更新appcd
 		new JPAQueryFactory(em)
 				.update(q)
 				.set(q.roleName,roleName)
@@ -275,38 +250,6 @@ public class ProfileMgmService implements InitializingBean {
 	}
 
 	/**
-	 * 角色权限分配
-	 *
-	 * @param roleId 角色id
-	 * @param authInfoList 权限集合
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public void distributionProfileRole(String roleId, List<MenuOrAuthInfo> authInfoList) {
-		// 如果对应的权限存在就进行删除然后在进行添加操作
-		QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
-		long n2 = new JPAQueryFactory(em)
-				.delete(qProfileRoleAuth)
-				.where(qProfileRoleAuth.roleId.eq(roleId))
-				.execute();
-		logger.debug("删除了{}条ProfileRoleAuth", n2);
-		//添加权限
-		authInfoList.forEach(authInfo -> {
-			ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
-			profileRoleAuth.fillDefaultValues();
-			profileRoleAuth.setRoleId(roleId);
-			profileRoleAuth.setAuthority(authInfo.getAuthority());
-			profileRoleAuth.setAutuUri(authInfo.getAutuUri());
-
-			em.persist(profileRoleAuth);
-		});
-
-		//刷新角色已有权限缓存
-		this.refreshUserMenuCache(StringUtils.join(AUTH_KEY,SPLIT,roleId));
-		//TODO 刷新用户菜单权限缓存
-//		menuService.refreshUserMenuCache();
-	}
-
-	/**
 	 * 角色标识必须是唯一的
 	 */
 	public boolean fetchRoleId(String roleId, int num) {
@@ -321,35 +264,6 @@ public class ProfileMgmService implements InitializingBean {
 	}
 
 	/**
-	 * 获取角色对应的权限主方法
-	 * @param roleId
-	 * @return
-	 */
-	public List<String> fetchRoleAuthByRoleId(String roleId) {
-		List<String> authList = null;
-		try {
-			//从本地缓存获取
-			authList = roleAuthCache.get(StringUtils.join(AUTH_KEY,SPLIT,roleId));
-		} catch (ExecutionException e) {
-			authList = getRoleAuthByRoleId(roleId);
-		}
-
-		return authList;
-	}
-	/**
-	 * 获取角色对应的权限
-	 */
-	public List<String> getRoleAuthByRoleId(String roleId) {
-		QProfileRoleAuth qProfileBranch = QProfileRoleAuth.profileRoleAuth;
-		List<String> authList = new JPAQueryFactory(em)
-				.select(qProfileBranch.authority)
-				.from(qProfileBranch)
-				.where(qProfileBranch.roleId.eq(roleId))
-				.fetch();
-		return authList;
-	}
-
-	/**
 	 * 获取用户对应的角色
 	 */
 	public FetchResponse<Map<String, Object>> fetchUserRoleByPuId(String puId) {
@@ -359,54 +273,6 @@ public class ProfileMgmService implements InitializingBean {
 				.from(qProfileUserRole)
 				.where(qProfileUserRole.puId.eq(puId));
 		return new JPAFetchResponseBuilder<Map<String, Object>>().buildAsMap(query, qProfileUserRole.roleId);
-	}
-
-
-	/**
-	 * 初始化角色已有权限cache
-	 * 同时对本地模式无appcd支持
-	 * RoleAuth|roleid
-	 */
-	public void initRoleAuthCache()
-	{
-		roleAuthCache = CacheBuilder.newBuilder()
-				.ticker(ticker)
-				//当缓存项在指定的时间段内没有被读或写就会被回收
-				.expireAfterAccess(Duration.ofDays(1))
-				//最大条数
-				.maximumSize(100)
-				.build(new CacheLoader<String, List<String>>() {
-
-					@Override
-					public List<String> load(String key) throws Exception {
-						List<String> authList = null;
-						String[] roleId = StringUtils.splitPreserveAllTokens(key,SPLIT);
-						String roleIdKey = roleId[1];
-						if (ValidateUtilExt.isNullOrEmpty(roleIdKey)) {
-							return null;
-						}
-						authList = getRoleAuthByRoleId(roleIdKey);
-						return authList;
-					}
-
-				});
-	}
-
-	/**
-	 * 刷新角色已有权限cache
-	 * 需要在分配角色权限后刷新缓存
-	 * @param key RoleAuth|roleid
-	 */
-	public void refreshUserMenuCache(String key)
-	{
-		roleAuthCache.refresh(key);
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		logger.debug("初始化角色已有权限cache...");
-		//初始化角色已有权限cache
-		initRoleAuthCache();
 	}
 
 }

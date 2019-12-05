@@ -26,7 +26,10 @@
 	<modules>
 		<module>profile-dict</module>
 		<module>profile-sdk</module>
+		<module>profile-api</module>
 		<module>profile-config</module>
+		<module>profile-tools</module>
+		<module>profile-tools-component</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -65,6 +68,23 @@
 				<artifactId>profile-sdk</artifactId>
 				<version>${profile.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-api</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-tools</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.engining.profile</groupId>
+				<artifactId>profile-tools-component</artifactId>
+				<version>${profile.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>net.engining.profile</groupId>
 				<artifactId>profile-config</artifactId>
