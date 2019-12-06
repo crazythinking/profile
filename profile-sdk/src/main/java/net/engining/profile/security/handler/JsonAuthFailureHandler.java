@@ -44,6 +44,7 @@ public class JsonAuthFailureHandler implements AuthenticationFailureHandler {
                             .build()
                             .setStatusCode(ProfileErrorCode.Error9200.getValue())
                             .setStatusDesc(ProfileErrorCode.Error9200.getLabel())
+                            //TODO key命名不合理
                             .putAdditionalRepMap("111", ProfileErrorCode.Error9200.getLabel())
 
             );

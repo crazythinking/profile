@@ -5,10 +5,10 @@ import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.init.TableDataInitializer;
+import net.engining.profile.config.props.ProfileParamProperties;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
-import net.engining.profile.config.props.ProfileParamProperties;
 import net.engining.profile.enums.InterFaceEnum;
 import net.engining.profile.enums.MenuEnum;
 import net.engining.profile.enums.RoleIdEnum;
@@ -18,15 +18,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
+ *
  * 文件初始化示例
  * @author 作者
  * @version 版本
@@ -319,6 +321,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        //TODO 此处不对，因应该是profile
         //初始化appcd
         if (cProperties.isAuthEnabled()){
             APP_CD = "profile";

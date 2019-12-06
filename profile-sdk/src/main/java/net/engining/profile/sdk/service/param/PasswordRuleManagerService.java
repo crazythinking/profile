@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO 需要重构
+ *
  * @Description 密码规则管理
  * @Author yangli
  */
@@ -76,6 +78,7 @@ public class PasswordRuleManagerService {
         securityControl.usernamePattern.add(usernamePattern1);
         securityControl.usernamePattern.add(usernamePattern2);
         facility.addParameter(ParameterFacility.UNIQUE_PARAM_KEY, securityControl);
+        //TODO ？？
         resultMessageBean.setKey("1111");
         resultMessageBean.setMessage("提交成功");
         return resultMessageBean;

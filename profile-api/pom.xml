@@ -14,6 +14,19 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-models</artifactId>
+		</dependency>
+
 		<!-- 自身依赖 -->
 		<dependency>
 			<groupId>net.engining.profile</groupId>

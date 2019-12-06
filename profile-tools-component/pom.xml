@@ -23,57 +23,36 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>net.engining.pg</groupId>
-			<artifactId>pg-parameter-dict</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.pg</groupId>
-			<artifactId>pg-batch-dict</artifactId>
+			<artifactId>pg-parameter-help</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.engining.gm</groupId>
-			<artifactId>gm-dict</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.profile</groupId>
-			<artifactId>profile-dict</artifactId>
+			<artifactId>gm-config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-config</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.engining.control</groupId>
-			<artifactId>control-dict</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-dict</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jsr305</artifactId>
-					<groupId>com.google.code.findbugs</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -92,10 +71,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>net.engining.pg</groupId>
-			<artifactId>pg-parameter-help</artifactId>
-		</dependency>
+
 	</dependencies>
 	
 	<build>

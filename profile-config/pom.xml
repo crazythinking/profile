@@ -25,106 +25,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-actuator-autoconfigure</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-core</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.amqp</groupId>
-			<artifactId>spring-rabbit</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<!-- ribbon -->
-		<dependency>
-			<groupId>com.netflix.ribbon</groupId>
-			<artifactId>ribbon-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jsr305</artifactId>
-					<groupId>com.google.code.findbugs</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.netflix.ribbon</groupId>
-			<artifactId>ribbon-httpclient</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.netflix.ribbon</groupId>
-			<artifactId>ribbon-loadbalancer</artifactId>
-			<optional>true</optional>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<optional>true</optional>
-		</dependency>
-		
-		<!-- swagger2 -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<optional>true</optional>
-		</dependency>
-		
-		<!-- QueryDsl for sql -->
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-sql-spring</artifactId>
-			<version>${querydsl.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jsr305</artifactId>
-					<groupId>com.google.code.findbugs</groupId>
-				</exclusion>
-			</exclusions>
 			<optional>true</optional>
 		</dependency>
 
@@ -133,27 +35,6 @@
 			<groupId>net.engining.pg</groupId>
 			<artifactId>pg-support</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.pg</groupId>
-			<artifactId>pg-parameter-help</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.pg</groupId>
-			<artifactId>pg-web</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.gm</groupId>
-			<artifactId>gm-config</artifactId>
-		</dependency>
-
-		<!-- servlet依赖 -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

@@ -1,4 +1,4 @@
-package net.engining.profile.api.controller.profile;
+package net.engining.profile.api.endpoint;
 
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;

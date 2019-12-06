@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
+ * TODO 这类Bean是否应该定义在此
  * @Description
  * @Author yangli
  */

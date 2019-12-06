@@ -30,6 +30,7 @@ public class SecurityControlInit implements ParameterInitializer {
         PasswordPattern passwordPattern1 = new PasswordPattern();
         passwordPattern1.mustMatch = true;
         passwordPattern1.message = "大小写字母+数字,长度为6~12个字符";
+        //TODO 该正则涉及replace，有性能风险，不要使用
         passwordPattern1.pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,12}$";
         passwordPattern1.weights = 100;
 //        PasswordPattern passwordPattern2 = new PasswordPattern();

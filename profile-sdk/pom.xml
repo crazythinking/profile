@@ -12,6 +12,10 @@
 	<artifactId>profile-sdk</artifactId>
 	<name>Profile - SDK</name>
 
+	<properties>
+		<jwt.version>0.9.0</jwt.version>
+	</properties>
+
 	<dependencies>
 		<!-- 自身框架依赖 -->
 		<dependency>
@@ -61,7 +65,13 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.0</version>
+			<version>${jwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -71,28 +81,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-models</artifactId>
 		</dependency>
 
 	</dependencies>
