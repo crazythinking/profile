@@ -180,13 +180,11 @@ public class AuthService implements InitializingBean {
      */
     public List<String> getRoleAuthByRoleId(String roleId) {
         QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
-        //排除菜单的权限，只返回接口的权限
         List<String> authList = new JPAQueryFactory(em)
                 .select(qProfileRoleAuth.authority)
                 .from(qProfileRoleAuth)
                 .where(
-                        qProfileRoleAuth.roleId.eq(roleId),
-                        qProfileRoleAuth.autuUri.ne(DbConstants.NULL)
+                        qProfileRoleAuth.roleId.eq(roleId)
                 )
                 .fetch();
         return authList;
@@ -317,7 +315,7 @@ public class AuthService implements InitializingBean {
                         profileMenu.parentId, profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
                 .where(profileMenu.menuCd.in(authoritys))
-                .orderBy(profileMenu.sortn.asc())
+                .orderBy(profileMenu.id.asc())
                 .fetch();
         List<MenuOrAuthBean> rootAllList = getMenuBeans(profileMenu, jpaQuery);
 
@@ -377,8 +375,8 @@ public class AuthService implements InitializingBean {
      * @return
      */
     private List<MenuOrAuthBean> getMenuBeans(QProfileMenu profileMenu, List<Tuple> jpaQuery) {
-        //所有菜单
-        List<MenuOrAuthBean> rootAllList = new ArrayList<>();
+        //所有菜单(有序)
+        List<MenuOrAuthBean> rootAllList = new LinkedList<>();
 
         for (Tuple tuple : jpaQuery) {
             MenuOrAuthBean MenuOrAuthBean = new MenuOrAuthBean();
@@ -400,8 +398,8 @@ public class AuthService implements InitializingBean {
      * @return
      */
     private List<MenuOrAuthBean> getAuthBeans(QProfileMenuInterf profileMenuInterf, List<Tuple> jpaQuery) {
-        //所有菜单
-        List<MenuOrAuthBean> rootAllList = new ArrayList<>();
+        //所有菜单(权限)
+        List<MenuOrAuthBean> rootAllList = new LinkedList<>();
 
         for (Tuple tuple : jpaQuery) {
             MenuOrAuthBean MenuOrAuthBean = new MenuOrAuthBean();
@@ -530,6 +528,7 @@ public class AuthService implements InitializingBean {
                 profileMenuInterf.iname)
                 .from(profileMenuInterf)
                 .where(profileMenuInterf.menuId.isNotNull())
+                .orderBy(profileMenuInterf.id.asc())
                 .fetch();
         return getAuthBeans(profileMenuInterf, jpaQuery);
     }

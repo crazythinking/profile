@@ -77,7 +77,6 @@ public enum MenuDef implements BaseEnum<String> {
      */
     leviedSeparateSreach("leviedSeparateSreach", "6,7"),
 
-    // FIXME: 2019/9/12 会计科目配置
     /**
      * 会计科目新增
      */
@@ -404,7 +403,6 @@ public enum MenuDef implements BaseEnum<String> {
      * 记账复核修改
      */
     update("update", "44,45"),
-    // todo 系统参数复核
     /**
      * 查询参数维护复核数据
      */
