@@ -13,8 +13,9 @@ import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
+import net.engining.profile.enums.RoleIdEnum;
 import net.engining.profile.sdk.service.query.AuthService;
-import net.engining.profile.config.props.ProfileParamProperties;
+import net.engining.profile.config.props.ProfileAuthProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class ProfileMgmService {
 	AuthService authService;
 
 	@Autowired
-	ProfileParamProperties profileParamProperties;
+	ProfileAuthProperties profileAuthProperties;
 
 	/**
 	 * 根据用户信息查询其角色
@@ -70,7 +71,7 @@ public class ProfileMgmService {
 	}
 
 	/**
-	 * 获取所有的角色(后端系统超级管理员权限不给予查出)
+	 * 获取所有的角色(后端系统超级管理员，监控权限不给予查出)
 	 * 分配角色时使用
 	 * @param appCd 应用代码
 	 * @return
@@ -79,7 +80,10 @@ public class ProfileMgmService {
 		//是否为auth中心模式
 		boolean isAuth = authService.checkAppCd(appCd);
 		QProfileRole qProfileRole = QProfileRole.profileRole;
-		BooleanExpression roleIdCondition = qProfileRole.roleId.ne(DefaultRoleID.SUPERADMIN.toString());
+		BooleanExpression roleIdCondition = qProfileRole.roleId.notIn(
+				DefaultRoleID.SUPERADMIN.toString(),
+				RoleIdEnum.ACTUATOR.toString()
+		);
 		if (isAuth){
 			roleIdCondition.and(qProfileRole.appCd.eq(appCd));
 		}
@@ -143,7 +147,10 @@ public class ProfileMgmService {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
 		BooleanExpression w = null;
-		BooleanExpression roleIdCondition = qProfileRole.roleId.ne(DefaultRoleID.SUPERADMIN.toString());
+		BooleanExpression roleIdCondition = qProfileRole.roleId.notIn(
+				DefaultRoleID.SUPERADMIN.toString(),
+				RoleIdEnum.ACTUATOR.toString()
+		);
 		if (StringUtils.isNotBlank(roleName)) {
 			w = qProfileRole.roleName.like("%" + roleName + "%");
 

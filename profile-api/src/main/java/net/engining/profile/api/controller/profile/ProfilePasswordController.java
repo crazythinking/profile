@@ -27,7 +27,7 @@ import java.util.Date;
  * @author yangxing
  */
 @RequestMapping("/profile")
-@Controller
+@RestController
 public class ProfilePasswordController {
 
     @Autowired

@@ -17,7 +17,7 @@ import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
-import net.engining.profile.config.props.ProfileParamProperties;
+import net.engining.profile.config.props.ProfileAuthProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public class AuthService implements InitializingBean {
     Provider4Organization provider4Organization;
 
     @Autowired
-    ProfileParamProperties profileParamProperties;
+    ProfileAuthProperties profileAuthProperties;
 
     /**
      * 菜单树查询
@@ -195,7 +195,7 @@ public class AuthService implements InitializingBean {
      */
     public boolean checkAppCd(String appCd) {
         //是否远程auth
-        boolean isAuth = profileParamProperties.isAuthEnabled();
+        boolean isAuth = profileAuthProperties.isAuthEnabled();
         if (isAuth && ValidateUtilExt.isNullOrEmpty(appCd)){
             throw new ErrorMessageException(ErrorCode.CheckError,"appCd不能为空！");
         }
@@ -231,7 +231,7 @@ public class AuthService implements InitializingBean {
         //添加父根节点
         TreeNode<MenuOrAuthBean> treeParentNode = getParentNode(ROOT_MENU_ID,ROOT_MENU_ID);
         //为父根节点添加子节点
-        getChild(treeParentNode,treeParentNode.getData().getId(), rootAllList);
+        addChild(treeParentNode,treeParentNode.getData().getId(), rootAllList);
         return treeParentNode;
     }
 
@@ -250,14 +250,13 @@ public class AuthService implements InitializingBean {
     }
 
     /**
-     * TODO 命名不合理
-     *
+     * 
      * 递归设置父节点的子节点
      * @param parentTreeNode
      * @param id
      * @param allMenu
      */
-    private void getChild(TreeNode<MenuOrAuthBean> parentTreeNode, String id, List<MenuOrAuthBean> allMenu) {
+    private void addChild(TreeNode<MenuOrAuthBean> parentTreeNode, String id, List<MenuOrAuthBean> allMenu) {
 
         //设置当前父节点的孩子
         for (MenuOrAuthBean menuParentBean : allMenu) {
@@ -268,12 +267,12 @@ public class AuthService implements InitializingBean {
             // 解决方案：因为接口不会有子接口，已经是树叶，所以不需要它的id，此处直接将id赋值为DbConstants.NULL
             // ）
             if (menuParentBean.getParentId().equals(id)) {
-                parentTreeNode.addChild(menuParentBean.getCd(), menuParentBean, parentTreeNode.getLevel());
+                parentTreeNode.addChild(menuParentBean.getName(), menuParentBean, parentTreeNode.getLevel());
             }
         }
         for (TreeNode<MenuOrAuthBean> menu : parentTreeNode.getChildren()) {
             //递归添加当前父节点孩子的孩子
-            getChild(menu,menu.getData().getId(), allMenu);
+            addChild(menu,menu.getData().getId(), allMenu);
         }
     }
 
@@ -320,7 +319,7 @@ public class AuthService implements InitializingBean {
 
         Map<String,TreeNode<MenuOrAuthBean>> map = null;
         //远程oauth中心
-        if (profileParamProperties.isAuthEnabled()) {
+        if (profileAuthProperties.isAuthEnabled()) {
             map = createMenuTreeNodeMapWithAuth(rootAllList);
         }else {
             //本地local
@@ -458,7 +457,7 @@ public class AuthService implements InitializingBean {
                     .filter(menuOrAuthBean -> cd.equals(menuOrAuthBean.getAppCd()))
                     .collect(Collectors.toList());
             TreeNode<MenuOrAuthBean> currentCdTree = treeNodeMap.get(cd);
-            getChild(currentCdTree,currentCdTree.getData().getId(),currentAuthList);
+            addChild(currentCdTree,currentCdTree.getData().getId(),currentAuthList);
         }
 
         return treeNodeMap;
@@ -476,7 +475,7 @@ public class AuthService implements InitializingBean {
         //获得全部接口(全部appcd)表接口
         List<MenuOrAuthBean> interAllList = getAllInterBeans();
         //挂载接口权限到菜单树
-        getChild(treeNode,treeNode.getData().getId(),interAllList);
+        addChild(treeNode,treeNode.getData().getId(),interAllList);
         Map<String,TreeNode<MenuOrAuthBean>> treeNodeMap = Maps.newHashMap();
         treeNodeMap.put(DbConstants.NULL,treeNode);
         return treeNodeMap;
@@ -490,7 +489,7 @@ public class AuthService implements InitializingBean {
     {
         Map<String,TreeNode<MenuOrAuthBean>> map = null;
         //远程auth中心
-        if (profileParamProperties.isAuthEnabled()) {
+        if (profileAuthProperties.isAuthEnabled()) {
             map = createAllAuthTreeNodeWithAuth();
         }else {
             //本地local

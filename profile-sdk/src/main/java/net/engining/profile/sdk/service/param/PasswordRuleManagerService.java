@@ -2,6 +2,7 @@ package net.engining.profile.sdk.service.param;
 
 
 import net.engining.pg.parameter.ParameterFacility;
+import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.param.PasswordPattern;
 import net.engining.profile.param.SecurityControl;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO 需要重构
  *
  * @Description 密码规则管理
  * @Author yangli
@@ -49,12 +49,24 @@ public class PasswordRuleManagerService {
         securityControl.complexPwdInd = Boolean.parseBoolean(passwordRuleBean.complexPwdInd);
         if(ValidateUtilExt.isNotNullOrEmpty(passwordRuleBean.complexPwdInd) && FLAGT.equals(passwordRuleBean.complexPwdInd)){
             securityControl.passwordPatterns = new ArrayList<>();
-            PasswordPattern passwordPattern1 = new PasswordPattern();
-            passwordPattern1.mustMatch = true;
-            passwordPattern1.message = "大小写字母+数字,长度为" + passwordRuleBean.getMinimumLength() +  "~" + passwordRuleBean.getMaximumLength() + "个字符 ";
-            passwordPattern1.pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{" + passwordRuleBean.getMinimumLength() +  "," + passwordRuleBean.getMaximumLength() + "}$";
-            passwordPattern1.weights = 100;
-            securityControl.passwordPatterns.add(passwordPattern1);
+            PasswordPattern passwordPattern2 = new PasswordPattern();
+            passwordPattern2.mustMatch = true;
+            passwordPattern2.message = "密码必须包含大写字母";
+            passwordPattern2.pattern = ".*[A-Z].*";
+            passwordPattern2.weights = 100;
+            PasswordPattern passwordPattern3 = new PasswordPattern();
+            passwordPattern3.mustMatch = true;
+            passwordPattern3.message = "密码必须包含数字";
+            passwordPattern3.pattern = ".*[0-9].*";
+            passwordPattern3.weights = 100;
+            PasswordPattern passwordPattern4 = new PasswordPattern();
+            passwordPattern4.mustMatch = true;
+            passwordPattern4.message = "长度为" + passwordRuleBean.getMinimumLength() + "~" + passwordRuleBean.getMaximumLength() + "个字符";
+            passwordPattern4.pattern = ".{" + passwordRuleBean.getMinimumLength() + "," + passwordRuleBean.getMaximumLength() +"}";
+            passwordPattern4.weights = 101;
+            securityControl.passwordPatterns.add(passwordPattern2);
+            securityControl.passwordPatterns.add(passwordPattern3);
+            securityControl.passwordPatterns.add(passwordPattern4);
         }
         //过期设置
         if(ValidateUtilExt.isNotNullOrEmpty(passwordRuleBean.getExpirationSettings()) && FLAGT.equals(passwordRuleBean.getExpirationSettings())){
@@ -78,9 +90,8 @@ public class PasswordRuleManagerService {
         securityControl.usernamePattern.add(usernamePattern1);
         securityControl.usernamePattern.add(usernamePattern2);
         facility.addParameter(ParameterFacility.UNIQUE_PARAM_KEY, securityControl);
-        //TODO ？？
-        resultMessageBean.setKey("1111");
-        resultMessageBean.setMessage("提交成功");
+        resultMessageBean.setKey(ErrorCode.Success.getValue());
+        resultMessageBean.setMessage(ErrorCode.Success.getLabel());
         return resultMessageBean;
     }
 

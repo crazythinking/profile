@@ -18,7 +18,7 @@ import java.util.Map;
  * @author yangxing
  */
 @RequestMapping("/profile")
-@Controller
+@RestController
 public class ProfileRoleController {
 
 	@Autowired

@@ -5,7 +5,7 @@ import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.init.TableDataInitializer;
-import net.engining.profile.config.props.ProfileParamProperties;
+import net.engining.profile.config.props.ProfileAuthProperties;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
@@ -53,7 +53,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     GmCommonProperties commonProperties;
 
     @Autowired
-    ProfileParamProperties cProperties;
+    ProfileAuthProperties cProperties;
 
     /**
      * 缺省角色名
@@ -98,11 +98,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
 
         //1.创建部门
-        ProfileBranch branch = new ProfileBranch();
-        branch.setOrgId(provider4Organization.getCurrentOrganizationId());
-        branch.setBranchId(provider4Organization.getCurrentOrganizationId());
-        branch.setBranchName(BRANCH_NAME);
-        em.persist(branch);
+        initBranch();
 
         //2.初始化菜单、接口
         initMenuAuthInterFace();
@@ -134,12 +130,6 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         ProfileMenu passwordRule = createMenu(MenuEnum.PasswordRule.getMname(),MenuEnum.PasswordRule.getMenuCd(),profileUser.getId());
         //用户登记簿查询 1
         ProfileMenu userRegistryDa = createMenu(MenuEnum.UserRegistryDa.getMname(),MenuEnum.UserRegistryDa.getMenuCd(),profileUser.getId());
-        //参数管理 0
-        ProfileMenu parameterManage = createMenu(MenuEnum.ParameterManage.getMname(),MenuEnum.ParameterManage.getMenuCd(),0);
-        //授权中心 0
-        ProfileMenu authorizationCenter = createMenu(MenuEnum.AuthorizationCenter.getMname(),MenuEnum.AuthorizationCenter.getMenuCd(),0);
-        //系统参数复核 1
-        ProfileMenu systemParameterReview = createMenu(MenuEnum.SystemParameterReview.getMname(),MenuEnum.SystemParameterReview.getMenuCd(),authorizationCenter.getId());
         //[菜单表初始化] ------------------------------------------------end
 
         //[接口表初始化] ------------------------------------------------start
@@ -180,9 +170,6 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         SUPERADMIN_MENU_AUTH_SET.add(maintenance);
         SUPERADMIN_MENU_AUTH_SET.add(passwordRule);
         SUPERADMIN_MENU_AUTH_SET.add(userRegistryDa);
-        SUPERADMIN_MENU_AUTH_SET.add(parameterManage);
-        SUPERADMIN_MENU_AUTH_SET.add(authorizationCenter);
-        SUPERADMIN_MENU_AUTH_SET.add(systemParameterReview);
         //超级管理员接口权限
         SUPERADMIN_INTER_AUTH_SET.add(updateProfileRole);
         SUPERADMIN_INTER_AUTH_SET.add(deleteProfileRole);
@@ -271,6 +258,24 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         return user;
     }
 
+    private ProfileBranch createBranch() {
+        ProfileBranch branch = new ProfileBranch();
+        branch.setOrgId(provider4Organization.getCurrentOrganizationId());
+        branch.setBranchId(provider4Organization.getCurrentOrganizationId());
+        branch.setBranchName(BRANCH_NAME);
+        em.persist(branch);
+        return branch;
+    }
+
+
+    /**
+     * 初始化部门
+     */
+    private void initBranch() {
+        log.debug("正在执行初始化器 -> AdministrationInit");
+        createBranch();
+    }
+
     /**
      * 初始化超级管理员
      */
@@ -321,11 +326,8 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //TODO 此处不对，因应该是profile
         //初始化appcd
-        if (cProperties.isAuthEnabled()){
-            APP_CD = "profile";
-        }else {
+        if ( ! cProperties.isAuthEnabled()){
             APP_CD = DbConstants.NULL;
         }
     }

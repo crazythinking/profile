@@ -193,7 +193,6 @@ public class ProfileUserService {
     public void updateProfileUser(ProfileUser user) {
 
         ProfileUser orginUser = em.find(ProfileUser.class, user.getPuId());
-        //TODO set需要修改的值
         orginUser.setName(user.getName());
         orginUser.setEmail(user.getEmail());
         orginUser.setMtnUser(user.getMtnUser());

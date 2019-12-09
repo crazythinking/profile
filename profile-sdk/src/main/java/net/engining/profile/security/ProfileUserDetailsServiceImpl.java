@@ -8,7 +8,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.profile.config.props.ProfileParamProperties;
+import net.engining.profile.config.props.ProfileAuthProperties;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
@@ -42,9 +42,10 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
     private ParameterFacility facility;
 
     @Autowired
-    ProfileParamProperties profileParamProperties;
+    ProfileAuthProperties profileAuthProperties;
 
     /**
+     * 提供用户认证所需要的数据库用户实体信息
      * @param username 用户登陆Id
      */
     @Override
@@ -74,7 +75,7 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
         List<String> authorities = Lists.newArrayList();
         //远程oauth中心
-        if (profileParamProperties.isAuthEnabled()){
+        if (profileAuthProperties.isAuthEnabled()){
             //App_Cd:Authority
             authorities = tuples.stream()
                     .map(tuple -> StringUtils.join(
