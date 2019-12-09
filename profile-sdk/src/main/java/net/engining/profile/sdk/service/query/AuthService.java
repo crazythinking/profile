@@ -180,10 +180,14 @@ public class AuthService implements InitializingBean {
      */
     public List<String> getRoleAuthByRoleId(String roleId) {
         QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
+        //排除菜单的权限，只返回接口的权限
         List<String> authList = new JPAQueryFactory(em)
                 .select(qProfileRoleAuth.authority)
                 .from(qProfileRoleAuth)
-                .where(qProfileRoleAuth.roleId.eq(roleId))
+                .where(
+                        qProfileRoleAuth.roleId.eq(roleId),
+                        qProfileRoleAuth.autuUri.ne(DbConstants.NULL)
+                )
                 .fetch();
         return authList;
     }
@@ -250,7 +254,7 @@ public class AuthService implements InitializingBean {
     }
 
     /**
-     * 
+     *
      * 递归设置父节点的子节点
      * @param parentTreeNode
      * @param id
