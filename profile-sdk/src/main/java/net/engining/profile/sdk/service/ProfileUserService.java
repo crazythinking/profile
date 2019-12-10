@@ -15,6 +15,7 @@ import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.sdk.service.bean.UserRoleBean;
+import net.engining.profile.sdk.service.bean.profile.ProfileUserUpdateForm;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,15 +191,17 @@ public class ProfileUserService {
      * @param user
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateProfileUser(ProfileUser user) {
+    public ProfileUser updateProfileUser(ProfileUserUpdateForm user) {
 
         ProfileUser orginUser = em.find(ProfileUser.class, user.getPuId());
         orginUser.setName(user.getName());
         orginUser.setEmail(user.getEmail());
-        orginUser.setMtnUser(user.getMtnUser());
+        orginUser.setMtnUser(user.getOperUserId());
         orginUser.setStatus(user.getStatus());
         orginUser.setBranchId(user.getBranchId());
+        orginUser.setOrgId(user.getOrgId());
 //		orginUser.setUserId(user.getUserId());
+        return orginUser;
     }
 
     @Transactional(rollbackFor = Exception.class)

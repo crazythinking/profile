@@ -7,7 +7,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.bean.profile.MgmWebUser;
-import net.engining.profile.sdk.service.bean.profile.ProfileUserForm;
+import net.engining.profile.sdk.service.bean.profile.ProfileUserUpdateForm;
 import net.engining.profile.security.ProfileSecurityService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +45,8 @@ public class UserService {
 		return profileUser;
 	}
 	
-	public ProfileUser profileUser(ProfileUserForm user){
-		ProfileUser profileUser = new ProfileUser();
-		BeanUtils.copyProperties(user, profileUser);
-		profileUser.fillDefaultValues();
-		profileUserService.updateProfileUser(profileUser);
+	public ProfileUser profileUser(ProfileUserUpdateForm user){
+		ProfileUser profileUser = profileUserService.updateProfileUser(user);
 		return profileUser;
 	}
 	

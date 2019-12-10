@@ -12,9 +12,7 @@ import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.enums.OperationType;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.UserManagerBean;
-import net.engining.profile.sdk.service.bean.profile.MgmWebUser;
-import net.engining.profile.sdk.service.bean.profile.ProfileUserForm;
-import net.engining.profile.sdk.service.bean.profile.UsersFilter;
+import net.engining.profile.sdk.service.bean.profile.*;
 import net.engining.profile.sdk.service.profile.UserService;
 import net.engining.profile.security.ProfileSecurityLoggerService;
 import net.engining.profile.security.ProfileSecurityService;
@@ -77,7 +75,7 @@ public class ProfileUserController {
 	@ApiOperation(value="登录时根据用户userId获取用户信息", notes="")
 	@RequestMapping(value="/loginUserId", method= RequestMethod.POST)
 	public @ResponseBody
-	CommonWithHeaderResponse loginUserByName(@RequestBody ProfileUserForm user, HttpServletRequest request) {
+	CommonWithHeaderResponse loginUserByName(@RequestBody LoginUserIdForm user, HttpServletRequest request) {
 		FetchResponse<Map<String, Object>> rsp = profileUserService.getUserInfoByUserId(user.getUserId());
 		Date date = new Date();
 		Object puid =profileSecurityLoggerService.getPuid(user.getOperUserId());
@@ -151,7 +149,7 @@ public class ProfileUserController {
 	@ApiOperation(value="更新某个用户", notes="")
     @RequestMapping(value="/updateUser", method= RequestMethod.POST)
 	public @ResponseBody
-	CommonWithHeaderResponse updateUser(@RequestBody ProfileUserForm user, HttpServletRequest request) {
+	CommonWithHeaderResponse updateUser(@RequestBody ProfileUserUpdateForm user, HttpServletRequest request) {
 		ProfileUser profileUser = userService.profileUser(user);
 		Date date = new Date();
 		Object puid =profileSecurityLoggerService.getPuid(user.getOperUserId());
