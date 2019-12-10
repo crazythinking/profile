@@ -39,7 +39,8 @@ public class ProfileUserUpdateForm implements Serializable {
     /**
      * 登录ID
      */
-    @ApiModelProperty(value = "用户id", required = false, example="111")
+    @NotBlank(message = "请输入：用户id")
+    @ApiModelProperty(value = "用户id", required = true, example="111")
     private String userId;
 
     /**

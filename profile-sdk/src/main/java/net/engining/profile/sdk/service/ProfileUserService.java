@@ -200,7 +200,7 @@ public class ProfileUserService {
         orginUser.setStatus(user.getStatus());
         orginUser.setBranchId(user.getBranchId());
         orginUser.setOrgId(user.getOrgId());
-//		orginUser.setUserId(user.getUserId());
+		orginUser.setUserId(user.getUserId());
         return orginUser;
     }
 
