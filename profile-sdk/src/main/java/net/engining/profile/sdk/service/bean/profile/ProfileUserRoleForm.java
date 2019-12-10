@@ -23,7 +23,7 @@ public class ProfileUserRoleForm implements Serializable {
 	private String userId;
 
 	@NotNull(message = "请输入：角色id集合")
-	@ApiModelProperty(value = "角色id集合", required = false, example="1111")
+	@ApiModelProperty(value = "角色id集合", required = true, example="1111")
 	private List<String> roleId;
 
 	@ApiModelProperty(value = "应用代码", required = false, example="123456")
