@@ -1,5 +1,6 @@
 package net.engining.profile.sdk.service.bean.profile;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ public class ProfileRoleDelForm implements Serializable{
 
     @NotNull(message = "请输入：角色id")
     @ApiModelProperty(value = "角色id", required = true, example="admin")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> roleId;
 
     public List<String> getRoleId() {
