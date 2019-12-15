@@ -116,7 +116,7 @@ public class PasswordRuleManagerService {
         List<PasswordPattern> patternsList = securityControl.passwordPatterns;
         if(ValidateUtilExt.isNotNullOrEmpty(patternsList)){
             for (PasswordPattern list : patternsList) {
-                if(ValidateUtilExt.isNotNullOrEmpty(list.weights)){
+                if(ValidateUtilExt.isNotNullOrEmpty(list.weights) && list.pattern.contains(".{")){
                     String pett1 = StringUtils.substringBefore(list.pattern, ",");
                     String patt2 = StringUtils.substringAfter(pett1, "{");
                     passwordRuleBean.setMinimumLength(Integer.parseInt(patt2));

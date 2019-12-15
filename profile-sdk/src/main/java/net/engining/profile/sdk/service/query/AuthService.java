@@ -350,7 +350,7 @@ public class AuthService implements InitializingBean {
         for (String cd : appCdSet) {
             List<MenuOrAuthBean> cdMenuOrAuthList = new ArrayList<>();
             for (MenuOrAuthBean menuOrAuthBean : rootAllList) {
-                if (cd.equals(menuOrAuthBean.getCd())) {
+                if (cd.equals(menuOrAuthBean.getAppCd())) {
                     cdMenuOrAuthList.add(menuOrAuthBean);
                 }
             }
