@@ -91,11 +91,11 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     @Transactional(rollbackFor = Exception.class)
     public void init() throws Exception {
         // 清空权限相关表
-        em.createNativeQuery("delete from PROFILE_BRANCH").executeUpdate();
-        em.createNativeQuery("delete from PROFILE_USER").executeUpdate();
-        em.createNativeQuery("delete from PROFILE_ROLE_AUTH").executeUpdate();
-        em.createNativeQuery("delete from PROFILE_ROLE").executeUpdate();
-        em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_BRANCH").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_USER").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_ROLE_AUTH").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_ROLE").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
 
         //1.创建部门
         initBranch();
@@ -114,9 +114,9 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
      */
     private void initMenuAuthInterFace() throws IOException {
         //清空菜单表
-        em.createNativeQuery("delete from PROFILE_MENU").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_MENU").executeUpdate();
         //清空接口
-        em.createNativeQuery("delete from PROFILE_MENU_INTERF").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_MENU_INTERF").executeUpdate();
         //初始化菜单表、管理员权限表(权限表中菜单权限的AUTU_URI为"-",接口权限的AUTU_URI为所属菜单的id)和接口表
         // (不同app_cd下的菜单cd和接口cd是可以重复的，唯一约束为菜单cd 和 appcd组合)
         //[菜单表初始化] ------------------------------------------------start

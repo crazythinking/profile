@@ -11,6 +11,7 @@ import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
 import net.engining.profile.enums.RoleIdEnum;
@@ -188,8 +189,10 @@ public class ProfileMgmService {
 		QProfileRole q = QProfileRole.profileRole;
 
 		if (!isAuth){
-			//本地profile模式
-			appCd = DbConstants.NULL;
+			//本地profile模式，如果appCd不为空，就用它的,空的话就用默认的（应对于授权中心模式）
+			if (ValidateUtilExt.isNullOrEmpty(appCd)) {
+				appCd = DbConstants.NULL;
+			}
 		}
 
 		long nameCount = new JPAQueryFactory(em)
@@ -228,7 +231,7 @@ public class ProfileMgmService {
 	@Transactional(rollbackFor = Exception.class)
 	public void updateProfileRole(String roleId, String branchId, String roleName, String appCd) {
 		//是否为auth中心模式
-		boolean isAuth = authService.checkAppCd(appCd);
+//		boolean isAuth = authService.checkAppCd(appCd);
 		//角色表
 		QProfileRole q = QProfileRole.profileRole;
 		BooleanExpression w1 = q.roleId.eq(roleId);
@@ -239,11 +242,6 @@ public class ProfileMgmService {
 				.set(q.roleName,roleName)
 				.set(q.branchId,branchId)
 				.where(w1);
-
-		//远程oauth模式更新appcd
-		if (isAuth){
-			roleUpdate.set(q.appCd,appCd);
-		}
 
 		roleUpdate.execute();
 

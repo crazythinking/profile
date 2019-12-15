@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
-import net.engining.profile.sdk.service.bean.param.MenuQueryRequest;
 import net.engining.profile.sdk.service.bean.profile.FetchRoleAuthResponse;
 import net.engining.profile.sdk.service.bean.profile.ProfileRoleDelDisForm;
 import net.engining.profile.sdk.service.query.AuthService;
@@ -17,29 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 菜单
+ * 菜单权限
  *
  * @author heqingxi
  */
 
-@Api(value = "MenuController")
+@Api(value = "ProfileAuthController")
 @RequestMapping("/menu")
 @RestController
 public class ProfileAuthController {
 
     @Autowired
     private AuthService authService;
-
-    //    @PreAuthorize("hasAuthority('menuQurey')")
-    @RequestMapping(value = "/menuQuery", method = RequestMethod.GET)
-    @ApiOperation(value = "主菜单信息查询", notes = "")
-    public CommonWithHeaderResponse
-    getMenu(MenuQueryRequest request) {
-        String menuList = authService.getMenuData(request.getUserId(),request.getAppCd());
-        return new CommonWithHeaderResponseBuilder<Void, String>()
-                .build()
-                .setResponseData(menuList);
-    }
 
     //    @PreAuthorize("hasAuthority('menuQurey')")
     @RequestMapping(value = "/menuAuthorityQuery", method = RequestMethod.GET)

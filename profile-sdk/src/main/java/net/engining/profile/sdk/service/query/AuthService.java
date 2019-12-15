@@ -324,8 +324,15 @@ public class AuthService implements InitializingBean {
         if (profileAuthProperties.isAuthEnabled()) {
             map = createMenuTreeNodeMapWithAuth(rootAllList);
         }else {
-            //本地local
-            map = createMenuTreeNodeMapWithlocal(rootAllList);
+            //本地local(本地模式下菜单的appcd默认都是DbConstants.NULL，
+            // 但是授权中心后管可能会把其他app的菜单放在一起，防止其他菜单在授权中心后管显示，
+            // 所以需要剔除其他的appcd)
+            map = createMenuTreeNodeMapWithlocal(
+                    rootAllList
+                            .stream()
+                            .filter(menuOrAuthBean -> DbConstants.NULL.equals(menuOrAuthBean.getAppCd()))
+                            .collect(Collectors.toList())
+            );
         }
         return map;
     }
@@ -339,7 +346,7 @@ public class AuthService implements InitializingBean {
     private Map<String, TreeNode<MenuOrAuthBean>> createMenuTreeNodeMapWithAuth(List<MenuOrAuthBean> rootAllList) {
         //按照app_cd分组菜单树
         Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = Maps.newHashMap();
-        Set<String> appCdSet = rootAllList.stream().map(MenuOrAuthBean::getCd).collect(Collectors.toSet());
+        Set<String> appCdSet = rootAllList.stream().map(MenuOrAuthBean::getAppCd).collect(Collectors.toSet());
         for (String cd : appCdSet) {
             List<MenuOrAuthBean> cdMenuOrAuthList = new ArrayList<>();
             for (MenuOrAuthBean menuOrAuthBean : rootAllList) {
@@ -386,6 +393,7 @@ public class AuthService implements InitializingBean {
             MenuOrAuthBean.setAutuUri(DbConstants.NULL);
             MenuOrAuthBean.setParentId(String.valueOf(tuple.get(profileMenu.parentId)));
             MenuOrAuthBean.setSortn(String.valueOf(tuple.get(profileMenu.sortn)));
+            MenuOrAuthBean.setAppCd((tuple.get(profileMenu.appCd)));
             rootAllList.add(MenuOrAuthBean);
         }
         return rootAllList;
@@ -412,6 +420,7 @@ public class AuthService implements InitializingBean {
             MenuOrAuthBean.setAutuUri(String.valueOf(tuple.get(profileMenuInterf.menuId)));
             MenuOrAuthBean.setParentId(String.valueOf(tuple.get(profileMenuInterf.menuId)));
             MenuOrAuthBean.setSortn("0");
+            MenuOrAuthBean.setAppCd((tuple.get(profileMenuInterf.appCd)));
             rootAllList.add(MenuOrAuthBean);
         }
         return rootAllList;
