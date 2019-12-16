@@ -104,7 +104,7 @@ public class AuthService implements InitializingBean {
     }
 
     /**
-     * 获得全部的菜单接口权限树(不分Roleid)
+     * 获得全部的菜单接口权限树(不分Roleid,但分appcd，只能分配当前appcd下的权限)
      * @param appCd 应用代码
      * @return
      */
@@ -217,9 +217,17 @@ public class AuthService implements InitializingBean {
             //auth中心时为多颗appcd对应的树
             treeJsonStr = JSON.toJSONString(treeParentNode.get(appCd));
         }else {
-            //本地时map中只存了一棵树
-            treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
+            //    * 本地模式下：
+            //     * （1）单纯的本地模式 当appcd为空，默认取-的appcd
+            //     *  (2)授权中心后管的本地模式 appcd不为空，取appcd对应的权限
+            if (ValidateUtilExt.isNotNullOrEmpty(appCd)) {
+                treeJsonStr = JSON.toJSONString(treeParentNode.get(appCd));
+            }else {
+                treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
+            }
+
         }
+
         return treeJsonStr;
     }
 
@@ -319,21 +327,9 @@ public class AuthService implements InitializingBean {
                 .fetch();
         List<MenuOrAuthBean> rootAllList = getMenuBeans(profileMenu, jpaQuery);
 
-        Map<String,TreeNode<MenuOrAuthBean>> map = null;
-        //远程oauth中心
-        if (profileAuthProperties.isAuthEnabled()) {
-            map = createMenuTreeNodeMapWithAuth(rootAllList);
-        }else {
-            //本地local(本地模式下菜单的appcd默认都是DbConstants.NULL，
-            // 但是授权中心后管可能会把其他app的菜单放在一起，防止其他菜单在授权中心后管显示，
-            // 所以需要剔除其他的appcd)
-            map = createMenuTreeNodeMapWithlocal(
-                    rootAllList
-                            .stream()
-                            .filter(menuOrAuthBean -> DbConstants.NULL.equals(menuOrAuthBean.getAppCd()))
-                            .collect(Collectors.toList())
-            );
-        }
+        //远程oauth中心 本地local(本地模式下菜单的appcd默认都是DbConstants.NULL，
+        Map<String,TreeNode<MenuOrAuthBean>> map = createMenuTreeNodeMapWithAuth(rootAllList);
+
         return map;
     }
 
@@ -498,14 +494,8 @@ public class AuthService implements InitializingBean {
      */
     private Map<String,TreeNode<MenuOrAuthBean>> getAllAuthTreeNode()
     {
-        Map<String,TreeNode<MenuOrAuthBean>> map = null;
-        //远程auth中心
-        if (profileAuthProperties.isAuthEnabled()) {
-            map = createAllAuthTreeNodeWithAuth();
-        }else {
-            //本地local
-            map = createAllAuthTreeNodeWithLocal();
-        }
+        //远程auth中心和本地模式统一缓存数据结构
+        Map<String,TreeNode<MenuOrAuthBean>> map = createAllAuthTreeNodeWithAuth();
         return map;
     }
 
@@ -543,8 +533,15 @@ public class AuthService implements InitializingBean {
     }
 
     /**
-     * 初始化全部菜单权限分配cache
-     * 同时对本地模式无appcd支持
+     * 初始化全部菜单权限分配cache,当前appcd的角色只能分配当前appcd的权限
+     * 本地local也要兼容本地模式下的授权中心管理多个app的服务场景
+     * 但是此处缓存初始化时无法获得appcd判断，所以和auth模式统一以
+     * Map<appcd,TreeNode<MenuOrAuthBean>>的数据结构缓存；
+     * 本地模式下：
+     * （1）单纯的本地模式 当appcd为空，默认取-的appcd
+     *  (2)授权中心后管的本地模式 appcd不为空，取appcd对应的权限
+     *  授权中心模式下：
+     *  （1）取appcd对应的权限
      */
     public void initAllAuthTreeCache()
     {
