@@ -78,14 +78,12 @@ public class ProfileMgmService {
 	 * @return
 	 */
 	public FetchResponse<Map<String, Object>> fetchAllProfileRole(String appCd) {
-		//是否为auth中心模式
-		boolean isAuth = authService.checkAppCd(appCd);
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		BooleanExpression roleIdCondition = qProfileRole.roleId.notIn(
 				DefaultRoleID.SUPERADMIN.toString(),
 				RoleIdEnum.ACTUATOR.toString()
 		);
-		if (isAuth){
+		if (ValidateUtilExt.isNotNullOrEmpty(appCd)){
 			roleIdCondition.and(qProfileRole.appCd.eq(appCd));
 		}
 		JPAQuery<Tuple> query = new JPAQueryFactory(em).select(qProfileRole.roleId, qProfileRole.roleName,
@@ -148,6 +146,7 @@ public class ProfileMgmService {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
 		BooleanExpression w = null;
+		BooleanExpression w1 = null;
 		BooleanExpression roleIdCondition = qProfileRole.roleId.notIn(
 				DefaultRoleID.SUPERADMIN.toString(),
 				RoleIdEnum.ACTUATOR.toString()
@@ -157,8 +156,7 @@ public class ProfileMgmService {
 
 		}
 		if (StringUtils.isNotBlank(appCd)) {
-			roleIdCondition.and(qProfileRole.appCd.like("%" + appCd + "%"));
-
+			w1 = qProfileRole.appCd.like("%" + appCd + "%");
 		}
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(qProfileRole.roleId, qProfileBranch.branchName,
@@ -166,6 +164,7 @@ public class ProfileMgmService {
 						qProfileRole.appCd)
 				.from(qProfileRole, qProfileBranch)
 				.where(w,
+						w1,
 						qProfileBranch.branchId.eq(qProfileRole.branchId),
 						roleIdCondition);
 
