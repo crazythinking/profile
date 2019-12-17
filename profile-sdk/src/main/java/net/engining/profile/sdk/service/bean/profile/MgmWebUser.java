@@ -3,9 +3,11 @@
  */
 package net.engining.profile.sdk.service.bean.profile;
 
+import io.swagger.annotations.ApiModelProperty;
 import net.engining.pg.web.bean.WebLoginUser;
 import net.engining.profile.entity.enums.StatusDef;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -16,30 +18,43 @@ public class MgmWebUser extends WebLoginUser {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Profile ID，用于对接权限系统的唯一键
-	 */
+	@NotBlank(message = "PU_ID不能为空")
+	@ApiModelProperty(value = "PU_ID", required = true, example="123")
 	private String puId;
 
+	@NotBlank(message = "操作员id不能为空")
+	@ApiModelProperty(value = "操作员id", required = true, example="123")
 	private String operUserId;
 
+	@ApiModelProperty(value = "机构号", required = false, example="123")
 	private String orgId;
 
+	@ApiModelProperty(value = "分支id", required = false, example="123")
 	private String branchId;
 
 	/**
 	 * 登录ID
 	 */
+	@NotBlank(message = "登录ID不能为空")
+	@ApiModelProperty(value = "登录ID", required = true, example="123")
 	private String userId;
 
+	@NotBlank(message = "用户姓名不能为空")
+	@ApiModelProperty(value = "用户姓名", required = true, example="123")
 	private String name;
 
+	@NotBlank(message = "用户状态不能为空")
+	@ApiModelProperty(value = "用户状态", required = true, example="A")
 	private StatusDef status;
 
+	@ApiModelProperty(value = "email", required = false, example="A")
 	private String email;
 
+	@ApiModelProperty(value = "密码过期日期", required = false, example="2019-03-02")
 	private Date pwdExpDate;
 
+	@NotBlank(message = "密码错误次数不能为空")
+	@ApiModelProperty(value = "密码错误次数", required = true, example="1")
 	private Integer pwdTries;
 
 	/**

@@ -14,10 +14,10 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.dstruct.TreeNode;
 import net.engining.pg.support.utils.ValidateUtilExt;
+import net.engining.profile.config.props.ProfileOauthProperties;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
-import net.engining.profile.config.props.ProfileAuthProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,11 @@ public class AuthService implements InitializingBean {
     Provider4Organization provider4Organization;
 
     @Autowired
-    ProfileAuthProperties profileAuthProperties;
+    ProfileOauthProperties profileAuthProperties;
+    /**
+     * 作为resource资源服务时的url
+     */
+    public final static String MENU_RESOURCE_URL = "menu_resource";
 
     /**
      * 菜单树查询
@@ -197,7 +201,7 @@ public class AuthService implements InitializingBean {
      */
     public boolean checkAppCd(String appCd) {
         //是否远程auth
-        boolean isAuth = profileAuthProperties.isAuthEnabled();
+        boolean isAuth = profileAuthProperties.isOauthed();
         if (isAuth && ValidateUtilExt.isNullOrEmpty(appCd)){
             throw new ErrorMessageException(ErrorCode.CheckError,"appCd不能为空！");
         }

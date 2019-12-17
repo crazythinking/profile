@@ -15,11 +15,9 @@ import net.engining.profile.security.ProfileSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
@@ -42,13 +40,12 @@ public class ProfilePasswordController {
     @Autowired
     ProfileSecurityLoggerService profileSecurityLoggerService;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @ApiOperation(value = "修改密码", notes = "")
     @RequestMapping(value = "/changePwdByAdmin/{puId}", method = RequestMethod.POST)
     public @ResponseBody
-    CommonWithHeaderResponse changePasswordByAdmin(@PathVariable String puId, @RequestBody ChangePasswordForm changePasswordForm, HttpServletRequest request) {
+    CommonWithHeaderResponse changePasswordByAdmin(@PathVariable String puId,
+                                                   @RequestBody @Validated ChangePasswordForm changePasswordForm,
+                                                   HttpServletRequest request) {
 
         String opUser = SecurityContextHolder.getContext().getAuthentication().getName();
         profileSecurityService.changeMyPassword(puId, changePasswordForm.getOldPassword(), changePasswordForm.getNewPassword(), opUser);
@@ -67,7 +64,7 @@ public class ProfilePasswordController {
      * @return
      */
     @PreAuthorize("hasAuthority('ProfileRole')")
-    @ApiOperation(value = "resetPwdByAdmin", notes = "")
+    @ApiOperation(value = "重置密码", notes = "")
     @RequestMapping(value = "/resetPwdByAdmin/{puId}", method = RequestMethod.POST)
     public @ResponseBody
     CommonWithHeaderResponse resetPasswordByAdmin(@PathVariable String puId) {

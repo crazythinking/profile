@@ -14,31 +14,31 @@ public class PasswordRuleBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("密码有效期")
+    @ApiModelProperty(value = "密码有效期", required = true, example="0")
     @NotNull(message = "密码有效期不能为空")
     public Integer pwdExpireDays;
 
-    @ApiModelProperty("首次登陆密码更改")
+    @ApiModelProperty(value = "首次登陆密码更改", required = true, example="true")
     @NotNull(message = "首次登陆密码更改不能为空")
     public String pwdFirstLoginChgInd;
 
-    @ApiModelProperty("连续输错次数")
+    @ApiModelProperty(value = "连续输错次数", required = true, example="0")
     @NotNull(message = "连续输错次数不能为空")
     public Integer pwdTries;
 
-    @ApiModelProperty("过期设置")
+    @ApiModelProperty(value = "过期设置", required = true, example="0")
     @NotNull(message = "过期设置不能为空")
     public String expirationSettings;
 
-    @ApiModelProperty("复杂度校验")
+    @ApiModelProperty(value = "复杂度校验", required = true, example="true")
     @NotNull(message = "复杂度校验不能为空")
     public String complexPwdInd;
 
-    @ApiModelProperty("最小长度")
+    @ApiModelProperty(value = "最小长度", required = true, example="6")
     @NotNull(message = "最小长度不能为空")
     public Integer minimumLength;
 
-    @ApiModelProperty("最大长度")
+    @ApiModelProperty(value = "最大长度", required = true, example="3")
     @NotNull(message = "最大长度不能为空")
     public Integer maximumLength;
 

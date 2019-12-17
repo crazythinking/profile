@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  */
 @Service
 public class ProfileRoleService {
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PersistenceContext
@@ -53,7 +53,7 @@ public class ProfileRoleService {
 		QProfileRole qProfileRole = QProfileRole.profileRole;
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
 		QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
-		
+
 		long n1 = new JPAQueryFactory(em)
 				.delete(qProfileUserRole)
 				.where(qProfileUserRole.roleId.in(roleIds))
@@ -69,7 +69,7 @@ public class ProfileRoleService {
 				.where(qProfileRole.roleId.in(roleIds))
 				.execute();
 		logger.debug("删除了{}条ProfileRole",n3);
-		
+
 	}
 
 	public ProfileRole getProfileRoleInfo(String roleId) {
@@ -105,7 +105,7 @@ public class ProfileRoleService {
 
 	/**
 	 * 删除角色下的用户
-	 * 
+	 *
 	 * @param roles
 	 *            Map<key, value>; key=roleId, value=puId
 	 */
@@ -116,7 +116,11 @@ public class ProfileRoleService {
 
 		for (Entry<String, String> userRole : roles.entrySet()) {
 			ProfileUserRole profileUserRole = query
-					.where(q.roleId.eq(userRole.getKey()).and(q.puId.eq(userRole.getValue()))).fetchOne();
+					.where(
+							q.roleId.eq(userRole.getKey())
+									.and(q.puId.eq(userRole.getValue()))
+					)
+					.fetchOne();
 			if (profileUserRole != null) {
 				em.remove(profileUserRole);
 			}

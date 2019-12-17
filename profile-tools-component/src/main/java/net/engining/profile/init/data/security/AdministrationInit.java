@@ -5,7 +5,7 @@ import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.init.TableDataInitializer;
-import net.engining.profile.config.props.ProfileAuthProperties;
+import net.engining.profile.config.props.ProfileOauthProperties;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
@@ -23,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -53,7 +51,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     GmCommonProperties commonProperties;
 
     @Autowired
-    ProfileAuthProperties cProperties;
+    ProfileOauthProperties cProperties;
 
     /**
      * 缺省角色名
@@ -81,11 +79,11 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     /**
      * 超级管理员初始化菜单权限
      */
-    private static final Set<ProfileMenu> SUPERADMIN_MENU_AUTH_SET = new HashSet<>();
+    private static final Set<ProfileMenu> SUPERADMIN_MENU_AUTH_SET = new TreeSet<>(Comparator.comparing(ProfileMenu::getMenuCd));
     /**
      * 超级管理员初始化接口权限
      */
-    private static final  Set<ProfileMenuInterf> SUPERADMIN_INTER_AUTH_SET = new HashSet<>();
+    private static final  Set<ProfileMenuInterf> SUPERADMIN_INTER_AUTH_SET = new TreeSet<>(Comparator.comparing(ProfileMenuInterf::getInterfCd));
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -327,7 +325,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化appcd
-        if ( ! cProperties.isAuthEnabled()){
+        if ( ! cProperties.isOauthed()){
             APP_CD = DbConstants.NULL;
         }
     }

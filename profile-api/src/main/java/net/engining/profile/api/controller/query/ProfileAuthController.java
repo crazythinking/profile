@@ -11,6 +11,7 @@ import net.engining.profile.sdk.service.bean.profile.ProfileRoleDelDisForm;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,8 @@ public class ProfileAuthController {
     @RequestMapping(value = "/menuAuthorityQuery", method = RequestMethod.GET)
     @ApiOperation(value = "权限菜单信息查询", notes = "")
     public CommonWithHeaderResponse
-    getAuthorityMenu(@ApiParam("应用代码") @RequestParam(required = false) String appCd) {
+    getAuthorityMenu(@ApiParam(value = "应用代码", required = true)
+                     @RequestParam(required = false) String appCd) {
         //所有角色
         String menuList = authService.getAuthorityData(appCd);
         return new CommonWithHeaderResponseBuilder<Void, String>()
@@ -51,7 +53,7 @@ public class ProfileAuthController {
     @ApiOperation(value = "角色权限分配", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse distributionProfileRole(
-            @RequestBody ProfileRoleDelDisForm profileRoleDelDisForm) {
+            @RequestBody @Validated ProfileRoleDelDisForm profileRoleDelDisForm) {
 
         authService.distributionProfileRole(profileRoleDelDisForm.getRoleId(),
                 profileRoleDelDisForm.getAuthList());
@@ -70,7 +72,7 @@ public class ProfileAuthController {
     @RequestMapping(value = "/fetchRoleAuth", method = RequestMethod.GET)
     @ApiOperation(value = "获取角色对应的权限", notes = "")
     public  CommonWithHeaderResponse fetchRoleAuth(
-            @ApiParam("角色id") @RequestParam String roleId) {
+            @ApiParam(value = "角色id", required = true) @RequestParam String roleId) {
         List<String> authList = authService
                 .fetchRoleAuthByRoleId(roleId);
         FetchRoleAuthResponse fetchResponse = new FetchRoleAuthResponse();

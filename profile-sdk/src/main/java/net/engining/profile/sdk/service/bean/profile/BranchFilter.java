@@ -1,5 +1,6 @@
 package net.engining.profile.sdk.service.bean.profile;
 
+import io.swagger.annotations.ApiModelProperty;
 import net.engining.pg.support.db.querydsl.Range;
 
 /**
@@ -7,7 +8,9 @@ import net.engining.pg.support.db.querydsl.Range;
  */
 public class BranchFilter {
 
+    @ApiModelProperty(value = "上级分支id", required = false, example="true")
     private String superiorId;
+
     private Range range;
 
     public String getSuperiorId() {

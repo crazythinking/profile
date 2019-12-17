@@ -37,7 +37,8 @@ public class UserRegistryController {
   @ApiOperation(value = "用户登记薄详情查询", notes = "")
   @RequestMapping(value = "/userRegistryDetailSearch", method = RequestMethod.POST)
   @ResponseBody
-  public CommonWithHeaderResponse userRegistryDetailSearch(@RequestBody @Validated UserRegistryDetailsReq uRegDetailsReq){
+  public CommonWithHeaderResponse userRegistryDetailSearch(@RequestBody
+                                                             @Validated UserRegistryDetailsReq uRegDetailsReq){
     FetchResponse<UserRegistryDetailsRes> fetchResponse= userRegistryService.getSecopeDetails(uRegDetailsReq);
     return new CommonWithHeaderResponseBuilder<Void, FetchResponse<UserRegistryDetailsRes>>()
             .build()
@@ -47,7 +48,9 @@ public class UserRegistryController {
   @PreAuthorize("hasAuthority('UserRegistryExport')")
   @ApiOperation(value="用户登记薄查询Excel", notes="")
   @RequestMapping(value="/userRegistryExport",method= RequestMethod.POST)
-  public void userRegistryExportExcel(@RequestBody @Validated UserRegistryDetailsReq uRegDetailsReq, HttpServletResponse response){
+  public void userRegistryExportExcel(@RequestBody
+                                        @Validated UserRegistryDetailsReq uRegDetailsReq,
+                                      HttpServletResponse response){
     FetchResponse<UserRegistryDetailsRes> excelData= userRegistryService.excelData(uRegDetailsReq);
       List<UserRegistryDetailsRes> dataList= excelData.getData();
     userRegistryExcelService.excelFile(dataList, response);

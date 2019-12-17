@@ -16,27 +16,27 @@ public class UserRegistryDetailsReq implements Serializable {
   private static final long serialVersionUID = 1L;
 
   /**puId*/
-  @ApiModelProperty("puid")
+  @ApiModelProperty(value = "puid", required = false, example="123")
   private String  puId;
 
   /**所属机构*/
-  @ApiModelProperty("所属机构")
+  @ApiModelProperty(value = "所属机构", required = false, example="123")
   private String  affiliation;
 
   /**部门*/
-  @ApiModelProperty("部门")
+  @ApiModelProperty(value = "部门", required = false, example="123")
   private String  department;
 
   /**用户ID*/
-  @ApiModelProperty("用户ID")
+  @ApiModelProperty(value = "用户ID", required = false, example="123")
   private String  userId;
 
   /**用户名字*/
-  @ApiModelProperty("用户姓名")
+  @ApiModelProperty(value = "用户姓名", required = false, example="123")
   private String  userName;
 
   /**分页*/
-  @ApiModelProperty("分页")
+  @ApiModelProperty(value = "分页", required = false, example="")
   private Range range;
 
   public String getAffiliation() {

@@ -17,6 +17,7 @@ import net.engining.profile.sdk.service.bean.profile.*;
 import net.engining.profile.security.ProfileSecurityLoggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +56,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "根据用户信息查询其角色", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse fetchProfileUser(
-            @RequestBody ProfileUserBranchForm profileUserBranchForm) {
+            @RequestBody @Validated ProfileUserBranchForm profileUserBranchForm) {
 
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchProfileUser(
                 profileUserBranchForm.getBranchId(), provider4Organization.getCurrentOrganizationId(),
@@ -73,7 +74,9 @@ public class ProfileMgmController {
     @RequestMapping(value = "/fetchAllProfileRole", method = RequestMethod.GET)
     @ApiOperation(value = " 获取所有的角色", notes = "")
     public
-    CommonWithHeaderResponse fetchAllProfileRole(@ApiParam("应用代码") @RequestParam(required = false) String appCd) {
+    CommonWithHeaderResponse fetchAllProfileRole(@ApiParam(value = "应用代码", required = false)
+                                                 @RequestParam(required = false)
+                                                         String appCd) {
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchAllProfileRole(appCd);
 
         return new CommonWithHeaderResponseBuilder<Void, FetchResponse<Map<String, Object>>>()
@@ -91,7 +94,8 @@ public class ProfileMgmController {
     @PreAuthorize("hasAuthority('SaveProfileUserAndRole')")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileUserAndRole(
-            @RequestBody ProfileUserRoleForm profileUserRoleForm, HttpServletRequest request) {
+            @RequestBody @Validated ProfileUserRoleForm profileUserRoleForm,
+            HttpServletRequest request) {
         Date date = new Date();
         profileMgmService.saveProfileUserAndRole(profileUserRoleForm.getPuId(), profileUserRoleForm.getRoleId());
         ProfileUser profileUserInfo = profileUserService.findProfileUserInfo(profileUserRoleForm.getPuId());
@@ -118,7 +122,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "获取用户对应的角色", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse fetchUserRole(
-            @RequestBody ProfileUserRoleForm profileUserRoleForm) {
+            @RequestBody @Validated ProfileUserRoleForm profileUserRoleForm) {
 
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService
                 .fetchUserRoleByPuId(profileUserRoleForm.getPuId());
@@ -152,7 +156,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "查询所有角色信息列表", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse fetchProfileRole(
-            @RequestBody ProfileRoleBranch profileRoleBranch) {
+            @RequestBody @Validated ProfileRoleBranch profileRoleBranch) {
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService
                 .fetchProfileRole(profileRoleBranch.getRoleName(),
                         profileRoleBranch.getAppCd(),
@@ -173,7 +177,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "角色新增", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileRole(
-            @RequestBody ProfileRoleSaveUpdateForm profileRoleSaveForm) {
+            @RequestBody @Validated ProfileRoleSaveUpdateForm profileRoleSaveForm) {
         profileMgmService.saveProfileRole(profileRoleSaveForm.getRoleId(), profileRoleSaveForm.getBranchId(),
                 profileRoleSaveForm.getRoleName(), provider4Organization.getCurrentOrganizationId(),
                 profileRoleSaveForm.getAppCd());
@@ -193,7 +197,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "角色修改", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse updateProfileRole(
-            @RequestBody ProfileRoleSaveUpdateForm profileRoleSaveUpdateForm) {
+            @RequestBody @Validated ProfileRoleSaveUpdateForm profileRoleSaveUpdateForm) {
 
         profileMgmService.updateProfileRole(profileRoleSaveUpdateForm.getRoleId(),
                 profileRoleSaveUpdateForm.getBranchId(),
@@ -215,7 +219,7 @@ public class ProfileMgmController {
     @ApiOperation(value = "角色删除", notes = "")
     public @ResponseBody
     CommonWithHeaderResponse deleteProfileRole(
-            @RequestBody ProfileRoleDelForm profileRoleDelForm) {
+            @RequestBody @Validated ProfileRoleDelForm profileRoleDelForm) {
         profileRoleService.deleteProfileRoles(
                 profileRoleDelForm.getRoleId()
         );

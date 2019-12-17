@@ -10,6 +10,7 @@ import net.engining.profile.sdk.service.bean.param.ResultMessageBean;
 import net.engining.profile.sdk.service.param.PasswordRuleManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,7 +29,7 @@ public class PasswordRuleManagerController {
     @ApiOperation(value = "密码规则确认", notes = "")
     @RequestMapping(value = "/passwordRuleManager", method = RequestMethod.POST)
     @ResponseBody
-    public CommonWithHeaderResponse passwordRuleManager(@RequestBody PasswordRuleBean passwordRuleBean) {
+    public CommonWithHeaderResponse passwordRuleManager(@RequestBody @Validated PasswordRuleBean passwordRuleBean) {
         ResultMessageBean resultMessageBean = passwordRuleManagerService.passwordRuleManager(passwordRuleBean);
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()

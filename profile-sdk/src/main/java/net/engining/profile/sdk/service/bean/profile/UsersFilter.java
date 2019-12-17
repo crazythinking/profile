@@ -1,7 +1,9 @@
 package net.engining.profile.sdk.service.bean.profile;
 
+import io.swagger.annotations.ApiModelProperty;
 import net.engining.pg.support.db.querydsl.Range;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -16,8 +18,14 @@ import java.io.Serializable;
 public class UsersFilter implements Serializable{
 
     private static final long serialVersionUID = 4603644745622122258L;
+
+    @NotBlank(message = "分支id")
+    @ApiModelProperty(value = "分支id", required = true, example="123")
     private String branchId;
+
     private Range range;
+
+    @ApiModelProperty(value = "用户姓名", required = false, example="xx")
     private String name;
 
     public String getBranchId() {
