@@ -12,11 +12,11 @@ import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
+import net.engining.profile.config.props.ProfileOauthProperties;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
 import net.engining.profile.enums.RoleIdEnum;
 import net.engining.profile.sdk.service.query.AuthService;
-import net.engining.profile.config.props.ProfileAuthProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class ProfileMgmService {
 	AuthService authService;
 
 	@Autowired
-	ProfileAuthProperties profileAuthProperties;
+	ProfileOauthProperties profileAuthProperties;
 
 	/**
 	 * 根据用户信息查询其角色

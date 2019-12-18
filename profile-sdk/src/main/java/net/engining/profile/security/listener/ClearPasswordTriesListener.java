@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * 登录成功重置密码错误次数
- * 
+ *
  * @author zhangkun
  *
  */
@@ -24,14 +24,15 @@ public class ClearPasswordTriesListener implements ApplicationListener<Authentic
 
 	/** logger */
 	private static final Logger log = LoggerFactory.getLogger(ClearPasswordTriesListener.class);
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
-		checkArgument(event.getAuthentication().getPrincipal() instanceof UserDetails);
+
+		//为了兼容oauth2认证，去除原先【instanceof UserDetails】的强校验
 
 		if (event.getAuthentication().getPrincipal() instanceof ProfileUserDetails) {
 			ProfileUserDetails ud = (ProfileUserDetails)event.getAuthentication().getPrincipal();
