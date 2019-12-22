@@ -348,7 +348,7 @@ public class AuthService implements InitializingBean {
         Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = Maps.newHashMap();
         Set<String> appCdSet = rootAllList.stream().map(MenuOrAuthBean::getAppCd).collect(Collectors.toSet());
         for (String cd : appCdSet) {
-            List<MenuOrAuthBean> cdMenuOrAuthList = new ArrayList<>();
+            List<MenuOrAuthBean> cdMenuOrAuthList = new LinkedList<>();
             for (MenuOrAuthBean menuOrAuthBean : rootAllList) {
                 if (cd.equals(menuOrAuthBean.getAppCd())) {
                     cdMenuOrAuthList.add(menuOrAuthBean);
