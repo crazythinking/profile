@@ -1,41 +1,37 @@
 package net.engining.profile.security.handler;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import net.engining.pg.support.core.exception.ErrorCode;
-import net.engining.pg.web.BaseResponseBean;
-import net.engining.pg.web.NewWebCommonResponseBuilder;
-import net.engining.pg.web.bean.DefaultResponseHeader;
-
+/**
+ * 返回Json格式的spring security框架用户身份验证成功后处理
+ * @author Eric Lu
+ */
 public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
-	private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request,HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException {
-		
-		response.setStatus(HttpStatus.OK.value());
-		
-		BaseResponseBean baseResponseBean = new BaseResponseBean();
-		
-		mapper.writeValue(response.getOutputStream(), 
-				new NewWebCommonResponseBuilder<DefaultResponseHeader,BaseResponseBean>()
-					.build()
-					.setStatusCode(ErrorCode.Success.getValue())
-					.setStatusDesc(ErrorCode.Success.getLabel())
-					.setResponseData(baseResponseBean)
-					);
-		
-	}
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException, ServletException {
+
+        response.setStatus(HttpStatus.OK.value());
+
+        mapper.writeValue(response.getOutputStream(),
+                new CommonWithHeaderResponseBuilder<Void, Void>()
+                        .build()
+                        .setStatusCode(ErrorCode.Success.getValue())
+                        .setStatusDesc(ErrorCode.Success.getLabel())
+        );
+
+    }
 
 }

@@ -4,12 +4,16 @@
 	<parent>
 		<groupId>net.engining.profile</groupId>
 		<artifactId>profile-parent</artifactId>
-		<version>4.0.1-SNAPSHOT</version>
+		<version>4.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	
 	<artifactId>profile-dict</artifactId>
 	<name>Profile - Dictionary</name>
+
+	<properties>
+		<pmd.skip>true</pmd.skip>
+	</properties>
 	
 	<dependencies>
 		<dependency>
@@ -17,6 +21,24 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- 注意必须依赖此包；否则pg-maven-plugin生成QueryDslRepository相关类会报错无法找到org.springframework.data.querydsl.QuerydslPredicateExecutor -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+			<version>${querydsl.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jsr305</artifactId>
+					<groupId>com.google.code.findbugs</groupId>
+				</exclusion>
+			</exclusions>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- 自身框架依赖 -->
 		<dependency>
 			<groupId>net.engining.pg</groupId>
@@ -33,7 +55,6 @@
 			<resource>
 				<directory>src\main\java</directory>
 				<includes>
-					<include>**/*.properties</include>
 					<include>**/*.sql</include>
 				</includes>
 			</resource>
@@ -43,6 +64,7 @@
 			<plugin>
 				<groupId>net.engining.pg</groupId>
 				<artifactId>pg-maven-plugin</artifactId>
+				<version>${pg.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -58,8 +80,8 @@
 					<outputDirectory>${project.build.directory}/pg-entities</outputDirectory>
 				</configuration>
 			</plugin>
+			<!-- Q对象生成插件 -->
 			<plugin>
-				<!-- Q对象生成插件 -->
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
 				<executions>
@@ -69,17 +91,42 @@
 						</goals>
 						<phase>generate-sources</phase>
 						<configuration>
-							<sourceDirectory>${project.build.directory}/pg-entities</sourceDirectory>
 							<outputDirectory>${project.build.directory}/querydsl-sources</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+							<processors>
+								<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+							</processors>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- SQL Q对象生成插件 -->
+			<plugin>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-maven-plugin</artifactId>
+				<version>${querydsl.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>export</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jdbcDriver>org.h2.Driver</jdbcDriver>
+					<jdbcUrl>
+						jdbc:h2:mem:memdb;INIT=RUNSCRIPT FROM '${project.baseUri}/src/main/java/net/engining/profile/sqlscript/profile-h2.sql'\;
+					</jdbcUrl>
+					<jdbcUser>sa</jdbcUser>
+					<namePrefix>QSql</namePrefix>
+					<sourceFolder>${project.build.directory}/querydsl-sources</sourceFolder>
+					<packageName>net.engining.profile.entity.model.qsql</packageName>
+					<targetFolder>${project.build.directory}/querydsl-sources</targetFolder>
+				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>com.querydsl</groupId>
-						<artifactId>querydsl-apt</artifactId>
-						<version>${querydsl.version}</version>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>${h2.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

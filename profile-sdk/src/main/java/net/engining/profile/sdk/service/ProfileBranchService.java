@@ -1,55 +1,43 @@
 package net.engining.profile.sdk.service;
 
-import java.text.MessageFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.model.ProfileBranch;
-import net.engining.profile.entity.model.ProfileBranchKey;
-import net.engining.profile.entity.model.ProfilePwdHist;
-import net.engining.profile.entity.model.ProfileRole;
-import net.engining.profile.entity.model.ProfileRoleAuth;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.ProfileUserRole;
-import net.engining.profile.entity.model.QProfileBranch;
-import net.engining.profile.entity.model.QProfilePwdHist;
-import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.entity.model.QProfileRoleAuth;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.entity.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProfileBranchService{
-	
+
 	@PersistenceContext
 	private EntityManager em;
 
+	private final static Logger log = LoggerFactory.getLogger(ProfileBranchService.class);
+
 	public FetchResponse<ProfileBranch> fetchBranch(Range range, String superiorId, String orgId) {
-		
+
 		QProfileBranch q = QProfileBranch.profileBranch;
 		JPAQuery<ProfileBranch> query = new JPAQueryFactory(em)
 				.select(q)
 				.from(q);
-		
+
 		if (superiorId == null)
 		{
 			query.where(q.superiorId.isNull());
@@ -58,20 +46,20 @@ public class ProfileBranchService{
 		{
 			query.where(q.superiorId.eq(superiorId).and(q.orgId.eq(orgId)));
 		}
-		
+
 		return new JPAFetchResponseBuilder<ProfileBranch>().range(range).build(query);
 	}
 
 	public FetchResponse<ProfileBranch> fetchBranch(Range range) {
-		
+
 		QProfileBranch q = QProfileBranch.profileBranch;
 		JPAQuery<ProfileBranch> query = new JPAQueryFactory(em)
 				.select(q)
 				.from(q);
-		
+
 		return new JPAFetchResponseBuilder<ProfileBranch>()
-			.range(range)
-			.build(query);
+				.range(range)
+				.build(query);
 	}
 
 	public ProfileBranch getBranch(String orgId, String branchId) {
@@ -79,10 +67,10 @@ public class ProfileBranchService{
 		return em.find(ProfileBranch.class, profileBranchKey);
 	}
 
-	
-	@Transactional
+
+	@Transactional(rollbackFor = Exception.class)
 	public void updateBranch(ProfileBranch branch) throws ErrorMessageException {
-		
+
 		QProfileBranch q = QProfileBranch.profileBranch;
 
 		if (Strings.isNullOrEmpty(branch.getSuperiorId()))
@@ -91,10 +79,10 @@ public class ProfileBranchService{
 					.select(q.branchId)
 					.from(q)
 					.where(
-							q.superiorId.isNull(), 
+							q.superiorId.isNull(),
 							q.branchId.ne(branch.getBranchId()),
 							q.orgId.eq(branch.getOrgId())
-							)
+					)
 					.fetchCount();
 			if (n > 0)
 			{
@@ -110,14 +98,14 @@ public class ProfileBranchService{
 					.where(
 							q.branchId.eq(branch.getSuperiorId()),
 							q.orgId.eq(branch.getOrgId())
-							)
+					)
 					.fetchCount();
 			if (n == 0)
 			{
 				throw new ErrorMessageException(ErrorCode.CheckError, MessageFormat.format("找不到上级分支, superiorId:{}", branch.getBranchId()));
 			}
 		}
-		
+
 		em.merge(branch);
 	}
 
@@ -128,15 +116,15 @@ public class ProfileBranchService{
 	 */
 	public Map<String, String> fetchBranchNamesByOrg(String orgId) {
 		QProfileBranch q = QProfileBranch.profileBranch;
-		QueryResults<Tuple> queryResults = new JPAQueryFactory(em)
+		List<Tuple> queryResults = new JPAQueryFactory(em)
 				.select(q.branchId, q.branchName)
 				.from(q)
 				.where(q.orgId.eq(orgId))
-				.fetchResults();
-		
-		LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
-		
-		for (Tuple t : queryResults.getResults())
+				.fetch();
+
+		HashMap<String, String> result = Maps.newHashMapWithExpectedSize(queryResults.size());
+
+		for (Tuple t : queryResults)
 		{
 			result.put(t.get(q.branchId), t.get(q.branchName));
 		}
@@ -148,73 +136,97 @@ public class ProfileBranchService{
 	 * @param branch
 	 * @throws ErrorMessageException
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void addbranch(ProfileBranch branch) throws ErrorMessageException {
 		ProfileBranchKey profileBranchKey = new ProfileBranchKey(branch.getOrgId(), branch.getBranchId());
-		
+
 		if(em.find(ProfileBranch.class, profileBranchKey) != null){
 			throw new ErrorMessageException(ErrorCode.CheckError, "添加分支机构失败:分支机构已存在");
 		}
 		em.persist(branch);
-		
+
 	}
 
 	/**
-	 * 清空分支机构下的所有Profiles信息; //TODO 如下删除效率低，重构
+	 * 清空分支机构下的所有Profiles信息;
 	 * @param branchIds
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteProfileBranch(List<String> branchIds, String orgId) {
+		//密码维护历史表
 		QProfilePwdHist qProfilePwdHist = QProfilePwdHist.profilePwdHist;
+		//用户角色表
 		QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;
-		QProfileRole qProfileRole =QProfileRole.profileRole;
+		//角色表
+		QProfileRole qProfileRole = QProfileRole.profileRole;
+		//角色权限表
 		QProfileRoleAuth qProfileRoleAuth = QProfileRoleAuth.profileRoleAuth;
-		QProfileUser qProfileUser =QProfileUser.profileUser;
-		
-		for(String branchId : branchIds)
-		{
-			
-			List<ProfileUser> profileUsers = new JPAQueryFactory(em)
-					.select(qProfileUser)
-					.from(qProfileUser)
-					.where(
-							qProfileUser.branchId.eq(branchId),
-							qProfileUser.orgId.eq(orgId)
-							)
-					.fetch();
-			for(ProfileUser profileUser: profileUsers){
-				List<ProfilePwdHist> profilePwdHists = new JPAQueryFactory(em).select(qProfilePwdHist).from(qProfilePwdHist).where(qProfilePwdHist.puId.eq(profileUser.getPuId())).fetch();
-				for(ProfilePwdHist profilePwdHist : profilePwdHists){
-					em.remove(profilePwdHist);
-				} 
-				em.remove(profileUser);
-			}
-			
-			List<ProfileRole> profileRoles = new JPAQueryFactory(em)
-					.select(qProfileRole)
-					.from(qProfileRole)
-					.where(
-							qProfileRole.branchId.eq(branchId),
-							qProfileRole.orgId.eq(orgId)
-							)
-					.fetch();
-			for(ProfileRole profileRole: profileRoles){
-				
-				List<ProfileUserRole> profileUserRoles = new JPAQueryFactory(em).select(qProfileUserRole).from(qProfileUserRole).where(qProfileUserRole.roleId.eq(profileRole.getRoleId())).fetch();
-				for(ProfileUserRole profileUserRole : profileUserRoles){
-					em.remove(profileUserRole);
-				}
-				
-				List<ProfileRoleAuth> profileRoleAuths = new JPAQueryFactory(em).select(qProfileRoleAuth).from(qProfileRoleAuth).where(qProfileRoleAuth.roleId.eq(profileRole.getRoleId())).fetch();
-				for(ProfileRoleAuth profileRoleAuth : profileRoleAuths){
-					em.remove(profileRoleAuth);
-				}
-				
-				em.remove(profileRole);
-			}
-			
-			ProfileBranchKey profileBranchKey = new ProfileBranchKey(orgId, branchId);
-			em.remove(em.find(ProfileBranch.class, profileBranchKey));
-		}	
+		//用户表
+		QProfileUser qProfileUser = QProfileUser.profileUser;
+		//机构表
+		QProfileBranch qProfileBranch = QProfileBranch.profileBranch;
+
+		List<String> profileUsers = new JPAQueryFactory(em)
+				.select(qProfileUser.puId)
+				.from(qProfileUser)
+				.where(
+						qProfileUser.branchId.in(branchIds),
+						qProfileUser.orgId.eq(orgId)
+				)
+				.fetch();
+		List<String> profileRoles = new JPAQueryFactory(em)
+				.select(qProfileRole.roleId)
+				.from(qProfileRole)
+				.where(
+						qProfileRole.branchId.in(branchIds),
+						qProfileRole.orgId.eq(orgId)
+				)
+				.fetch();
+
+		//删除密码维护历史表
+		long n1 = new JPAQueryFactory(em)
+				.delete(qProfilePwdHist)
+				.where(qProfilePwdHist.puId.in(profileUsers))
+				.execute();
+		log.debug("删除了{}条ProfilePwdHist", n1);
+
+		//删除用户表
+		long n2 = new JPAQueryFactory(em)
+				.delete(qProfileUser)
+				.where(qProfileUser.puId.in(profileUsers))
+				.execute();
+		log.debug("删除了{}条ProfileUser", n2);
+
+		//删除用户角色表
+		long n3 = new JPAQueryFactory(em)
+				.delete(qProfileUserRole)
+				.where(qProfileUserRole.roleId.in(profileRoles))
+				.execute();
+		log.debug("删除了{}条ProfileUserRole", n3);
+
+		//删除角色权限表
+		long n4 = new JPAQueryFactory(em)
+				.delete(qProfileRoleAuth)
+				.where(qProfileRoleAuth.roleId.in(profileRoles))
+				.execute();
+		log.debug("删除了{}条ProfileRoleAuth", n4);
+
+		//删除角色表
+		long n5 = new JPAQueryFactory(em)
+				.delete(qProfileRole)
+				.where(qProfileRole.roleId.in(profileRoles))
+				.execute();
+		log.debug("删除了{}条ProfileRole", n5);
+
+		//删除机构表
+		long n6 = new JPAQueryFactory(em)
+				.delete(qProfileBranch)
+				.where(
+						qProfileBranch.branchId.in(branchIds),
+						qProfileBranch.orgId.eq(orgId)
+				)
+				.execute();
+		log.debug("删除了{}条ProfileBranch", n6);
+
 	}
 }

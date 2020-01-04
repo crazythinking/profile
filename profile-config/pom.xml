@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.engining.profile</groupId>
+		<artifactId>profile-parent</artifactId>
+		<version>4.0.3-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>profile-config</artifactId>
+	<name>统一配置库</name>
+	<packaging>jar</packaging>
+
+	<!-- 以下config项目的依赖，总体原则上optional，避免spring-boot启动时自动加载不需要的加载项 ；各依赖项目根据需要自己依赖-->
+	<dependencies>
+		<!-- 该组件为自定义的properties(@ConfigurationProperties)产生元数据文件classes/META-INF/spring-configuration-metadata.json; 
+		另外此依赖还会造成aspectj-maven-plugin插件maven编译时出错，尽量不要同时用，或者配置maven-compiler-plugin：<proc>none</proc>（详见pg-support） -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- 自身框架依赖 -->
+		<dependency>
+			<groupId>net.engining.pg</groupId>
+			<artifactId>pg-support</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>objenesis</artifactId>
+					<groupId>org.objenesis</groupId>
+				</exclusion>
+			</exclusions>
+			<optional>true</optional>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+</project>

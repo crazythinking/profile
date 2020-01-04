@@ -1,8 +1,11 @@
 package net.engining.profile.security.listener;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import net.engining.pg.parameter.ParameterFacility;
+import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.param.SecurityControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +13,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import net.engining.pg.parameter.ParameterFacility;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.entity.model.QProfileUser;
-import net.engining.profile.param.SecurityControl;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * 根据密码输入错误次数锁定用户
@@ -43,7 +41,7 @@ public class PasswordTriesListener implements ApplicationListener<Authentication
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
 
 		String userId = (String)event.getAuthentication().getPrincipal();
@@ -60,8 +58,8 @@ public class PasswordTriesListener implements ApplicationListener<Authentication
 			//计数
 			user.setPwdTries(user.getPwdTries() + 1);
 			
-			//处理账户销定
-			SecurityControl sc = parameterFacility.getUniqueParameter(SecurityControl.class).or(defaultSecurityControl);
+			//处理账户锁定
+			SecurityControl sc = parameterFacility.getUniqueParameter(SecurityControl.class).orElse(defaultSecurityControl);
 			
 			if (user.getPwdTries() >= sc.getPwdTries())
 			{
