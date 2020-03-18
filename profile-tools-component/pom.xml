@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>profile-tools-component</artifactId>
-	<name>初始化 component (jar依赖)</name>
+	<name>Profile tools-component (jar依赖)</name>
 	<packaging>jar</packaging>
 
 	<properties>

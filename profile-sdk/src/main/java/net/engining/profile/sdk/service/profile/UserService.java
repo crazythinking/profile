@@ -8,7 +8,7 @@ import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.bean.profile.MgmWebUser;
 import net.engining.profile.sdk.service.bean.profile.ProfileUserUpdateForm;
-import net.engining.profile.security.ProfileSecurityService;
+import net.engining.profile.security.service.ProfileSecurityService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

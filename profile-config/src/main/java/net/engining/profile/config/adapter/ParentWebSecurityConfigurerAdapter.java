@@ -3,7 +3,6 @@ package net.engining.profile.config.adapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,9 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- *
- * 使用SecurityProperties.BASIC_AUTH_ORDER-1，即比pring security默认的安全配置优先级高；
- * <br>
  * 因为此配置必然需要控制端点层的权限，所以需要使用@EnableGlobalMethodSecurity 开启支持方法注解的权限控制,
  * 等同于<security:global-method-security pre-post-annotations="enabled" mode="aspectj"/>：
  * <br>
@@ -37,11 +33,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @date : 2020-03-17 11:25
  * @since : 4.0.3
  */
-@Configuration
 @Order(SecurityProperties.BASIC_AUTH_ORDER-1)
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, mode = AdviceMode.ASPECTJ)
-public class ParentWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter{
+public abstract class ParentWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter{
 
     @Autowired
     PasswordEncoder passwordEncoder;

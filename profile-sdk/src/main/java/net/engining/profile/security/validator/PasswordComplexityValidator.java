@@ -1,13 +1,11 @@
 package net.engining.profile.security.validator;
 
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Service;
-
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.param.PasswordPattern;
 import net.engining.profile.param.SecurityControl;
+import org.springframework.stereotype.Service;
 
 /**
  * 密码复杂度校验，根据参数设置的密码复杂度正则表达式校验密码，参见{@link PasswordPattern}
@@ -16,7 +14,6 @@ import net.engining.profile.param.SecurityControl;
  * 
  */
 @Service
-@Configurable
 public class PasswordComplexityValidator implements SecurityControlValidator {
 
 	private static final String HINT_PREFIX = "密码必须";

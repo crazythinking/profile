@@ -1,14 +1,16 @@
 package net.engining.profile.security.adapter;
 
-import net.engining.gm.config.props.GmCommonProperties;
+import net.engining.pg.web.security.DefaultJsonAuthSuccessHandler;
 import net.engining.profile.config.adapter.ParentWebSecurityConfigurerAdapter;
+import net.engining.profile.security.handler.JsonAuthFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
+ * 使用SecurityProperties.BASIC_AUTH_ORDER-2，即比pring security默认的安全配置优先级高；
  * 用于支持FormLogin登录方式的安全控制，主要用于前后分离架构，使用无session的模式；
  *
  * @author : Eric Lu
@@ -16,14 +18,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * @date : 2020-03-17 11:25
  * @since : 4.0.3
  **/
-@Configuration
 public class FormLoginWebSecurityExtContextConfig extends ParentWebSecurityConfigurerAdapter {
 
 	@Autowired
-	AuthenticationSuccessHandler jsonAuthSuccessHandler;
+	DefaultJsonAuthSuccessHandler jsonAuthSuccessHandler;
 
 	@Autowired
-	AuthenticationFailureHandler jsonAuthFailureHandler;
+	JsonAuthFailureHandler jsonAuthFailureHandler;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

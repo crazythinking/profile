@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>profile-api</artifactId>
-	<name>Profile - api</name>
+	<name>Profile - API</name>
 
 	<dependencies>
 

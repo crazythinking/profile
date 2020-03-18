@@ -1,4 +1,4 @@
-package net.engining.profile.security;
+package net.engining.profile.security.service;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;

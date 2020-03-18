@@ -14,7 +14,7 @@ import net.engining.profile.sdk.service.ProfileMgmService;
 import net.engining.profile.sdk.service.ProfileRoleService;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.bean.profile.*;
-import net.engining.profile.security.ProfileSecurityLoggerService;
+import net.engining.profile.security.service.ProfileSecurityLoggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;

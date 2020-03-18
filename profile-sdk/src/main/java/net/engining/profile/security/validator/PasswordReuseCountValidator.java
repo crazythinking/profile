@@ -26,7 +26,6 @@ import net.engining.profile.param.SecurityControl;
  * 
  */
 @Service
-@Configurable
 public class PasswordReuseCountValidator implements SecurityControlValidator {
 
 	@PersistenceContext

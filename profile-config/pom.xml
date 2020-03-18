@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>profile-config</artifactId>
-	<name>统一配置库</name>
+	<name>Profile 统一配置库</name>
 	<packaging>jar</packaging>
 
 	<!-- 以下config项目的依赖，总体原则上optional，避免spring-boot启动时自动加载不需要的加载项 ；各依赖项目根据需要自己依赖-->
@@ -39,6 +39,11 @@
 			<artifactId>spring-security-config</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- 自身框架依赖 -->
 		<dependency>
@@ -54,6 +59,12 @@
 		<dependency>
 			<groupId>net.engining.gm</groupId>
 			<artifactId>gm-config</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

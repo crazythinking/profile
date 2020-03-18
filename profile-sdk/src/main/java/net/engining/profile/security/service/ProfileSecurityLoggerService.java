@@ -1,4 +1,4 @@
-package net.engining.profile.security;
+package net.engining.profile.security.service;
 
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.profile.entity.model.ProfileSecoperLog;

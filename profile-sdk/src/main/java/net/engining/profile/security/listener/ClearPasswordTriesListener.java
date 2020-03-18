@@ -1,12 +1,11 @@
 package net.engining.profile.security.listener;
 
 import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.security.ProfileUserDetails;
+import net.engining.profile.security.service.ProfileUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;

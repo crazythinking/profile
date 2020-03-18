@@ -1,4 +1,4 @@
-package net.engining.profile.security;
+package net.engining.profile.security.service;
 
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;

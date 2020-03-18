@@ -52,6 +52,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- AspectJ 依赖项 -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>

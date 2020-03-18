@@ -9,7 +9,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
 import net.engining.profile.param.SecurityControl;
-import net.engining.profile.security.ProfileUserDetails;
+import net.engining.profile.security.service.ProfileUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

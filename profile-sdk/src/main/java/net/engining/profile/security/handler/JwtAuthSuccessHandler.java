@@ -6,8 +6,8 @@ import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.profile.enums.OperationType;
-import net.engining.profile.security.ProfileSecurityLoggerService;
-import net.engining.profile.security.ProfileUserDetails;
+import net.engining.profile.security.service.ProfileSecurityLoggerService;
+import net.engining.profile.security.service.ProfileUserDetails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,7 @@ import java.util.Date;
 public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Autowired
-    ProfileSecurityLoggerService securityLoggerService;
+	ProfileSecurityLoggerService securityLoggerService;
 	
 	@Autowired
 	GmCommonProperties commonProperties;
@@ -45,6 +45,9 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 	
 	private ObjectMapper mapper;
 
+	/**
+	 * 由外部传入，减少ObjectMapper实例化的消耗，此对象的实例化比较耗费资源
+	 */
 	public void setMapper(ObjectMapper mapper) {
 		this.mapper = mapper;
 	}
@@ -77,6 +80,7 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 			issuer = commonProperties.getJwtIssuer();
 		}
 
+		//兜底
 		if (ValidateUtilExt.isNullOrEmpty(mapper)){
 			mapper = new ObjectMapper();
 		}
