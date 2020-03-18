@@ -1,6 +1,8 @@
 package net.engining.profile.sdk.service.query;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Ticker;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,7 +17,12 @@ import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.dstruct.TreeNode;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.config.props.ProfileOauthProperties;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileMenu;
+import net.engining.profile.entity.model.QProfileMenuInterf;
+import net.engining.profile.entity.model.QProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -229,10 +240,47 @@ public class AuthService implements InitializingBean {
             }else {
                 treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
             }
-
         }
 
-        return treeJsonStr;
+        JSONObject jsonObject = getOrderTreeJsonString(JSONObject.parseObject(treeJsonStr));
+        return JSON.toJSONString(jsonObject);
+    }
+
+    /**
+     * 原菜单树存在HashSet中，存取无序，需要对其进行再次排序
+     *
+     * @param originalObject 原菜单树转换成JSONObject对象
+     * @return 排序后原菜单树转成的JSONObject对象
+     */
+    private JSONObject getOrderTreeJsonString(JSONObject originalObject) {
+        // 判断其下是否有子菜单树，没有则不需要进行排序
+        if (ValidateUtilExt.isNotNullOrEmpty(originalObject.get("children"))) {
+            JSONArray originalArray = originalObject.getJSONArray("children");
+
+            int size = originalArray.size();
+            List<JSONObject> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                // 递归，先从最低一级的菜单树开始排序
+                JSONObject jsonObject = getOrderTreeJsonString(originalArray.getJSONObject(i));
+                list.add(jsonObject);
+            }
+
+            // 根据id递增
+            list.sort((a, b) -> {
+                MenuOrAuthBean menu1 = JSONObject.parseObject(a.get("data").toString(), MenuOrAuthBean.class);
+                MenuOrAuthBean menu2 = JSONObject.parseObject(b.get("data").toString(), MenuOrAuthBean.class);
+                Integer id1 = Integer.valueOf(menu1.getId());
+                Integer id2 = Integer.valueOf(menu2.getId());
+                return id1 - id2;
+            });
+
+            // 替换原菜单树
+            JSONArray newArray = new JSONArray(size);
+            newArray.addAll(list);
+            originalObject.put("children", newArray);
+        }
+
+        return originalObject;
     }
 
     /**
@@ -688,4 +736,5 @@ public class AuthService implements InitializingBean {
         Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
         log.debug("菜单权限树缓存cache加载完成...{}",JSON.toJSONString(treeParentNode));
     }
+
 }
