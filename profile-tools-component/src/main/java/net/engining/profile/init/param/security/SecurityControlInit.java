@@ -27,11 +27,6 @@ public class SecurityControlInit implements ParameterInitializer {
         SecurityControl securityControl = new SecurityControl();
         securityControl.complexPwdInd = true;
         securityControl.passwordPatterns = new ArrayList<>();
-//        PasswordPattern passwordPattern1 = new PasswordPattern();
-//        passwordPattern1.mustMatch = true;
-//        passwordPattern1.message = "大小写字母+数字,长度为6~12个字符";
-//        passwordPattern1.pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,12}$";
-//        passwordPattern1.weights = 100;
         PasswordPattern passwordPattern2 = new PasswordPattern();
         passwordPattern2.mustMatch = true;
         passwordPattern2.message = "密码必须包含大写字母";
@@ -47,7 +42,6 @@ public class SecurityControlInit implements ParameterInitializer {
         passwordPattern4.message = "长度6-12位";
         passwordPattern4.pattern = ".{6,12}";
         passwordPattern4.weights = 101;
-//        securityControl.passwordPatterns.add(passwordPattern1);
         securityControl.passwordPatterns.add(passwordPattern2);
         securityControl.passwordPatterns.add(passwordPattern3);
         securityControl.passwordPatterns.add(passwordPattern4);

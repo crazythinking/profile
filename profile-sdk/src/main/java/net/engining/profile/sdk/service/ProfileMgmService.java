@@ -12,7 +12,6 @@ import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.profile.config.props.ProfileOauthProperties;
 import net.engining.profile.entity.model.*;
 import net.engining.profile.enums.DefaultRoleID;
 import net.engining.profile.enums.RoleIdEnum;
@@ -23,27 +22,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Profile 后台管理服务
+ *
  * @author
  */
 @Service
 public class ProfileMgmService {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	/** logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileMgmService.class);
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired
 	AuthService authService;
-
-	@Autowired
-	ProfileOauthProperties profileAuthProperties;
 
 	/**
 	 * 根据用户信息查询其角色
@@ -110,7 +110,7 @@ public class ProfileMgmService {
 				.where(qProfileUserRole.puId.eq(puId))
 				.execute();
 
-		logger.debug("删除了{}条ProfileUserRole", n1);
+		LOGGER.debug("删除了{}条ProfileUserRole", n1);
 
 		for(String s : roleId){
 			ProfileUserRole profileUserRole = new ProfileUserRole();

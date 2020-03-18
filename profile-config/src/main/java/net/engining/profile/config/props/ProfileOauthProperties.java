@@ -3,9 +3,10 @@ package net.engining.profile.config.props;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * 授权中心配置参数
+ *
  * @author : lijiahui
  * @version : 版本
- * @Description :授权中心参数
  * @date : 2019/11/29 18:28
  */
 @ConfigurationProperties(prefix = "profile.oauth")

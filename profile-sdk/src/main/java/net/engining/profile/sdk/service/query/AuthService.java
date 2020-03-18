@@ -29,43 +29,54 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Duration;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * @Description 菜单权限相关service
+ *
+ * 菜单权限相关service
  * RoleId全局不可重复，MenuCd，Authority在同App_Cd范围内 不可重复；
  * ProfileParamProperties判断是否使用了授权中心
  * oauth中心模式缓存的map中有多颗appcd对应的树
  * 本地profile模式缓存的map中只有一颗树，且map key为"-",即DbConstants.NULL
- * @author sangchunhua
+ *
  */
 @Service
 public class AuthService implements InitializingBean {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    /** logger */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
+
     /**
      * 根级菜单编号
      */
     private static final String ROOT_MENU_ID = "0";
+
     /**
      * 全部权限树的cache key
      */
     public static final String ALL_AUTH_KEY = "allAuth";
+
     /**
      * (roleId)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
      */
     private LoadingCache<String, List<String>> roleAuthCache;
+
     /**
      * 没把全部用户的菜单树放缓存是因为，用户过多占太多内存
      * (userId)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
      */
     private LoadingCache<String, Map<String,TreeNode<MenuOrAuthBean>>> userMenuCache;
+
     /**
      * (allAuth)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
      */
     private LoadingCache<String, Map<String,TreeNode<MenuOrAuthBean>>> allAuthCache;
+
     /**
      * A time source
      */
@@ -78,11 +89,26 @@ public class AuthService implements InitializingBean {
     Provider4Organization provider4Organization;
 
     @Autowired
-    ProfileOauthProperties profileAuthProperties;
+    ProfileOauthProperties profileOauthProperties;
+
     /**
      * 作为resource资源服务时的url
      */
     public final static String MENU_RESOURCE_URL = "menu_resource";
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        LOGGER.debug("初始化菜单权限树缓存cache...");
+        //全部appcd权限树
+        initAllAuthTreeCache();
+        //用户菜单树
+        initUserMenuTreeCache();
+        //角色已有权限cache
+        initRoleAuthCache();
+        //触发缓存
+        Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
+        LOGGER.debug("菜单权限树缓存cache加载完成...{}",JSON.toJSONString(treeParentNode));
+    }
 
     /**
      * 菜单树查询
@@ -144,7 +170,7 @@ public class AuthService implements InitializingBean {
                 .delete(qProfileRoleAuth)
                 .where(qProfileRoleAuth.roleId.eq(roleId))
                 .execute();
-        log.debug("删除了{}条ProfileRoleAuth", n2);
+        LOGGER.debug("删除了{}条ProfileRoleAuth", n2);
         //添加权限
         authInfoList.forEach(authInfo -> {
             ProfileRoleAuth profileRoleAuth = new ProfileRoleAuth();
@@ -201,9 +227,9 @@ public class AuthService implements InitializingBean {
      */
     public boolean checkAppCd(String appCd) {
         //是否远程auth
-        boolean isAuth = profileAuthProperties.isOauthed();
+        boolean isAuth = profileOauthProperties.isOauthed();
         if (isAuth && ValidateUtilExt.isNullOrEmpty(appCd)){
-            throw new ErrorMessageException(ErrorCode.CheckError,"appCd不能为空！");
+            throw new ErrorMessageException(ErrorCode.CheckError, "appCd不能为空！");
         }
         return isAuth;
     }
@@ -240,8 +266,7 @@ public class AuthService implements InitializingBean {
      * @param rootAllList 用户角色下所有菜单list
      * @return
      */
-    private TreeNode<MenuOrAuthBean> createTreeNode(List<MenuOrAuthBean> rootAllList)
-    {
+    private TreeNode<MenuOrAuthBean> createTreeNode(List<MenuOrAuthBean> rootAllList) {
         //添加父根节点
         TreeNode<MenuOrAuthBean> treeParentNode = getParentNode(ROOT_MENU_ID,ROOT_MENU_ID);
         //为父根节点添加子节点
@@ -255,8 +280,7 @@ public class AuthService implements InitializingBean {
      * @param id 菜单id
      * @return
      */
-    private TreeNode<MenuOrAuthBean> getParentNode(String key, String id)
-    {
+    private TreeNode<MenuOrAuthBean> getParentNode(String key, String id) {
         MenuOrAuthBean parentMenu = new MenuOrAuthBean();
         parentMenu.setCd(key);
         parentMenu.setId(id);
@@ -675,17 +699,4 @@ public class AuthService implements InitializingBean {
                 .forEach(this::refreshUserMenuCacheByUserId);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        log.debug("初始化菜单权限树缓存cache...");
-        //全部appcd权限树
-        initAllAuthTreeCache();
-        //用户菜单树
-        initUserMenuTreeCache();
-        //角色已有权限cache
-        initRoleAuthCache();
-        //触发缓存
-        Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
-        log.debug("菜单权限树缓存cache加载完成...{}",JSON.toJSONString(treeParentNode));
-    }
 }

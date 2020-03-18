@@ -2,18 +2,14 @@ package net.engining.profile.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.profile.enums.OperationType;
 import net.engining.profile.security.ProfileSecurityLoggerService;
 import net.engining.profile.security.ProfileUserDetails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -41,14 +37,18 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 	/**
 	 * JWT secret key
 	 */
-	private String signingKey = WebCommonUtils.SE_JWT_SIGNKEY;
+	private static String signingKey = WebCommonUtils.SE_JWT_SIGNKEY;
 	
-	private long expirationMills = 30 * 60 * 1000;
+	private static long expirationMills = 30 * 60 * 1000;
 
-	private String issuer = "PROFILE";
+	private static String issuer = "PROFILE";
 	
-	private ObjectMapper mapper = new ObjectMapper();
-	
+	private ObjectMapper mapper;
+
+	public void setMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 										Authentication authentication)throws IOException, ServletException {
@@ -77,32 +77,22 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 			issuer = commonProperties.getJwtIssuer();
 		}
 
-		String token = Jwts.builder()
-				//代表这个JWT的主体，即它的所有人
-				.setSubject(authentication.getName())
-				//代表这个JWT的签发时间
-				.setIssuedAt(new Date())
-				//代表这个JWT的签发主体
-				.setIssuer(issuer)
-				//代表这个JWT生效的开始时间，意味着在这个时间之前验证JWT是会失败的；
-				.setNotBefore(new Date())
-				//代表这个JWT的过期时间
-				.setExpiration(new Date(System.currentTimeMillis() + expirationMills))
-				//.claim("roles", roles)
-				.claim("authorities", authorities)
-				//采用HS512加签
-				.signWith(SignatureAlgorithm.HS512, signingKey)
-				.compact();
-		response.addHeader("Authorization", "Bearer " + token);
-		
-		response.setStatus(HttpStatus.OK.value());
-		
-		mapper.writeValue(
-				response.getOutputStream(),
-				new CommonWithHeaderResponseBuilder<Void, Void>()
-					.build()
+		if (ValidateUtilExt.isNullOrEmpty(mapper)){
+			mapper = new ObjectMapper();
+		}
+		//生成JWT，并存入Header
+		WebCommonUtils.jwtBuilder(
+				response,
+				authentication,
+				authorities,
+				issuer,
+				expirationMills,
+				signingKey,
+				mapper
 		);
 	}
-	
-	
+
+
+
+
 }

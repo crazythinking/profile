@@ -25,9 +25,9 @@
 	
 	<modules>
 		<module>profile-dict</module>
+		<module>profile-config</module>
 		<module>profile-sdk</module>
 		<module>profile-api</module>
-		<module>profile-config</module>
 		<module>profile-tools-component</module>
 	</modules>
 	

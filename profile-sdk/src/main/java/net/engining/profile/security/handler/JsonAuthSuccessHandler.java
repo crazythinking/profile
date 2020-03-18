@@ -16,6 +16,7 @@ import java.io.IOException;
  * 返回Json格式的spring security框架用户身份验证成功后处理
  * @author Eric Lu
  */
+@Deprecated
 public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
     private ObjectMapper mapper = new ObjectMapper();
 

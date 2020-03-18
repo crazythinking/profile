@@ -37,16 +37,12 @@
 			<artifactId>pg-parameter-help</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.engining.gm</groupId>
-			<artifactId>gm-config</artifactId>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-dict</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.engining.profile</groupId>
-			<artifactId>profile-dict</artifactId>
 		</dependency>
 
         <dependency>
