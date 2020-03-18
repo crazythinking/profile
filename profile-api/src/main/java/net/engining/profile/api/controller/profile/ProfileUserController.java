@@ -5,7 +5,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.engining.pg.support.core.context.Provider4Organization;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
@@ -132,6 +135,9 @@ public class ProfileUserController {
 	public @ResponseBody
 	CommonWithHeaderResponse addUser(@RequestBody @Validated MgmWebUser user,
 									 HttpServletRequest request) {
+		if (ValidateUtilExt.isNullOrEmpty(user.getPassword())) {
+			throw new ErrorMessageException(ErrorCode.BadRequest, "密码不能为空！");
+		}
 		userService.validateUser(user.getUserId());
 		ProfileUser profileUser = userService.profileUserForm(user);
 		Date date = new Date();
