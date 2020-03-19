@@ -7,12 +7,9 @@ import net.engining.profile.config.adapter.ParentWebSecurityConfigurerAdapter;
 import net.engining.profile.security.handler.JsonAuthFailureHandler;
 import net.engining.profile.security.handler.JwtAuthSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * 使用SecurityProperties.BASIC_AUTH_ORDER-1，即比pring security默认的安全配置优先级高；
