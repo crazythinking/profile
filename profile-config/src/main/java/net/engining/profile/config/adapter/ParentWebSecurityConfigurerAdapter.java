@@ -1,5 +1,6 @@
 package net.engining.profile.config.adapter;
 
+import net.engining.pg.config.StaticResourceWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.AdviceMode;
@@ -36,34 +37,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Order(SecurityProperties.BASIC_AUTH_ORDER-1)
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, mode = AdviceMode.ASPECTJ)
-public abstract class ParentWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter{
+public abstract class ParentWebSecurityConfigurerAdapter extends StaticResourceWebSecurityConfigurerAdapter {
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
     UserDetailsService profileUserDetailsService;
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        // 设置不拦截规则
-        web.ignoring().antMatchers(
-                "/webjars/springfox-swagger-ui/**",
-                // swagger api json
-                "/v2/api-docs",
-                // 用来获取api-docs的URI
-                "/swagger-resources",
-                // 用来获取支持的动作
-                "/swagger-resources/configuration/ui/**",
-                // 安全选项
-                "/swagger-resources/configuration/security/**",
-                "/swagger-ui.html",
-                "/error",
-                "/**/favicon.ico",
-                //druid监控
-                "/druid/**"
-        );
-    }
 
     /**
      * 配置authenticationManager

@@ -103,7 +103,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
 
         //3.初始化用户角色权限
         initSuperAdmin();
-        initActuatorUser();
+        //initActuatorUser();
     }
 
     /**
