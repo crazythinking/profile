@@ -36,6 +36,15 @@ import java.util.*;
 @Api(value="ProfileUserController")
 public class ProfileUserController {
 
+	/**
+	 * 超级管理员用户名
+	 */
+	private final static String ADMIN = "admin";
+	/**
+     * 监控
+     */
+	private final static String SVADMIN = "svadmin";
+
 	@Autowired
 	private ProfileUserService profileUserService;
 
@@ -161,9 +170,18 @@ public class ProfileUserController {
 	public @ResponseBody
 	CommonWithHeaderResponse removeUser(@RequestBody @Validated ProfileUserForm user,
 										HttpServletRequest request) {
-		List<String> usrs = new ArrayList<String>();
+		if (user.getPuId().equals(user.getOperUserId())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除您自己的用户！");
+		}
+		List<String> usrs = new ArrayList<>(1);
 		usrs.add(user.getPuId());
 		ProfileUser profileUserInfo = profileUserService.findProfileUserInfo(user.getPuId());
+		if (ADMIN.equals(profileUserInfo.getUserId())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除超级管理员！");
+		}
+        if (SVADMIN.equals(profileUserInfo.getUserId())) {
+            throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除监控管理员！");
+        }
 		profileUserService.deleteProfileUsers(usrs);
 		String userId=profileUserInfo.getUserId();
 		Date date = new Date();

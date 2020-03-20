@@ -12,7 +12,12 @@ import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.QProfileBranch;
+import net.engining.profile.entity.model.QProfilePwdHist;
+import net.engining.profile.entity.model.QProfileRole;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.sdk.service.bean.UserRoleBean;
 import net.engining.profile.sdk.service.bean.profile.ProfileUserUpdateForm;
@@ -135,6 +140,7 @@ public class ProfileUserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void deleteProfileUsers(List<String> puIds) {
+
         QProfileUser qProfileUser = QProfileUser.profileUser;
         QProfilePwdHist qProfilePwdHist = QProfilePwdHist.profilePwdHist;
         QProfileUserRole qProfileUserRole = QProfileUserRole.profileUserRole;

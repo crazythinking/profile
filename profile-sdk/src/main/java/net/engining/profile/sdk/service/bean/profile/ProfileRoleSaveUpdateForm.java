@@ -1,8 +1,11 @@
 package net.engining.profile.sdk.service.bean.profile;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -18,6 +21,7 @@ public class ProfileRoleSaveUpdateForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@NotBlank(message = "请输入：角色id")
+    @Pattern(regexp = "^[0-9a-zA-Z]{1,18}$", message = "角色id只能输入18位以内的字母或数字")
 	@ApiModelProperty(value = "角色id", required = true, example="admin")
 	private String roleId;
 

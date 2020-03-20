@@ -9,6 +9,7 @@ import net.engining.profile.entity.enums.StatusDef;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 /**
@@ -35,6 +36,7 @@ public class MgmWebUser extends WebLoginUser {
 	 * 登录ID
 	 */
 	@NotBlank(message = "登录ID不能为空")
+	@Pattern(regexp = "^[0-9a-zA-Z]{1,38}$", message = "用户id只能输入20位以内的字母或数字")
 	@ApiModelProperty(value = "登录ID", required = true, example="123")
 	private String userId;
 

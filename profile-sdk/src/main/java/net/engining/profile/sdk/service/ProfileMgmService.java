@@ -229,21 +229,15 @@ public class ProfileMgmService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public void updateProfileRole(String roleId, String branchId, String roleName, String appCd) {
-		//是否为auth中心模式
+        ProfileRole profileRole = em.find(ProfileRole.class, roleId);
+        if (ValidateUtilExt.isNotNullOrEmpty(profileRole)) {
+            throw new ErrorMessageException(ErrorCode.Null, "角色不存在，请确认角色id是否正确！");
+        }
+        //是否为auth中心模式
 //		boolean isAuth = authService.checkAppCd(appCd);
-		//角色表
-		QProfileRole q = QProfileRole.profileRole;
-		BooleanExpression w1 = q.roleId.eq(roleId);
-
-		//更新角色信息
-		JPAUpdateClause roleUpdate = new JPAQueryFactory(em)
-				.update(q)
-				.set(q.roleName,roleName)
-				.set(q.branchId,branchId)
-				.where(w1);
-
-		roleUpdate.execute();
-
+		profileRole.setBranchId(branchId);
+		profileRole.setRoleName(roleName);
+		profileRole.setAppCd(appCd);
 	}
 
 	/**
