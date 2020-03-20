@@ -8,6 +8,7 @@ import net.engining.pg.web.bean.WebLoginUser;
 import net.engining.profile.entity.enums.StatusDef;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -18,11 +19,9 @@ public class MgmWebUser extends WebLoginUser {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotBlank(message = "PU_ID不能为空")
 	@ApiModelProperty(value = "PU_ID", required = true, example="123")
 	private String puId;
 
-	@NotBlank(message = "操作员id不能为空")
 	@ApiModelProperty(value = "操作员id", required = true, example="123")
 	private String operUserId;
 
@@ -43,17 +42,17 @@ public class MgmWebUser extends WebLoginUser {
 	@ApiModelProperty(value = "用户姓名", required = true, example="123")
 	private String name;
 
-	@NotBlank(message = "用户状态不能为空")
+	@NotNull(message = "用户状态不能为空")
 	@ApiModelProperty(value = "用户状态", required = true, example="A")
 	private StatusDef status;
 
+	@NotBlank(message = "电子邮箱不能为空")
 	@ApiModelProperty(value = "email", required = false, example="A")
 	private String email;
 
 	@ApiModelProperty(value = "密码过期日期", required = false, example="2019-03-02")
 	private Date pwdExpDate;
 
-	@NotBlank(message = "密码错误次数不能为空")
 	@ApiModelProperty(value = "密码错误次数", required = true, example="1")
 	private Integer pwdTries;
 
