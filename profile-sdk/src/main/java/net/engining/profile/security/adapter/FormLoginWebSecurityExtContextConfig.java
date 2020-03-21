@@ -3,8 +3,10 @@ package net.engining.profile.security.adapter;
 import net.engining.pg.web.security.DefaultJsonAuthSuccessHandler;
 import net.engining.profile.config.adapter.ParentWebSecurityConfigurerAdapter;
 import net.engining.profile.security.handler.JsonAuthFailureHandler;
+import net.engining.profile.security.handler.JwtAuthSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,10 +23,20 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class FormLoginWebSecurityExtContextConfig extends ParentWebSecurityConfigurerAdapter {
 
 	@Autowired
-	DefaultJsonAuthSuccessHandler jsonAuthSuccessHandler;
+	AuthenticationSuccessHandler jsonAuthSuccessHandler;
 
 	@Autowired
-	JsonAuthFailureHandler jsonAuthFailureHandler;
+	AuthenticationFailureHandler jsonAuthFailureHandler;
+
+	@Bean
+	public AuthenticationSuccessHandler jsonAuthSuccessHandler() {
+		return new DefaultJsonAuthSuccessHandler();
+	}
+
+	@Bean
+	public AuthenticationFailureHandler jsonAuthFailureHandler() {
+		return new JsonAuthFailureHandler();
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

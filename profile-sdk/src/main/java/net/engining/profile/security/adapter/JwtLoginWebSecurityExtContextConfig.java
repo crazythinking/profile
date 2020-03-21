@@ -1,5 +1,6 @@
 package net.engining.profile.security.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.engining.gm.config.props.GmCommonProperties;
 import net.engining.pg.web.filter.JwtBasicAuthenticationFilter;
 import net.engining.pg.web.filter.RESTfulUsernamePasswordAuthenticationFilter;
@@ -7,9 +8,11 @@ import net.engining.profile.config.adapter.ParentWebSecurityConfigurerAdapter;
 import net.engining.profile.security.handler.JsonAuthFailureHandler;
 import net.engining.profile.security.handler.JwtAuthSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * 使用SecurityProperties.BASIC_AUTH_ORDER-1，即比pring security默认的安全配置优先级高；
@@ -26,10 +29,25 @@ public class JwtLoginWebSecurityExtContextConfig extends ParentWebSecurityConfig
     GmCommonProperties commonProperties;
 
     @Autowired
+    private ObjectMapper jacksonObjectMapper;
+
+    @Autowired
     JwtAuthSuccessHandler jwtAuthSuccessHandler;
 
     @Autowired
     JsonAuthFailureHandler jsonAuthFailureHandler;
+
+    @Bean
+    public AuthenticationSuccessHandler jwtAuthSuccessHandler() {
+        JwtAuthSuccessHandler jwtAuthSuccessHandler = new JwtAuthSuccessHandler();
+        jwtAuthSuccessHandler.setMapper(jacksonObjectMapper);
+        return jwtAuthSuccessHandler;
+    }
+
+    @Bean
+    public JsonAuthFailureHandler jsonAuthFailureHandler() {
+        return new JsonAuthFailureHandler();
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
