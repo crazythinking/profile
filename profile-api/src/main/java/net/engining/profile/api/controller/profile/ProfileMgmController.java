@@ -108,7 +108,7 @@ public class ProfileMgmController {
     CommonWithHeaderResponse saveProfileUserAndRole(
             @RequestBody @Validated ProfileUserRoleForm profileUserRoleForm,
             HttpServletRequest request) {
-        if (ValidateUtilExt.isNotNullOrEmpty(profileUserRoleForm.getRoleId())) {
+        if (ValidateUtilExt.isNullOrEmpty(profileUserRoleForm.getRoleId())) {
             throw new ErrorMessageException(ErrorCode.Null, "角色id集合不能为空！");
         }
         Date date = new Date();
