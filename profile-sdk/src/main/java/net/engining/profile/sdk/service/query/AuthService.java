@@ -1,6 +1,8 @@
 package net.engining.profile.sdk.service.query;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Ticker;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,7 +17,12 @@ import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.dstruct.TreeNode;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.config.props.ProfileOauthProperties;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileMenu;
+import net.engining.profile.entity.model.QProfileMenuInterf;
+import net.engining.profile.entity.model.QProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +46,6 @@ import java.util.stream.Collectors;
 
 /**
  *
- * 菜单权限相关service
  * RoleId全局不可重复，MenuCd，Authority在同App_Cd范围内 不可重复；
  * ProfileParamProperties判断是否使用了授权中心
  * oauth中心模式缓存的map中有多颗appcd对应的树
@@ -70,13 +77,11 @@ public class AuthService implements InitializingBean {
      * 没把全部用户的菜单树放缓存是因为，用户过多占太多内存
      * (userId)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
      */
-    private LoadingCache<String, Map<String,TreeNode<MenuOrAuthBean>>> userMenuCache;
-
+    private LoadingCache<String, Map<String, TreeNode<MenuOrAuthBean>>> userMenuCache;
     /**
      * (allAuth)   -   Map<appcd,TreeNode<String, MenuOrAuthBean>>
      */
-    private LoadingCache<String, Map<String,TreeNode<MenuOrAuthBean>>> allAuthCache;
-
+    private LoadingCache<String, Map<String, TreeNode<MenuOrAuthBean>>> allAuthCache;
     /**
      * A time source
      */
@@ -112,15 +117,16 @@ public class AuthService implements InitializingBean {
 
     /**
      * 菜单树查询
+     *
      * @param userId 用户id
-     * @param appCd 应用代码
+     * @param appCd  应用代码
      * @return
      */
     public String getMenuData(String userId, String appCd) {
         //检查appcd
         boolean isAuth = checkAppCd(appCd);
 
-        Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = null;
+        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
         try {
             //从本地缓存获取
             treeParentNode = userMenuCache.get(StringUtils.join(userId));
@@ -135,6 +141,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 获得全部的菜单接口权限树(不分Roleid,但分appcd，只能分配当前appcd下的权限)
+     *
      * @param appCd 应用代码
      * @return
      */
@@ -142,7 +149,7 @@ public class AuthService implements InitializingBean {
         //检查appcd
         boolean isAuth = checkAppCd(appCd);
 
-        Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = null;
+        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
         try {
             //从本地缓存获取
             treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
@@ -159,7 +166,7 @@ public class AuthService implements InitializingBean {
     /**
      * 角色权限分配
      *
-     * @param roleId 角色id
+     * @param roleId       角色id
      * @param authInfoList 权限集合
      */
     @Transactional(rollbackFor = Exception.class)
@@ -190,6 +197,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 获取角色对应的权限主方法
+     *
      * @param roleId
      * @return
      */
@@ -222,6 +230,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 校验appcd在auth中心模式下不能为空
+     *
      * @param appCd
      * @return
      */
@@ -236,6 +245,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 转换树的jsonString
+     *
      * @param appCd
      * @param isAuth
      * @param treeParentNode
@@ -243,41 +253,90 @@ public class AuthService implements InitializingBean {
      */
     private String getTreeJsonString(String appCd, boolean isAuth, Map<String, TreeNode<MenuOrAuthBean>> treeParentNode) {
         String treeJsonStr = null;
-        if (isAuth){
+        if (isAuth) {
             //auth中心时为多颗appcd对应的树
             treeJsonStr = JSON.toJSONString(treeParentNode.get(appCd));
-        }else {
+        } else {
             //    * 本地模式下：
             //     * （1）单纯的本地模式 当appcd为空，默认取-的appcd
             //     *  (2)授权中心后管的本地模式 appcd不为空，取appcd对应的权限
             if (ValidateUtilExt.isNotNullOrEmpty(appCd)) {
                 treeJsonStr = JSON.toJSONString(treeParentNode.get(appCd));
-            }else {
+            } else {
                 treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
             }
-
         }
 
-        return treeJsonStr;
+        JSONObject jsonObject = getOrderTreeJsonString(JSONObject.parseObject(treeJsonStr));
+        return JSON.toJSONString(jsonObject);
+    }
+
+    /**
+     * 原菜单树存在HashSet中，存取无序，需要对其进行再次排序
+     *
+     * @param originalObject 原菜单树转换成JSONObject对象
+     * @return 排序后原菜单树转成的JSONObject对象
+     */
+    private JSONObject getOrderTreeJsonString(JSONObject originalObject) {
+        // 判断其下是否有子菜单树，没有则不需要进行排序
+        if (ValidateUtilExt.isNotNullOrEmpty(originalObject.get("children"))) {
+            JSONArray originalArray = originalObject.getJSONArray("children");
+
+            int size = originalArray.size();
+            List<JSONObject> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                // 递归，先从最低一级的菜单树开始排序
+                JSONObject jsonObject = getOrderTreeJsonString(originalArray.getJSONObject(i));
+                list.add(jsonObject);
+            }
+
+            int level = (int) list.get(0).get("level");
+            // 根据id递增
+            list.sort((a, b) -> {
+                MenuOrAuthBean menu1 = JSONObject.parseObject(a.get("data").toString(), MenuOrAuthBean.class);
+                MenuOrAuthBean menu2 = JSONObject.parseObject(b.get("data").toString(), MenuOrAuthBean.class);
+                Integer id1;
+                Integer id2;
+                // 接口级菜单id C+序号
+                if (3 == level) {
+                    id1 = Integer.valueOf(menu1.getId().substring(1));
+                    id2 = Integer.valueOf(menu2.getId().substring(1));
+
+                } else {
+                    id1 = Integer.valueOf(menu1.getId());
+                    id2 = Integer.valueOf(menu2.getId());
+                }
+                return id1 - id2;
+            });
+
+            // 替换原菜单树
+            JSONArray newArray = new JSONArray(size);
+            newArray.addAll(list);
+            originalObject.put("children", newArray);
+        }
+
+        return originalObject;
     }
 
     /**
      * 处理生成所需菜单树
+     *
      * @param rootAllList 用户角色下所有菜单list
      * @return
      */
     private TreeNode<MenuOrAuthBean> createTreeNode(List<MenuOrAuthBean> rootAllList) {
         //添加父根节点
-        TreeNode<MenuOrAuthBean> treeParentNode = getParentNode(ROOT_MENU_ID,ROOT_MENU_ID);
+        TreeNode<MenuOrAuthBean> treeParentNode = getParentNode(ROOT_MENU_ID, ROOT_MENU_ID);
         //为父根节点添加子节点
-        addChild(treeParentNode,treeParentNode.getData().getId(), rootAllList);
+        addChild(treeParentNode, treeParentNode.getData().getId(), rootAllList);
         return treeParentNode;
     }
 
     /**
      * 生成主父菜单根
+     *
      * @param key key
-     * @param id 菜单id
+     * @param id  菜单id
      * @return
      */
     private TreeNode<MenuOrAuthBean> getParentNode(String key, String id) {
@@ -288,8 +347,8 @@ public class AuthService implements InitializingBean {
     }
 
     /**
-     *
      * 递归设置父节点的子节点
+     *
      * @param parentTreeNode
      * @param id
      * @param allMenu
@@ -310,16 +369,17 @@ public class AuthService implements InitializingBean {
         }
         for (TreeNode<MenuOrAuthBean> menu : parentTreeNode.getChildren()) {
             //递归添加当前父节点孩子的孩子
-            addChild(menu,menu.getData().getId(), allMenu);
+            addChild(menu, menu.getData().getId(), allMenu);
         }
     }
 
     /**
      * 获得用户的菜单树主方法
+     *
      * @param userId
      * @return
      */
-    private Map<String,TreeNode<MenuOrAuthBean>> getMenuTreeByUserid(String userId) {
+    private Map<String, TreeNode<MenuOrAuthBean>> getMenuTreeByUserid(String userId) {
         //菜单表
         QProfileMenu profileMenu = QProfileMenu.profileMenu;
         //权限表
@@ -347,7 +407,7 @@ public class AuthService implements InitializingBean {
                 .collect(Collectors.toSet());
 
         List<Tuple> jpaQuery = new JPAQueryFactory(em)
-                .select(profileMenu.id,profileMenu.mname, profileMenu.menuCd,
+                .select(profileMenu.id, profileMenu.mname, profileMenu.menuCd,
                         profileMenu.parentId, profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
                 .where(profileMenu.menuCd.in(authoritys))
@@ -356,7 +416,7 @@ public class AuthService implements InitializingBean {
         List<MenuOrAuthBean> rootAllList = getMenuBeans(profileMenu, jpaQuery);
 
         //远程oauth中心 本地local(本地模式下菜单的appcd默认都是DbConstants.NULL，
-        Map<String,TreeNode<MenuOrAuthBean>> map = createMenuTreeNodeMapWithAuth(rootAllList);
+        Map<String, TreeNode<MenuOrAuthBean>> map = createMenuTreeNodeMapWithAuth(rootAllList);
 
         return map;
     }
@@ -364,6 +424,7 @@ public class AuthService implements InitializingBean {
     /**
      * 获得用户userid下的菜单树（oauth中心模式）
      * 按照app_cd分组菜单树，map中多棵树
+     *
      * @param rootAllList
      * @return
      */
@@ -387,6 +448,7 @@ public class AuthService implements InitializingBean {
     /**
      * 获得用户userid下的菜单树（本地profile模式）
      * map中只有一颗树
+     *
      * @param rootAllList
      * @return
      */
@@ -401,6 +463,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 生成所有菜单List
+     *
      * @param profileMenu
      * @param jpaQuery
      * @return
@@ -425,6 +488,7 @@ public class AuthService implements InitializingBean {
 
     /**
      * 生成所有权限接口List
+     *
      * @param profileMenuInterf
      * @param jpaQuery
      * @return
@@ -438,7 +502,8 @@ public class AuthService implements InitializingBean {
             //因为接口不会有子接口，已经是树叶，所以不需要它的id，此处直接将id赋值为DbConstants.NULL
             //避免由于MenuOrAuthBean来源于2张不同的表(菜单表和接口表)，出现id重复现象，进而
             //出现一棵树中id和parentId相同，导致getChild方法自己把自己挂为子树的死循环
-            MenuOrAuthBean.setId(DbConstants.NULL);
+            // 现阶段因为排序需要设置成C+id号,同时避免上述死循环问题
+            MenuOrAuthBean.setId("C" + tuple.get(profileMenuInterf.id));
             MenuOrAuthBean.setCd(tuple.get(profileMenuInterf.interfCd));
             MenuOrAuthBean.setName(tuple.get(profileMenuInterf.iname));
             MenuOrAuthBean.setAutuUri(String.valueOf(tuple.get(profileMenuInterf.menuId)));
@@ -453,9 +518,10 @@ public class AuthService implements InitializingBean {
     /**
      * 获得全部总的菜单树(oauth模式)
      * 多颗appcd的树
+     *
      * @return
      */
-    private Map<String,TreeNode<MenuOrAuthBean>> getAllMenuTreeNodeWithAuth() {
+    private Map<String, TreeNode<MenuOrAuthBean>> getAllMenuTreeNodeWithAuth() {
         List<MenuOrAuthBean> rootAllList = getAllMenuBeans();
         //按照app_cd分组菜单树
         Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = createMenuTreeNodeMapWithAuth(rootAllList);
@@ -465,6 +531,7 @@ public class AuthService implements InitializingBean {
     /**
      * 获得全部总的菜单树（local模式）
      * 只有一棵树
+     *
      * @return
      */
     private TreeNode<MenuOrAuthBean> getAllMenuTreeNodeWithLocal() {
@@ -475,11 +542,12 @@ public class AuthService implements InitializingBean {
 
     /**
      * 根据总的菜单树挂载接口权限，生成总的菜单权限树(oauth中心模式)
-     * @return Map<String,TreeNode<String, MenuOrAuthBean>>
-     *     String：AppCd
-     *     TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
+     *
+     * @return Map<String       ,       TreeNode       <       String       ,               MenuOrAuthBean>>
+     * String：AppCd
+     * TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
      */
-    private Map<String,TreeNode<MenuOrAuthBean>> createAllAuthTreeNodeWithAuth(){
+    private Map<String, TreeNode<MenuOrAuthBean>> createAllAuthTreeNodeWithAuth() {
         //获取总的菜单树
         Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = getAllMenuTreeNodeWithAuth();
         //获得全部接口(全部appcd)表接口
@@ -492,7 +560,7 @@ public class AuthService implements InitializingBean {
                     .filter(menuOrAuthBean -> cd.equals(menuOrAuthBean.getAppCd()))
                     .collect(Collectors.toList());
             TreeNode<MenuOrAuthBean> currentCdTree = treeNodeMap.get(cd);
-            addChild(currentCdTree,currentCdTree.getData().getId(),currentAuthList);
+            addChild(currentCdTree, currentCdTree.getData().getId(), currentAuthList);
         }
 
         return treeNodeMap;
@@ -500,42 +568,44 @@ public class AuthService implements InitializingBean {
 
     /**
      * 根据总的菜单树挂载接口权限，生成总的菜单权限树(本地profile中心模式)
-     * @return Map<String,TreeNode<String, MenuOrAuthBean>>
-     *     String：AppCd
-     *     TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
+     *
+     * @return Map<String       ,       TreeNode       <       String       ,               MenuOrAuthBean>>
+     * String：AppCd
+     * TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
      */
-    private Map<String,TreeNode<MenuOrAuthBean>> createAllAuthTreeNodeWithLocal(){
+    private Map<String, TreeNode<MenuOrAuthBean>> createAllAuthTreeNodeWithLocal() {
         //获取总的菜单树
         TreeNode<MenuOrAuthBean> treeNode = getAllMenuTreeNodeWithLocal();
         //获得全部接口(全部appcd)表接口
         List<MenuOrAuthBean> interAllList = getAllInterBeans();
         //挂载接口权限到菜单树
-        addChild(treeNode,treeNode.getData().getId(),interAllList);
-        Map<String,TreeNode<MenuOrAuthBean>> treeNodeMap = Maps.newHashMap();
-        treeNodeMap.put(DbConstants.NULL,treeNode);
+        addChild(treeNode, treeNode.getData().getId(), interAllList);
+        Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = Maps.newHashMap();
+        treeNodeMap.put(DbConstants.NULL, treeNode);
         return treeNodeMap;
     }
 
     /**
      * 获得全部权限树主方法
+     *
      * @return
      */
-    private Map<String,TreeNode<MenuOrAuthBean>> getAllAuthTreeNode()
-    {
+    private Map<String, TreeNode<MenuOrAuthBean>> getAllAuthTreeNode() {
         //远程auth中心和本地模式统一缓存数据结构
-        Map<String,TreeNode<MenuOrAuthBean>> map = createAllAuthTreeNodeWithAuth();
+        Map<String, TreeNode<MenuOrAuthBean>> map = createAllAuthTreeNodeWithAuth();
         return map;
     }
 
     /**
      * 获得全部menu类
+     *
      * @return
      */
     private List<MenuOrAuthBean> getAllMenuBeans() {
         //菜单表
         QProfileMenu profileMenu = QProfileMenu.profileMenu;
-        List<Tuple> jpaQuery = new JPAQueryFactory(em).select(profileMenu.id,profileMenu.mname,
-                profileMenu.menuCd,profileMenu.parentId,
+        List<Tuple> jpaQuery = new JPAQueryFactory(em).select(profileMenu.id, profileMenu.mname,
+                profileMenu.menuCd, profileMenu.parentId,
                 profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
                 .orderBy(profileMenu.sortn.asc())
@@ -545,13 +615,14 @@ public class AuthService implements InitializingBean {
 
     /**
      * 获得全部接口类
+     *
      * @return
      */
     private List<MenuOrAuthBean> getAllInterBeans() {
         //接口表
         QProfileMenuInterf profileMenuInterf = QProfileMenuInterf.profileMenuInterf;
         List<Tuple> jpaQuery = new JPAQueryFactory(em).select(profileMenuInterf.id,
-                profileMenuInterf.appCd, profileMenuInterf.interfCd,profileMenuInterf.menuId,
+                profileMenuInterf.appCd, profileMenuInterf.interfCd, profileMenuInterf.menuId,
                 profileMenuInterf.iname)
                 .from(profileMenuInterf)
                 .where(profileMenuInterf.menuId.isNotNull())
@@ -567,21 +638,20 @@ public class AuthService implements InitializingBean {
      * Map<appcd,TreeNode<MenuOrAuthBean>>的数据结构缓存；
      * 本地模式下：
      * （1）单纯的本地模式 当appcd为空，默认取-的appcd
-     *  (2)授权中心后管的本地模式 appcd不为空，取appcd对应的权限
-     *  授权中心模式下：
-     *  （1）取appcd对应的权限
+     * (2)授权中心后管的本地模式 appcd不为空，取appcd对应的权限
+     * 授权中心模式下：
+     * （1）取appcd对应的权限
      */
-    public void initAllAuthTreeCache()
-    {
+    public void initAllAuthTreeCache() {
         allAuthCache = CacheBuilder.newBuilder()
                 .ticker(ticker)
                 //最大条数
                 .maximumSize(1)
-                .build(new CacheLoader<String, Map<String,TreeNode<MenuOrAuthBean>>>() {
+                .build(new CacheLoader<String, Map<String, TreeNode<MenuOrAuthBean>>>() {
 
                     @Override
-                    public Map<String,TreeNode<MenuOrAuthBean>> load(String key) throws Exception {
-                        Map<String,TreeNode<MenuOrAuthBean>> treeNodeMap = null;
+                    public Map<String, TreeNode<MenuOrAuthBean>> load(String key) throws Exception {
+                        Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = null;
                         if (ValidateUtilExt.isNullOrEmpty(key)) {
                             return null;
                         }
@@ -596,19 +666,18 @@ public class AuthService implements InitializingBean {
      * 初始化用户权限菜单cache
      * 同时对本地模式无appcd支持
      */
-    public void initUserMenuTreeCache()
-    {
+    public void initUserMenuTreeCache() {
         userMenuCache = CacheBuilder.newBuilder()
                 .ticker(ticker)
                 //当缓存项在指定的时间段内没有被读或写就会被回收
                 .expireAfterAccess(Duration.ofDays(1))
                 //最大条数
                 .maximumSize(100)
-                .build(new CacheLoader<String, Map<String,TreeNode<MenuOrAuthBean>>>() {
+                .build(new CacheLoader<String, Map<String, TreeNode<MenuOrAuthBean>>>() {
 
                     @Override
-                    public Map<String,TreeNode<MenuOrAuthBean>> load(String key) throws Exception {
-                        Map<String,TreeNode<MenuOrAuthBean>> treeNodeMap = null;
+                    public Map<String, TreeNode<MenuOrAuthBean>> load(String key) throws Exception {
+                        Map<String, TreeNode<MenuOrAuthBean>> treeNodeMap = null;
                         if (ValidateUtilExt.isNullOrEmpty(key)) {
                             return null;
                         }
@@ -624,8 +693,7 @@ public class AuthService implements InitializingBean {
      * 同时对本地模式无appcd支持
      * RoleAuth|roleid
      */
-    public void initRoleAuthCache()
-    {
+    public void initRoleAuthCache() {
         roleAuthCache = CacheBuilder.newBuilder()
                 .ticker(ticker)
                 //当缓存项在指定的时间段内没有被读或写就会被回收
@@ -650,38 +718,38 @@ public class AuthService implements InitializingBean {
     /**
      * 刷新角色已有权限cache
      * 需要在分配角色权限后刷新缓存
+     *
      * @param roleId roleId
      */
-    public void refreshRoleAuthCacheByRoleId(String roleId)
-    {
+    public void refreshRoleAuthCacheByRoleId(String roleId) {
         roleAuthCache.refresh(roleId);
     }
 
     /**
      * 刷新全部权限菜单cache
+     *
      * @param key allAuth
      */
-    public void refreshAllAuthCache(String key)
-    {
+    public void refreshAllAuthCache(String key) {
         allAuthCache.refresh(key);
     }
 
     /**
      * 刷新用户权限菜单cache
+     *
      * @param userId userId
      */
-    public void refreshUserMenuCacheByUserId(String userId)
-    {
+    public void refreshUserMenuCacheByUserId(String userId) {
         userMenuCache.refresh(userId);
     }
 
     /**
      * 刷新用户权限菜单cache
      * 需要在分配角色权限后重新刷新缓存
+     *
      * @param roleId roleId
      */
-    public void refreshUserMenuCacheByRoleId(String roleId)
-    {
+    public void refreshUserMenuCacheByRoleId(String roleId) {
         //通过roleId查出userid进行缓存刷新
         //用户角色表
         QProfileUserRole profileUserRole = QProfileUserRole.profileUserRole;
@@ -698,5 +766,6 @@ public class AuthService implements InitializingBean {
                 .distinct()
                 .forEach(this::refreshUserMenuCacheByUserId);
     }
+
 
 }
