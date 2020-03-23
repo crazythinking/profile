@@ -4,7 +4,10 @@ package net.engining.profile.api.controller.profile;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.engining.pg.support.core.context.Provider4Organization;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
@@ -14,11 +17,16 @@ import net.engining.profile.sdk.service.ProfileMgmService;
 import net.engining.profile.sdk.service.ProfileRoleService;
 import net.engining.profile.sdk.service.ProfileUserService;
 import net.engining.profile.sdk.service.bean.profile.*;
-import net.engining.profile.security.service.ProfileSecurityLoggerService;
+import net.engining.profile.security.ProfileSecurityLoggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -106,6 +114,9 @@ public class ProfileMgmController {
     CommonWithHeaderResponse saveProfileUserAndRole(
             @RequestBody @Validated ProfileUserRoleForm profileUserRoleForm,
             HttpServletRequest request) {
+        if (ValidateUtilExt.isNullOrEmpty(profileUserRoleForm.getRoleId())) {
+            throw new ErrorMessageException(ErrorCode.Null, "角色id集合不能为空！");
+        }
         Date date = new Date();
         profileMgmService.saveProfileUserAndRole(profileUserRoleForm.getPuId(), profileUserRoleForm.getRoleId());
         ProfileUser profileUserInfo = profileUserService.findProfileUserInfo(profileUserRoleForm.getPuId());

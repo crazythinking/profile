@@ -267,8 +267,12 @@ public class AuthService implements InitializingBean {
             }
         }
 
-        JSONObject jsonObject = getOrderTreeJsonString(JSONObject.parseObject(treeJsonStr));
-        return JSON.toJSONString(jsonObject);
+        JSONObject jsonObject = null;
+        if (ValidateUtilExt.isNotNullOrEmpty(treeJsonStr)) {
+            jsonObject = getOrderTreeJsonString(JSONObject.parseObject(treeJsonStr));
+            return JSON.toJSONString(jsonObject);
+        }
+        return treeJsonStr;
     }
 
     /**

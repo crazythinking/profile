@@ -5,6 +5,7 @@ import net.engining.pg.support.db.querydsl.Range;
 import net.engining.profile.entity.enums.StatusDef;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -46,7 +47,7 @@ public class ProfileUserUpdateForm implements Serializable {
     /**
      * 用户状态
      */
-    @NotBlank(message = "请输入：用户状态")
+    @NotNull(message = "请输入：用户状态")
     @ApiModelProperty(value = "用户状态", required = true, example="111")
     private StatusDef status;
 

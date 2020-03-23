@@ -3,7 +3,6 @@ package net.engining.profile.sdk.service.bean.profile;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class ProfileUserRoleForm implements Serializable {
 	@ApiModelProperty(value = "用户id", required = false, example="1111")
 	private String userId;
 
-	@NotNull(message = "请输入：角色id集合")
 	@ApiModelProperty(value = "角色id集合", required = true, example="1111")
 	private List<String> roleId;
 

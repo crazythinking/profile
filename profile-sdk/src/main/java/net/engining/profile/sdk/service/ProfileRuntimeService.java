@@ -1,5 +1,6 @@
 package net.engining.profile.sdk.service;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -9,8 +10,9 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
 import net.engining.profile.param.SecurityControl;
-import net.engining.profile.security.service.ProfileUserDetails;
+import net.engining.profile.security.ProfileUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +40,13 @@ public class ProfileRuntimeService {
                 //转换成Set<String>
                 Collections2.transform(
                         ud.getAuthorities(),
-                        input -> input.getAuthority()
+                        new Function<GrantedAuthority, String>() {
+                            @Nullable
+                            @Override
+                            public String apply(@Nullable GrantedAuthority input) {
+                                return input.getAuthority();
+                            }
+                        }
                 )
         ));
 

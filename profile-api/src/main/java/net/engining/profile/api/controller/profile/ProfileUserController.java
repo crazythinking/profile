@@ -35,9 +35,7 @@ import java.util.*;
 @RestController
 @Api(value="ProfileUserController",description = "用户服务模块")
 public class ProfileUserController {
-	/**
-	 * 用户服务
-	 */
+
 	@Autowired
 	private ProfileUserService profileUserService;
 
@@ -175,9 +173,18 @@ public class ProfileUserController {
 	public @ResponseBody
 	CommonWithHeaderResponse removeUser(@RequestBody @Validated ProfileUserForm user,
 										HttpServletRequest request) {
-		List<String> usrs = new ArrayList<String>();
+		if (user.getPuId().equals(user.getOperUserId())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除您自己的用户！");
+		}
+		List<String> usrs = new ArrayList<>(1);
 		usrs.add(user.getPuId());
 		ProfileUser profileUserInfo = profileUserService.findProfileUserInfo(user.getPuId());
+		if (ADMIN.equals(profileUserInfo.getUserId())) {
+			throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除超级管理员！");
+		}
+        if (SVADMIN.equals(profileUserInfo.getUserId())) {
+            throw new ErrorMessageException(ErrorCode.CheckError, "您无法删除监控管理员！");
+        }
 		profileUserService.deleteProfileUsers(usrs);
 		String userId=profileUserInfo.getUserId();
 		Date date = new Date();
