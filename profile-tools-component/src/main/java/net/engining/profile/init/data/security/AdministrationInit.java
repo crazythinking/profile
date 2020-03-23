@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * 系统初始数据初始化
  *
- * 文件初始化示例
  * @author 作者
  * @version 版本
  * @since
@@ -35,31 +35,46 @@ import java.util.*;
  */
 public class AdministrationInit implements TableDataInitializer, InitializingBean {
 
-
-    private static final Logger log = LoggerFactory.getLogger(AdministrationInit.class);
-
+    /**
+     * 日志
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdministrationInit.class);
+    /**
+     * 实体服务
+     */
     @PersistenceContext
     private EntityManager em;
-
+    /**
+     * 机构服务
+     */
     @Autowired
     Provider4Organization provider4Organization;
-
+    /**
+     * 密码服务
+     */
     @Autowired
     PasswordEncoder passwordEncoder;
-
+    /**
+     * 公共配置
+     */
     @Autowired
     GmCommonProperties commonProperties;
-
+    /**
+     * 授权中心配置参数配置
+     */
     @Autowired
     ProfileOauthProperties cProperties;
-
     /**
-     * 缺省角色名
+     * 管理员角色
      */
     private static final String ROLE_NAME = "系统超级管理员";
-
+    /**
+     * 监控角色
+     */
     private static final String ACTUATOR_ROLE_NAME = "系统监控";
-
+    /**
+     * 默认部门名称
+     */
     private static final String BRANCH_NAME = "财务运营管理部";
     /**
      * AppCd
@@ -67,14 +82,20 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     private String APP_CD = "";
 
     /**
-     * 缺省用户名
+     * 管理员名
      */
     private static final String USER_NAME = "admin";
-
+    /**
+     * 监控管理员名
+     */
     private static final String ACTUATOR_USER = "svadmin";
-
+    /**
+     * 监控管理员密码
+     */
     private static final String ACTUATOR_PASSWORD = "sv@dm1n";
-
+    /**
+     * 默认用户名
+     */
     private static final String MTN_USER = "Initializer";
     /**
      * 超级管理员初始化菜单权限
@@ -88,21 +109,33 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void init() throws Exception {
-        // 清空权限相关表
+        LOGGER.debug("系统初始数据初始化---->开始");
+
+        // 清空机构表
+        LOGGER.debug("清空机构表--->PROFILE_BRANCH");
         em.createNativeQuery("delete from PROFILE_BRANCH").executeUpdate();
+        //清空用户表
+        LOGGER.debug("清空用户表--->PROFILE_USER");
         em.createNativeQuery("delete from PROFILE_USER").executeUpdate();
+        //清空权限表
+        LOGGER.debug("清空权限表--->PROFILE_ROLE_AUTH");
         em.createNativeQuery("delete from PROFILE_ROLE_AUTH").executeUpdate();
+        //清空角色定义表
+        LOGGER.debug("清空角色定义表--->PROFILE_ROLE");
         em.createNativeQuery("delete from PROFILE_ROLE").executeUpdate();
+        //清空用户角色表
+        LOGGER.debug("清空用户角色表--->PROFILE_USER_ROLE");
         em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
-
         //1.创建部门
+        LOGGER.debug("初始化部门信息");
         initBranch();
-
         //2.初始化菜单、接口
+        LOGGER.debug("初始化菜单和接口");
         initMenuAuthInterFace();
-
         //3.初始化用户角色权限
+        LOGGER.debug("初始化用户角色权限");
         initSuperAdmin();
+        LOGGER.debug("系统初始数据初始化---->结束");
         //initActuatorUser();
     }
 
@@ -256,6 +289,10 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         return user;
     }
 
+    /**
+     * 初始化部门信息
+     * @return 部门信息
+     */
     private ProfileBranch createBranch() {
         ProfileBranch branch = new ProfileBranch();
         branch.setOrgId(provider4Organization.getCurrentOrganizationId());
@@ -274,7 +311,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
                 .setParameter(1, appCd)
                 .executeUpdate();
 
-        log.debug("删除了{}条ProfileMenuInterf数据",count);
+        LOGGER.debug("删除了{}条ProfileMenuInterf数据",count);
     }
 
     /**
@@ -287,14 +324,14 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
                 .setParameter(1, appCd)
                 .executeUpdate();
 
-        log.debug("删除了{}条ProfileMenu数据",count);
+        LOGGER.debug("删除了{}条ProfileMenu数据",count);
     }
 
     /**
      * 初始化部门
      */
     private void initBranch() {
-        log.debug("正在执行初始化器 -> AdministrationInit");
+        LOGGER.debug("正在执行初始化器 -> AdministrationInit");
         createBranch();
     }
 
@@ -302,7 +339,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
      * 初始化超级管理员
      */
     private void initSuperAdmin() {
-        log.debug("正在执行初始化器 -> AdministrationInit");
+        LOGGER.debug("正在执行初始化器 -> AdministrationInit");
         // Init Role
         ProfileRole profileRole = initRole(DefaultRoleID.SUPERADMIN.toString(),ROLE_NAME);
 
@@ -330,7 +367,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
      * 只有监控权限
      */
     private void initActuatorUser() {
-        log.debug("正在执行初始化器 -> ActuatorUserInit");
+        LOGGER.debug("正在执行初始化器 -> ActuatorUserInit");
         // Init Role
         ProfileRole profileRole = initRole(RoleIdEnum.ACTUATOR.toString(),ACTUATOR_ROLE_NAME);
         // Init Role Auth; 角色与权限

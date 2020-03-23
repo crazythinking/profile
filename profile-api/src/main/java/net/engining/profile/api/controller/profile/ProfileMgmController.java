@@ -30,19 +30,29 @@ import java.util.Map;
 @RequestMapping("/profileMgm")
 @RestController
 public class ProfileMgmController {
-
+    /**
+     * 后台管理服务
+     */
     @Autowired
     private ProfileMgmService profileMgmService;
-
+    /**
+     * 角色服务
+     */
     @Autowired
     private ProfileRoleService profileRoleService;
-
+    /**
+     * 机构服务
+     */
     @Autowired
     Provider4Organization provider4Organization;
-
+    /**
+     * 用户服务
+     */
     @Autowired
     private ProfileUserService profileUserService;
-
+    /**
+     * 日志服务
+     */
     @Autowired
     private ProfileSecurityLoggerService profileSecurityLoggerService;
 
@@ -53,7 +63,7 @@ public class ProfileMgmController {
      */
 //    @PreAuthorize("hasAuthority('ProfileUser')")
     @RequestMapping(value = "/fetchProfileUser", method = RequestMethod.POST)
-    @ApiOperation(value = "根据用户信息查询其角色", notes = "")
+    @ApiOperation(value = "根据用户信息查询其角色", notes = "根据用户信息查询其角色")
     public @ResponseBody
     CommonWithHeaderResponse fetchProfileUser(
             @RequestBody @Validated ProfileUserBranchForm profileUserBranchForm) {
@@ -72,7 +82,7 @@ public class ProfileMgmController {
      */
 //    @PreAuthorize("hasAuthority('ProfileUser')")
     @RequestMapping(value = "/fetchAllProfileRole", method = RequestMethod.GET)
-    @ApiOperation(value = " 获取所有的角色", notes = "")
+    @ApiOperation(value = " 获取所有的角色", notes = "获取所有的角色")
     public
     CommonWithHeaderResponse fetchAllProfileRole(@ApiParam(value = "应用代码", required = false)
                                                  @RequestParam(required = false)
@@ -90,7 +100,7 @@ public class ProfileMgmController {
      * @return
      */
     @RequestMapping(value = "/saveProfileUserAndRole", method = RequestMethod.POST)
-    @ApiOperation(value = "为用户分配角色", notes = "")
+    @ApiOperation(value = "为用户分配角色", notes = "为用户分配角色")
     @PreAuthorize("hasAuthority('SaveProfileUserAndRole')")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileUserAndRole(
@@ -119,7 +129,7 @@ public class ProfileMgmController {
      */
 //    @PreAuthorize("hasAuthority('ProfileUser')")
     @RequestMapping(value = "/fetchUserRole", method = RequestMethod.POST)
-    @ApiOperation(value = "获取用户对应的角色", notes = "")
+    @ApiOperation(value = "获取用户对应的角色", notes = "获取用户对应的角色")
     public @ResponseBody
     CommonWithHeaderResponse fetchUserRole(
             @RequestBody @Validated ProfileUserRoleForm profileUserRoleForm) {
@@ -136,7 +146,7 @@ public class ProfileMgmController {
      * 获取所有的分支下拉框
      */
     @RequestMapping(value = "/fetchAllProfileBranch", method = RequestMethod.POST)
-    @ApiOperation(value = "获取所有的分支下拉框", notes = "")
+    @ApiOperation(value = "获取所有的分支下拉框", notes = "获取所有的分支下拉框")
     public @ResponseBody
     CommonWithHeaderResponse fetchAllProfileBranch() {
         FetchResponse<Map<String, Object>> fetchResponse = profileMgmService.fetchAllProfileBranch();
@@ -153,7 +163,7 @@ public class ProfileMgmController {
      */
 //    @PreAuthorize("hasAuthority('ProfileRole')")
     @RequestMapping(value = "/fetchProfileRole", method = RequestMethod.POST)
-    @ApiOperation(value = "查询所有角色信息列表", notes = "")
+    @ApiOperation(value = "查询所有角色信息列表", notes = "查询所有角色信息列表")
     public @ResponseBody
     CommonWithHeaderResponse fetchProfileRole(
             @RequestBody @Validated ProfileRoleBranch profileRoleBranch) {
@@ -172,9 +182,9 @@ public class ProfileMgmController {
      *
      * @return
      */
-//    @PreAuthorize("hasAuthority('SaveProfileRole')")
+    @PreAuthorize("hasAuthority('SaveProfileRole')")
     @RequestMapping(value = "/saveProfileRole", method = RequestMethod.POST)
-    @ApiOperation(value = "角色新增", notes = "")
+    @ApiOperation(value = "角色新增", notes = "角色新增")
     public @ResponseBody
     CommonWithHeaderResponse saveProfileRole(
             @RequestBody @Validated ProfileRoleSaveUpdateForm profileRoleSaveForm) {
@@ -194,7 +204,7 @@ public class ProfileMgmController {
      */
     @PreAuthorize("hasAuthority('UpdateProfileRole')")
     @RequestMapping(value = "/updateProfileRole", method = RequestMethod.POST)
-    @ApiOperation(value = "角色修改", notes = "")
+    @ApiOperation(value = "角色修改", notes = "角色修改")
     public @ResponseBody
     CommonWithHeaderResponse updateProfileRole(
             @RequestBody @Validated ProfileRoleSaveUpdateForm profileRoleSaveUpdateForm) {
@@ -216,7 +226,7 @@ public class ProfileMgmController {
      */
     @PreAuthorize("hasAuthority('DeleteProfileRole')")
     @RequestMapping(value = "/deleteProfileRole", method = RequestMethod.POST)
-    @ApiOperation(value = "角色删除", notes = "")
+    @ApiOperation(value = "角色删除", notes = "角色删除")
     public @ResponseBody
     CommonWithHeaderResponse deleteProfileRole(
             @RequestBody @Validated ProfileRoleDelForm profileRoleDelForm) {

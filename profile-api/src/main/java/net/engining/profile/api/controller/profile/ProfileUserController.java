@@ -33,26 +33,40 @@ import java.util.*;
  */
 @RequestMapping("/proUser")
 @RestController
-@Api(value="ProfileUserController")
+@Api(value="ProfileUserController",description = "用户服务模块")
 public class ProfileUserController {
-
+	/**
+	 * 用户服务
+	 */
 	@Autowired
 	private ProfileUserService profileUserService;
 
+	/**
+	 * 安全服务
+	 */
 	@Autowired
 	private ProfileSecurityService profileSecurityService;
 
+	/**
+	 * 机构服务
+	 */
 	@Autowired
 	private Provider4Organization provider4Organization;
 
+	/**
+	 * 用户服务
+	 */
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * 安全日志服务
+	 */
 	@Autowired
 	private ProfileSecurityLoggerService profileSecurityLoggerService;
 
-	//    @PreAuthorize("hasAuthority('Users')")
-	@ApiOperation(value="根据机构和分部获取用户列表", notes="")
+	    @PreAuthorize("hasAuthority('users')")
+	@ApiOperation(value="根据机构和分部获取用户列表", notes="根据机构和分部获取用户列表")
 	@RequestMapping(value="/users", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse getUsers(@RequestBody @Validated UsersFilter usersFilter) {
@@ -67,8 +81,8 @@ public class ProfileUserController {
 				.setResponseData(rsp);
 	}
 
-	//    @PreAuthorize("hasAuthority('Maintenance')")
-	@ApiOperation(value="根据用户userId获取用户信息", notes="")
+	    @PreAuthorize("hasAuthority('Maintenance')")
+	@ApiOperation(value="根据用户userId获取用户信息", notes="根据用户userId获取用户信息")
 	@RequestMapping(value="/userId", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse getUserByName(@RequestBody @Validated ProfileUserForm user,
@@ -87,8 +101,8 @@ public class ProfileUserController {
 				.setResponseData(rsp);
 	}
 
-	//	@PreAuthorize("hasAuthority('ProfileUser')")
-	@ApiOperation(value="登录时根据用户userId获取用户信息", notes="")
+		@PreAuthorize("hasAuthority('ProfileUser')")
+	@ApiOperation(value="登录时根据用户userId获取用户信息", notes="登录时根据用户userId获取用户信息")
 	@RequestMapping(value="/loginUserId", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse loginUserByName(@RequestBody LoginUserIdForm user,
@@ -108,8 +122,8 @@ public class ProfileUserController {
 				.setResponseData(rsp);
 	}
 
-	//    @PreAuthorize("hasAuthority('PuId')")
-	@ApiOperation(value="获取用户信息", notes="")
+	    @PreAuthorize("hasAuthority('PuId')")
+	@ApiOperation(value="获取用户信息", notes="获取用户信息")
 	@RequestMapping(value="/puId", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse getUser(@RequestBody @Validated ProfileUserForm user,
@@ -130,7 +144,7 @@ public class ProfileUserController {
 	}
 
 	@PreAuthorize("hasAuthority('AddUser')")
-	@ApiOperation(value="添加用户", notes="")
+	@ApiOperation(value="添加用户", notes="添加用户")
 	@RequestMapping(value="/addUser", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse addUser(@RequestBody @Validated MgmWebUser user,
@@ -156,7 +170,7 @@ public class ProfileUserController {
 
 
 	@PreAuthorize("hasAuthority('RemoveUserByPuId')")
-	@ApiOperation(value="删除某个用户", notes="")
+	@ApiOperation(value="删除某个用户", notes="删除某个用户")
 	@RequestMapping(value="/removeUserByPuId", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse removeUser(@RequestBody @Validated ProfileUserForm user,
@@ -178,8 +192,8 @@ public class ProfileUserController {
 		return new CommonWithHeaderResponseBuilder<Void,Void>().build();
 	}
 
-	//    @PreAuthorize("hasAuthority('Maintenance')")
-	@ApiOperation(value="删除多个用户", notes="")
+	    @PreAuthorize("hasAuthority('Maintenance')")
+	@ApiOperation(value="删除多个用户", notes="删除多个用户")
 	@RequestMapping(value="/removeUsers", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse removeUser(@RequestBody
@@ -191,7 +205,7 @@ public class ProfileUserController {
 	}
 
 	@PreAuthorize("hasAuthority('UpdateUser')")
-	@ApiOperation(value="更新某个用户", notes="")
+	@ApiOperation(value="更新某个用户", notes="更新某个用户")
 	@RequestMapping(value="/updateUser", method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse updateUser(@RequestBody @Validated ProfileUserUpdateForm user,

@@ -10,8 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
+
 /**
- * @author lijiahui
+ * 安全控制初始化
+ *
+ * @author 陈宝
+ * @version 1.0
+ * @date 2020/3/20 17:43
+ * @since 1.0
  */
 public class SecurityControlInit implements ParameterInitializer {
 

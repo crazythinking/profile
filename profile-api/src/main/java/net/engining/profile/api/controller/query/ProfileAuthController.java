@@ -22,17 +22,19 @@ import java.util.List;
  * @author heqingxi
  */
 
-@Api(value = "ProfileAuthController")
+@Api(value = "ProfileAuthController",description = "菜单权限模块")
 @RequestMapping("/menu")
 @RestController
 public class ProfileAuthController {
-
+    /**
+     * 菜单权限服务
+     */
     @Autowired
     private AuthService authService;
 
     //    @PreAuthorize("hasAuthority('menuQurey')")
     @RequestMapping(value = "/menuAuthorityQuery", method = RequestMethod.GET)
-    @ApiOperation(value = "权限菜单信息查询", notes = "")
+    @ApiOperation(value = "权限菜单信息查询", notes = "权限菜单信息查询")
     public CommonWithHeaderResponse
     getAuthorityMenu(@ApiParam(value = "应用代码", required = true)
                      @RequestParam(required = false) String appCd) {
@@ -50,7 +52,7 @@ public class ProfileAuthController {
      */
     @PreAuthorize("hasAuthority('DistributionProfileRole')")
     @RequestMapping(value = "/distributionProfileRole", method = RequestMethod.POST)
-    @ApiOperation(value = "角色权限分配", notes = "")
+    @ApiOperation(value = "角色权限分配", notes = "角色权限分配")
     public @ResponseBody
     CommonWithHeaderResponse distributionProfileRole(
             @RequestBody @Validated ProfileRoleDelDisForm profileRoleDelDisForm) {
@@ -70,7 +72,7 @@ public class ProfileAuthController {
      */
 //    @PreAuthorize("hasAuthority('ProfileRole')")
     @RequestMapping(value = "/fetchRoleAuth", method = RequestMethod.GET)
-    @ApiOperation(value = "获取角色对应的权限", notes = "")
+    @ApiOperation(value = "获取角色对应的权限", notes = "获取角色对应的权限")
     public  CommonWithHeaderResponse fetchRoleAuth(
             @ApiParam(value = "角色id", required = true) @RequestParam String roleId) {
         List<String> authList = authService

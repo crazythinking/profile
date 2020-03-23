@@ -1,6 +1,7 @@
 package net.engining.profile.api.controller.profile;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.WebCommonUtils;
@@ -24,23 +25,33 @@ import java.util.Date;
 /**
  * @author yangxing
  */
+@Api(value = "ProfilePasswordController",description = "密码服务模块")
 @RequestMapping("/profile")
 @RestController
 public class ProfilePasswordController {
-
+    /**
+     * 用户服务
+     */
     @Autowired
     private ProfileUserService profileUserService;
-
+    /**
+     * 密码服务
+     */
     @Autowired
     ProfilePasswordService profilePasswordService;
-
+    /**
+     * 安全服务
+     */
     @Autowired
     ProfileSecurityService profileSecurityService;
-
+    /**
+     * 安全日志服务
+     */
     @Autowired
     ProfileSecurityLoggerService profileSecurityLoggerService;
 
-    @ApiOperation(value = "修改密码", notes = "")
+    @PreAuthorize("hasAuthority('ProfileRole')")
+    @ApiOperation(value = "修改密码", notes = "修改密码")
     @RequestMapping(value = "/changePwdByAdmin/{puId}", method = RequestMethod.POST)
     public @ResponseBody
     CommonWithHeaderResponse changePasswordByAdmin(@PathVariable String puId,
@@ -64,7 +75,7 @@ public class ProfilePasswordController {
      * @return
      */
     @PreAuthorize("hasAuthority('ProfileRole')")
-    @ApiOperation(value = "重置密码", notes = "")
+    @ApiOperation(value = "重置密码", notes = "重置密码")
     @RequestMapping(value = "/resetPwdByAdmin/{puId}", method = RequestMethod.POST)
     public @ResponseBody
     CommonWithHeaderResponse resetPasswordByAdmin(@PathVariable String puId) {

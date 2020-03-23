@@ -22,19 +22,23 @@ import java.util.List;
  * 用户登记薄Controller
  * @author heqingxi
  */
-@Api(value = "UserRegistryController")
+@Api(value = "UserRegistryController",description = "用户登记薄模块")
 @RequestMapping("/userRegistry")
 @RestController
 public class UserRegistryController {
-
+  /**
+   * 用户登记服务
+   */
   @Autowired
   UserRegistryService userRegistryService;
-
+  /**
+   *
+   */
   @Autowired
   UserRegistryExcelService userRegistryExcelService;
 
   @PreAuthorize("hasAuthority('UserRegistryDetailSearch')")
-  @ApiOperation(value = "用户登记薄详情查询", notes = "")
+  @ApiOperation(value = "用户登记薄详情查询", notes = "用户登记薄详情查询")
   @RequestMapping(value = "/userRegistryDetailSearch", method = RequestMethod.POST)
   @ResponseBody
   public CommonWithHeaderResponse userRegistryDetailSearch(@RequestBody
@@ -46,7 +50,7 @@ public class UserRegistryController {
   }
 
   @PreAuthorize("hasAuthority('UserRegistryExport')")
-  @ApiOperation(value="用户登记薄查询Excel", notes="")
+  @ApiOperation(value="用户登记薄查询Excel", notes="用户登记薄查询Excel")
   @RequestMapping(value="/userRegistryExport",method= RequestMethod.POST)
   public void userRegistryExportExcel(@RequestBody
                                         @Validated UserRegistryDetailsReq uRegDetailsReq,

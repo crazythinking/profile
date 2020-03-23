@@ -17,16 +17,23 @@ import org.springframework.web.bind.annotation.*;
  * @Description 密码规则管理
  * @Author yangli
  */
-@Api(value = "PasswordRuleManagerController")
+@Api(value = "PasswordRuleManagerController",description = "密码规则管理")
 @RestController
 @RequestMapping(value = "/passwordRule")
 public class PasswordRuleManagerController {
-
+    /**
+     * 密码管理服务
+     */
     @Autowired
     private PasswordRuleManagerService passwordRuleManagerService;
 
+    /**
+     * 密码修改
+     * @param passwordRuleBean 修改请求
+     * @return 修改结果
+     */
     @PreAuthorize("hasAuthority('PasswordRuleManager')")
-    @ApiOperation(value = "密码规则确认", notes = "")
+    @ApiOperation(value = "密码规则确认", notes = "密码规则修改")
     @RequestMapping(value = "/passwordRuleManager", method = RequestMethod.POST)
     @ResponseBody
     public CommonWithHeaderResponse passwordRuleManager(@RequestBody @Validated PasswordRuleBean passwordRuleBean) {
@@ -36,8 +43,11 @@ public class PasswordRuleManagerController {
                 .putAdditionalRepMap("result", resultMessageBean);
     }
 
-
-    @ApiOperation(value = "密码规则查询", notes = "")
+    /**
+     * 密码规则查询
+     * @return 密码规则
+     */
+    @ApiOperation(value = "密码规则查询", notes = "密码规则查询")
     @RequestMapping(value = "/passwordRuleSearch", method = RequestMethod.POST)
     @ResponseBody
     public CommonWithHeaderResponse passwordRuleSearch() {

@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
 
 /**
+ * 机构服务
  * @author tuyi
  */
 @Service

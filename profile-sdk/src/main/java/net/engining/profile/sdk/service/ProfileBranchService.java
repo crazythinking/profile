@@ -23,16 +23,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 机构服务
+ *
+ * @author 陈宝
+ * @version 1.0
+ * @date 2020/3/20 19:36
+ * @since 1.0
+ */
 @Service
 public class ProfileBranchService{
-
+	/**
+	 * 日志
+	 */
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProfileBranchService.class);
+	/**
+	 * 实体服务
+	 */
 	@PersistenceContext
 	private EntityManager em;
 
-	private final static Logger log = LoggerFactory.getLogger(ProfileBranchService.class);
-
+	/**
+	 *
+	 * @param range
+	 * @param superiorId
+	 * @param orgId
+	 * @return
+	 */
 	public FetchResponse<ProfileBranch> fetchBranch(Range range, String superiorId, String orgId) {
-
 		QProfileBranch q = QProfileBranch.profileBranch;
 		JPAQuery<ProfileBranch> query = new JPAQueryFactory(em)
 				.select(q)
@@ -188,35 +206,35 @@ public class ProfileBranchService{
 				.delete(qProfilePwdHist)
 				.where(qProfilePwdHist.puId.in(profileUsers))
 				.execute();
-		log.debug("删除了{}条ProfilePwdHist", n1);
+		LOGGER.debug("删除了{}条ProfilePwdHist", n1);
 
 		//删除用户表
 		long n2 = new JPAQueryFactory(em)
 				.delete(qProfileUser)
 				.where(qProfileUser.puId.in(profileUsers))
 				.execute();
-		log.debug("删除了{}条ProfileUser", n2);
+		LOGGER.debug("删除了{}条ProfileUser", n2);
 
 		//删除用户角色表
 		long n3 = new JPAQueryFactory(em)
 				.delete(qProfileUserRole)
 				.where(qProfileUserRole.roleId.in(profileRoles))
 				.execute();
-		log.debug("删除了{}条ProfileUserRole", n3);
+		LOGGER.debug("删除了{}条ProfileUserRole", n3);
 
 		//删除角色权限表
 		long n4 = new JPAQueryFactory(em)
 				.delete(qProfileRoleAuth)
 				.where(qProfileRoleAuth.roleId.in(profileRoles))
 				.execute();
-		log.debug("删除了{}条ProfileRoleAuth", n4);
+		LOGGER.debug("删除了{}条ProfileRoleAuth", n4);
 
 		//删除角色表
 		long n5 = new JPAQueryFactory(em)
 				.delete(qProfileRole)
 				.where(qProfileRole.roleId.in(profileRoles))
 				.execute();
-		log.debug("删除了{}条ProfileRole", n5);
+		LOGGER.debug("删除了{}条ProfileRole", n5);
 
 		//删除机构表
 		long n6 = new JPAQueryFactory(em)
@@ -226,7 +244,7 @@ public class ProfileBranchService{
 						qProfileBranch.orgId.eq(orgId)
 				)
 				.execute();
-		log.debug("删除了{}条ProfileBranch", n6);
+		LOGGER.debug("删除了{}条ProfileBranch", n6);
 
 	}
 }

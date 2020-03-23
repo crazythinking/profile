@@ -3,6 +3,7 @@ package net.engining.profile.sdk.service.bean.profile;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -17,15 +18,15 @@ public class ProfileRoleSaveUpdateForm implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@NotBlank(message = "请输入：角色id")
+	@NotEmpty(message = "请输入：角色id")
 	@ApiModelProperty(value = "角色id", required = true, example="admin")
 	private String roleId;
 
-	@NotBlank(message = "请输入：机构id")
+	@NotEmpty(message = "请输入：机构id")
 	@ApiModelProperty(value = "机构id", required = true, example="10000")
 	private String branchId;
 
-	@NotBlank(message = "请输入：角色名称")
+	@NotEmpty(message = "请输入：角色名称")
 	@ApiModelProperty(value = "角色名称", required = true, example="admin")
 	private String roleName;
 

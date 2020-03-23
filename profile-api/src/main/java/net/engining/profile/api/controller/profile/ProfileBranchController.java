@@ -1,11 +1,13 @@
 package net.engining.profile.api.controller.profile;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.Range;
+import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
 import net.engining.profile.entity.model.ProfileBranch;
@@ -24,21 +26,33 @@ import java.util.Map;
 /**
  * @author tuyi
  */
+@Api(value = "ProfileBranchController",description = "机构服务模块")
 @RequestMapping("/profile")
 @RestController
 public class ProfileBranchController {
-
+	/**
+	 * 机构服务
+	 */
 	@Autowired
 	ProfileBranchService profileBranchService;
-
+	/**
+	 * 机构服务
+	 */
 	@Autowired
 	Provider4Organization provider4Organization;
-
+	/**
+	 * 机构服务
+	 */
 	@Autowired
 	BranchService branchService;
 
+	/**
+	 * 通过上级分支id查询机构分支信息
+	 * @param branchFilter
+	 * @return
+	 */
 	@RequestMapping(value="/branchesBySuperid",method= RequestMethod.POST)
-	@ApiOperation(value="通过上级分支id查询机构分支信息", notes="")
+	@ApiOperation(value="通过上级分支id查询机构分支信息", notes="通过上级分支id查询机构分支信息")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public @ResponseBody
 	CommonWithHeaderResponse fetchBranchesBySuperid(@RequestBody @Validated BranchFilter branchFilter) {
@@ -53,7 +67,7 @@ public class ProfileBranchController {
 	}
 
 	@RequestMapping(value="/branches",method= RequestMethod.POST)
-	@ApiOperation(value="查询机构分支信息列表", notes="")
+	@ApiOperation(value="查询机构分支信息列表", notes="查询机构分支信息列表")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public @ResponseBody
 	CommonWithHeaderResponse fetchBranches(@RequestBody Range range) {
@@ -64,7 +78,7 @@ public class ProfileBranchController {
 	}
 
 	@RequestMapping(value="/branch/{branchId}",method= RequestMethod.GET)
-	@ApiOperation(value="通过分支id查询机构分支信息", notes="")
+	@ApiOperation(value="通过分支id查询机构分支信息", notes="通过分支id查询机构分支信息")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public
 	CommonWithHeaderResponse getBranch(@PathVariable String branchId) {
@@ -72,13 +86,16 @@ public class ProfileBranchController {
 				provider4Organization.getCurrentOrganizationId(),
 				branchId
 		);
+		if(ValidateUtilExt.isNullOrEmpty(branch)){
+			return null;
+		}
 		ProfileBranchForm profileBranchForm = branchService.profileBranchForm(branch);
 		return new CommonWithHeaderResponseBuilder<Void,ProfileBranchForm>().build()
 				.setResponseData(profileBranchForm);
 	}
 
 	@RequestMapping(value="/updateBranch",method= RequestMethod.POST)
-	@ApiOperation(value="更新机构分支信息", notes="")
+	@ApiOperation(value="更新机构分支信息", notes="更新机构分支信息")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public @ResponseBody
 	CommonWithHeaderResponse updateBranch(@RequestBody ProfileBranchForm branch) {
@@ -88,7 +105,7 @@ public class ProfileBranchController {
 	}
 
 	@RequestMapping(value="/getBranchNames",method= RequestMethod.GET)
-	@ApiOperation(value="获得当前机构id下分支名", notes="")
+	@ApiOperation(value="获得当前机构id下分支名", notes="获得当前机构id下分支名")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public
 	CommonWithHeaderResponse getBranchNames() {
@@ -100,7 +117,7 @@ public class ProfileBranchController {
 	}
 
 	@RequestMapping(value="/removeBranches",method= RequestMethod.POST)
-	@ApiOperation(value="删除机构分支信息", notes="")
+	@ApiOperation(value="删除机构分支信息", notes="删除机构分支信息")
 //	@PreAuthorize("hasAuthority('ProfileBranch')")
 	public @ResponseBody
 	CommonWithHeaderResponse removeBranches(@RequestBody

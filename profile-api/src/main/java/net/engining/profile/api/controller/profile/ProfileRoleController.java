@@ -1,6 +1,7 @@
 package net.engining.profile.api.controller.profile;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.engining.pg.web.CommonWithHeaderResponseBuilder;
@@ -16,16 +17,19 @@ import java.util.Map;
 /**
  * @author yangxing
  */
+@Api(value = "ProfileRoleController",description = "角色服务模块")
 @RequestMapping("/profile")
 @RestController
 public class ProfileRoleController {
-
+	/**
+	 * 角色服务
+	 */
 	@Autowired
 	private ProfileRoleService profileRoleService;
 
 
 	@PreAuthorize("hasAuthority('ProfileRole')")
-	@ApiOperation(value="通过角色id查询角色信息", notes="")
+	@ApiOperation(value="通过角色id查询角色信息", notes="通过角色id查询角色信息")
 	@RequestMapping(value="/getRole/{roleId}",method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse getRole(@PathVariable String roleId) {
@@ -38,7 +42,7 @@ public class ProfileRoleController {
 
 
 	@PreAuthorize("hasAuthority('ProfileRole')")
-	@ApiOperation(value="删除角色下的用户", notes="")
+	@ApiOperation(value="删除角色下的用户", notes="删除角色下的用户")
 	@RequestMapping(value="/delRoleUsers",method= RequestMethod.POST)
 	public @ResponseBody
 	CommonWithHeaderResponse deleteRole2User(@RequestBody

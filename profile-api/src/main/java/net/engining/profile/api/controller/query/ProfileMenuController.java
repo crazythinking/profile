@@ -22,7 +22,7 @@ import static net.engining.profile.sdk.service.query.AuthService.MENU_RESOURCE_U
  * @author heqingxi
  */
 
-@Api(value = "ProfileMenuController")
+@Api(value = "ProfileMenuController",description = "菜单服务模块")
 @RequestMapping({
         "/menu",
         MENU_RESOURCE_URL
@@ -35,7 +35,7 @@ public class ProfileMenuController {
 
     //    @PreAuthorize("hasAuthority('menuQurey')")
     @RequestMapping(value = "/menuQuery", method = RequestMethod.GET)
-    @ApiOperation(value = "主菜单信息查询", notes = "")
+    @ApiOperation(value = "主菜单信息查询", notes = "主菜单信息查询")
     public CommonWithHeaderResponse
     getMenu(@Validated MenuQueryRequest request) {
         String menuList = authService.getMenuData(
