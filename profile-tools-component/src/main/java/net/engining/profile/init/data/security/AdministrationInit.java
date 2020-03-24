@@ -113,19 +113,19 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
 
         // 清空机构表
         LOGGER.debug("清空机构表--->PROFILE_BRANCH");
-        em.createNativeQuery("delete from PROFILE_BRANCH").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_BRANCH").executeUpdate();
         //清空用户表
         LOGGER.debug("清空用户表--->PROFILE_USER");
-        em.createNativeQuery("delete from PROFILE_USER").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_USER").executeUpdate();
         //清空权限表
         LOGGER.debug("清空权限表--->PROFILE_ROLE_AUTH");
-        em.createNativeQuery("delete from PROFILE_ROLE_AUTH").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_ROLE_AUTH").executeUpdate();
         //清空角色定义表
         LOGGER.debug("清空角色定义表--->PROFILE_ROLE");
-        em.createNativeQuery("delete from PROFILE_ROLE").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_ROLE").executeUpdate();
         //清空用户角色表
         LOGGER.debug("清空用户角色表--->PROFILE_USER_ROLE");
-        em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
+//        em.createNativeQuery("delete from PROFILE_USER_ROLE").executeUpdate();
         //1.创建部门
         LOGGER.debug("初始化部门信息");
         initBranch();

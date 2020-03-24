@@ -23,10 +23,18 @@ import net.engining.profile.security.service.ProfileSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author yangxing
@@ -62,6 +70,8 @@ public class ProfileUserController {
 	 */
 	@Autowired
 	private ProfileSecurityLoggerService profileSecurityLoggerService;
+ 	private static final String ADMIN = "admin";
+ 	private static final String SVADMIN = "svadmin";
 
 	    @PreAuthorize("hasAuthority('users')")
 	@ApiOperation(value="根据机构和分部获取用户列表", notes="根据机构和分部获取用户列表")

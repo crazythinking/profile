@@ -45,17 +45,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- *
  * RoleId全局不可重复，MenuCd，Authority在同App_Cd范围内 不可重复；
  * ProfileParamProperties判断是否使用了授权中心
  * oauth中心模式缓存的map中有多颗appcd对应的树
  * 本地profile模式缓存的map中只有一颗树，且map key为"-",即DbConstants.NULL
- *
  */
 @Service
 public class AuthService implements InitializingBean {
 
-    /** logger */
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
     /**
@@ -111,8 +111,8 @@ public class AuthService implements InitializingBean {
         //角色已有权限cache
         initRoleAuthCache();
         //触发缓存
-        Map<String,TreeNode<MenuOrAuthBean>> treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
-        LOGGER.debug("菜单权限树缓存cache加载完成...{}",JSON.toJSONString(treeParentNode));
+        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
+        LOGGER.debug("菜单权限树缓存cache加载完成...{}", JSON.toJSONString(treeParentNode));
     }
 
     /**
@@ -237,7 +237,7 @@ public class AuthService implements InitializingBean {
     public boolean checkAppCd(String appCd) {
         //是否远程auth
         boolean isAuth = profileOauthProperties.isOauthed();
-        if (isAuth && ValidateUtilExt.isNullOrEmpty(appCd)){
+        if (isAuth && ValidateUtilExt.isNullOrEmpty(appCd)) {
             throw new ErrorMessageException(ErrorCode.CheckError, "appCd不能为空！");
         }
         return isAuth;
@@ -263,7 +263,9 @@ public class AuthService implements InitializingBean {
             if (ValidateUtilExt.isNotNullOrEmpty(appCd)) {
                 treeJsonStr = JSON.toJSONString(treeParentNode.get(appCd));
             } else {
-                treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
+                if (ValidateUtilExt.isNotNullOrEmpty(treeParentNode.get(DbConstants.NULL))) {
+                    treeJsonStr = JSON.toJSONString(treeParentNode.get(DbConstants.NULL));
+                }
             }
         }
 
@@ -547,7 +549,7 @@ public class AuthService implements InitializingBean {
     /**
      * 根据总的菜单树挂载接口权限，生成总的菜单权限树(oauth中心模式)
      *
-     * @return Map<String       ,       TreeNode       <       String       ,               MenuOrAuthBean>>
+     * @return Map<String, TreeNode < String, MenuOrAuthBean>>
      * String：AppCd
      * TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
      */
@@ -573,7 +575,7 @@ public class AuthService implements InitializingBean {
     /**
      * 根据总的菜单树挂载接口权限，生成总的菜单权限树(本地profile中心模式)
      *
-     * @return Map<String       ,       TreeNode       <       String       ,               MenuOrAuthBean>>
+     * @return Map<String, TreeNode < String, MenuOrAuthBean>>
      * String：AppCd
      * TreeNode<String, MenuOrAuthBean>:AppCd对应的总菜单权限树
      */
