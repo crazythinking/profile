@@ -253,6 +253,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         profileRole.setOrgId(provider4Organization.getCurrentOrganizationId());
         profileRole.setBranchId(provider4Organization.getCurrentOrganizationId());
         profileRole.setRoleName(roleName);
+        profileRole.setClientId("");
         em.persist(profileRole);
         return profileRole;
     }

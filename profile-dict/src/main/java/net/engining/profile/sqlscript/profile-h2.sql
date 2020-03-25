@@ -113,7 +113,9 @@ CREATE TABLE PROFILE_ROLE
 	-- 机构号
 	ORG_ID VARCHAR(12) NOT NULL,
 	-- 应用代码 : 接入授权中心对应的client_id
-	APP_CD VARCHAR(50),
+	CLIENT_ID VARCHAR(50),
+	-- 应用代码 : 接入授权中心对应的client_id
+	APP_CD VARCHAR(64),
 	-- 分支编码
 	BRANCH_ID VARCHAR(9) NOT NULL,
 	-- 角色名

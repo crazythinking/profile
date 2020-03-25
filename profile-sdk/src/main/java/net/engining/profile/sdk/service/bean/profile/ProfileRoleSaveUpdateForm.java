@@ -34,6 +34,16 @@ public class ProfileRoleSaveUpdateForm implements Serializable {
 
 	@ApiModelProperty(value = "应用代码", required = false, example="123456")
 	private String appCd;
+	@ApiModelProperty(value = "客户端id", required = false, example="123456-app")
+	private String clientId;
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
 
 	public String getRoleId() {
 		return roleId;

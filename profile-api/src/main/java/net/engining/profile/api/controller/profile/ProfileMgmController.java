@@ -205,7 +205,7 @@ public class ProfileMgmController {
             @RequestBody @Validated ProfileRoleSaveUpdateForm profileRoleSaveForm) {
         profileMgmService.saveProfileRole(profileRoleSaveForm.getRoleId(), profileRoleSaveForm.getBranchId(),
                 profileRoleSaveForm.getRoleName(), provider4Organization.getCurrentOrganizationId(),
-                profileRoleSaveForm.getAppCd());
+                profileRoleSaveForm.getAppCd(),profileRoleSaveForm.getClientId());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()
@@ -227,7 +227,7 @@ public class ProfileMgmController {
         profileMgmService.updateProfileRole(profileRoleSaveUpdateForm.getRoleId(),
                 profileRoleSaveUpdateForm.getBranchId(),
                 profileRoleSaveUpdateForm.getRoleName(),
-                profileRoleSaveUpdateForm.getAppCd());
+                profileRoleSaveUpdateForm.getAppCd(),profileRoleSaveUpdateForm.getClientId());
 
         return new CommonWithHeaderResponseBuilder<Void, Void>()
                 .build()

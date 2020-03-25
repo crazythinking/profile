@@ -161,7 +161,7 @@ public class ProfileMgmService {
 		JPAQuery<Tuple> query = new JPAQueryFactory(em)
 				.select(qProfileRole.roleId, qProfileBranch.branchName,
 						qProfileBranch.branchId,qProfileRole.roleName,
-						qProfileRole.appCd)
+						qProfileRole.clientId,qProfileRole.appCd)
 				.from(qProfileRole, qProfileBranch)
 				.where(w,
 						w1,
@@ -169,7 +169,7 @@ public class ProfileMgmService {
 						roleIdCondition);
 
 		return new JPAFetchResponseBuilder<Map<String, Object>>().range(range).buildAsMap(query, qProfileRole.roleId,
-				qProfileBranch.branchName,qProfileBranch.branchId, qProfileRole.roleName, qProfileRole.appCd);
+				qProfileBranch.branchName,qProfileBranch.branchId, qProfileRole.roleName, qProfileRole.appCd,qProfileRole.clientId);
 	}
 
 	/**
@@ -179,14 +179,19 @@ public class ProfileMgmService {
 	 * @param roleName
 	 * @param orgId
 	 * @param appCd
+	 * @param clientId
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void saveProfileRole(String roleId, String branchId, String roleName, String orgId, String appCd) {
+	public void saveProfileRole(String roleId, String branchId, String roleName, String orgId, String appCd,String clientId) {
 		//是否为auth中心模式
 		boolean isAuth = authService.checkAppCd(appCd);
 
 		QProfileRole q = QProfileRole.profileRole;
-
+		QProfileMenu qProfileMenu = QProfileMenu.profileMenu;
+		List<ProfileMenu> list = new JPAQueryFactory(em).select(qProfileMenu).from(qProfileMenu).where(qProfileMenu.appCd.eq(clientId)).fetch();
+		if(ValidateUtilExt.isNullOrEmpty(list)||list.size()<=0){
+			throw new ErrorMessageException(ErrorCode.CheckError,String.format("客户端：%s 没有对应的菜单",clientId));
+		}
 		if (!isAuth){
 			//本地profile模式，如果appCd不为空，就用它的,空的话就用默认的（应对于授权中心模式）
 			if (ValidateUtilExt.isNullOrEmpty(appCd)) {
@@ -217,6 +222,7 @@ public class ProfileMgmService {
 		profileRole.setAppCd(appCd);
 		profileRole.setBranchId(branchId);
 		profileRole.setRoleName(roleName);
+		profileRole.setClientId(clientId);
 		em.persist(profileRole);
 	}
 
@@ -226,9 +232,10 @@ public class ProfileMgmService {
 	 * @param branchId
 	 * @param roleName
 	 * @param appCd
+	 * @param clientId
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void updateProfileRole(String roleId, String branchId, String roleName, String appCd) {
+	public void updateProfileRole(String roleId, String branchId, String roleName, String appCd,String clientId) {
         ProfileRole profileRole = em.find(ProfileRole.class, roleId);
         if (ValidateUtilExt.isNotNullOrEmpty(profileRole)) {
             throw new ErrorMessageException(ErrorCode.Null, "角色不存在，请确认角色id是否正确！");
@@ -238,6 +245,7 @@ public class ProfileMgmService {
 		profileRole.setBranchId(branchId);
 		profileRole.setRoleName(roleName);
 		profileRole.setAppCd(appCd);
+		profileRole.setClientId(clientId);
 	}
 
 	/**
