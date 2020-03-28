@@ -2,7 +2,6 @@ package net.engining.profile.sdk.service.bean.profile;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -12,7 +11,6 @@ public class ProfileUserForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotBlank(message = "PU_ID不能为空")
     @ApiModelProperty(value = "puId", required = false, example="123")
     private String puId;
 
