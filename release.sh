@@ -18,10 +18,12 @@ git push origin sccc-4.0.3
 git checkout master
 # 合并目标版本到master分支
 git merge sccc-4.0.3
+# 提交合并
+git push origin master
 # 创建切换到新创建的分支
 git checkout -b sccc-4.0.4
 # 将master提升版本号
-sed -i "s/sccc-4.0.3.RELEASE/sccc-4.0.4-SNAPSHOT/g" pom.xml */pom.xml */*/pom.xml
+sed -i "s/4.0.3.RELEASE/4.0.4-SNAPSHOT/g" pom.xml */pom.xml */*/pom.xml
 # 添加所有修改的内容
 git add .
 # 提交本地master分支
