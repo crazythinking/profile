@@ -32,6 +32,10 @@
 			<groupId>net.engining.profile</groupId>
 			<artifactId>profile-sdk</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.engining.profile</groupId>
+			<artifactId>profile-flow-trans-sdk</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
