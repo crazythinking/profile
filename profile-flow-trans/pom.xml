@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.engining.profile</groupId>
+        <artifactId>profile-parent</artifactId>
+        <version>4.0.5-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <artifactId>profile-flow-trans</artifactId>
+    <name>flow-Trans组件</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- QueryDsl for sql -->
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-sql-spring</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.engining.control</groupId>
+            <artifactId>control-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.control</groupId>
+            <artifactId>control-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.gm</groupId>
+            <artifactId>gm-sdk</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-dict</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-flow-trans-meta</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
