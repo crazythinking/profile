@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 
 /**
@@ -115,7 +116,7 @@ public class ProfilePasswordController {
     @ApiOperation(value = "修改密码", notes = "修改密码")
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
-    changePassword(CommonWithHeaderRequest<DefaultRequestHeader, ChangePasswordRequest> request) {
+    changePassword(@Valid @RequestBody CommonWithHeaderRequest<DefaultRequestHeader, ChangePasswordRequest> request) {
         // 请求体
         ChangePasswordRequest requestData = request.getRequestData();
         // 请求头
@@ -137,6 +138,8 @@ public class ProfilePasswordController {
         flowRequest.setChannel(requestHead.getChannelId());
         flowRequest.setTxnDateTime(timestamp);
         flowRequest.setOnlineData(JSON.toJSONString(request));
+        // 其它
+        flowRequest.setOperationType(OperationType.CP);
 
         ChangePasswordFlowResponse flowResponse = flowTransProcessorTemplate.process(flowRequest, ChangePasswordFlowResponse.class);
         ControllerUtils.checkFlowResponse(flowResponse);

@@ -12,6 +12,7 @@ import net.engining.control.core.invoker.WriteJournalUpdateResult;
 import net.engining.profile.invoker.AddProfileSecoperLogInvoker;
 import net.engining.profile.invoker.ChangePasswordInvoker;
 import net.engining.profile.invoker.CheckOldPasswordIsRightInvoker;
+import net.engining.profile.invoker.CheckOperatorIsSelfInvoker;
 import net.engining.profile.invoker.CheckUserExistsInvoker;
 import net.engining.profile.invoker.PasswordValidateInvoker;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ import org.springframework.stereotype.Service;
                 TransactionSeperator.class,
                 // 校验用户信息是否存在
                 CheckUserExistsInvoker.class,
-                // TODO 是否只能修改自己的密码
+                // 校验操作人是否是自己
+                CheckOperatorIsSelfInvoker.class,
                 // 校验旧密码是否正确
                 CheckOldPasswordIsRightInvoker.class,
                 // 密码校验

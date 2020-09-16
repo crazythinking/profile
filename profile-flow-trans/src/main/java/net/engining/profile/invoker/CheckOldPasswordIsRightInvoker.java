@@ -34,7 +34,7 @@ public class CheckOldPasswordIsRightInvoker extends AbstractSkippableInvoker {
 
     @Override
     public void invoke(FlowContext flowContext) {
-        if (passwordEncoder.matches(flowContext.get(OriginalPasswordKey.class),
+        if (!passwordEncoder.matches(flowContext.get(OriginalPasswordKey.class),
                 flowContext.get(ProfileUserKey.class).getPassword())) {
             throw new ErrorMessageException(ErrorCode.CheckError, "原密码不正确");
         }
