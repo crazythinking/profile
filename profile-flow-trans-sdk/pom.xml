@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.engining.profile</groupId>
+        <artifactId>profile-parent</artifactId>
+        <version>4.0.5-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <artifactId>profile-flow-trans-sdk</artifactId>
+    <name>flow-基础服务</name>
+
+    <properties>
+        <pmd.skip>true</pmd.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.engining.pg</groupId>
+            <artifactId>pg-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.control</groupId>
+            <artifactId>control-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.control</groupId>
+            <artifactId>control-sdk</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-flow-trans-meta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-flow-trans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.engining.profile</groupId>
+            <artifactId>profile-dict</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.engining.control</groupId>
+                <artifactId>control-maven-plugin</artifactId>
+                <version>${control.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>service-flow</goal>
+                        </goals>
+                        <configuration>
+                            <basePackage>net.engining.profile.flow.sdk</basePackage>
+                            <scanPackages>
+                                <scanPackage>net.engining.profile.flow</scanPackage>
+                            </scanPackages>
+                            <graphvizDirectory>${project.build.directory}/graphviz-source</graphvizDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.engining.profile</groupId>
+                        <artifactId>profile-flow-trans-meta</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.engining.profile</groupId>
+                        <artifactId>profile-flow-trans</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
