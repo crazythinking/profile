@@ -7,10 +7,9 @@ import com.google.common.collect.Sets;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.param.SecurityControl;
-
 import net.engining.profile.security.service.ProfileUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -69,7 +68,7 @@ public class ProfileRuntimeService {
                 //首次登录改密码
                 control.get().pwdFirstLoginChgInd &&
                 //新用户
-                ud.getStatus() == StatusDef.N
+                ud.getStatus() == UserStatusEnum.N
         );
 
         return cu;

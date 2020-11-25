@@ -1,8 +1,6 @@
 package net.engining.profile.sdk.service.bean.profile;
 
 import io.swagger.annotations.ApiModelProperty;
-import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.enums.StatusDef;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;

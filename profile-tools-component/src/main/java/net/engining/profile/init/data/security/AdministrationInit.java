@@ -6,12 +6,18 @@ import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.init.TableDataInitializer;
 import net.engining.profile.config.props.ProfileOauthProperties;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfileBranch;
+import net.engining.profile.entity.model.ProfileMenu;
+import net.engining.profile.entity.model.ProfileMenuInterf;
+import net.engining.profile.entity.model.ProfileRole;
+import net.engining.profile.entity.model.ProfileRoleAuth;
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.ProfileUserRole;
 import net.engining.profile.enums.DefaultRoleID;
 import net.engining.profile.enums.InterFaceEnum;
 import net.engining.profile.enums.MenuEnum;
 import net.engining.profile.enums.RoleIdEnum;
+import net.engining.profile.enums.UserStatusEnum;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 系统初始数据初始化
@@ -285,7 +294,7 @@ public class AdministrationInit implements TableDataInitializer, InitializingBea
         user.setPassword(passwordEncoder.encode(defaultPassword));
         user.setPwdExpDate(DateUtils.addYears(new Date(), 10));
         user.setPwdTries(0);
-        user.setStatus(StatusDef.A);
+        user.setStatus(UserStatusEnum.A);
         em.persist(user);
         return user;
     }

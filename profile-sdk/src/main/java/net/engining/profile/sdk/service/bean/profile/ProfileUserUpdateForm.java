@@ -1,8 +1,7 @@
 package net.engining.profile.sdk.service.bean.profile;
 
 import io.swagger.annotations.ApiModelProperty;
-import net.engining.pg.support.db.querydsl.Range;
-import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.enums.UserStatusEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -49,7 +48,7 @@ public class ProfileUserUpdateForm implements Serializable {
      */
     @NotNull(message = "请输入：用户状态")
     @ApiModelProperty(value = "用户状态", required = true, example="111")
-    private StatusDef status;
+    private UserStatusEnum status;
 
     @NotBlank(message = "请输入：邮箱")
     @ApiModelProperty(value = "邮箱", required = true, example="@")
@@ -103,11 +102,11 @@ public class ProfileUserUpdateForm implements Serializable {
         this.userId = userId;
     }
 
-    public StatusDef getStatus() {
+    public UserStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(StatusDef status) {
+    public void setStatus(UserStatusEnum status) {
         this.status = status;
     }
 

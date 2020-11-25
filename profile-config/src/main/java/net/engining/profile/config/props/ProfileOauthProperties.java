@@ -18,6 +18,10 @@ public class ProfileOauthProperties {
      * 默认为false
      */
     private boolean oauthed = false;
+    /**
+     * 默认密码
+     */
+    private String defaultPassword = "Abcd123456";
 
     public boolean isOauthed() {
         return oauthed;
@@ -25,5 +29,13 @@ public class ProfileOauthProperties {
 
     public void setOauthed(boolean oauthed) {
         this.oauthed = oauthed;
+    }
+
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public void setDefaultPassword(String defaultPassword) {
+        this.defaultPassword = defaultPassword;
     }
 }

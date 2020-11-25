@@ -1,7 +1,7 @@
 package net.engining.profile.sdk.service;
 
 import net.engining.pg.web.bean.AbstractWebUser;
-import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.enums.UserStatusEnum;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -34,13 +34,13 @@ public class ClientWebUser extends AbstractWebUser {
 	 */
 	private Map<String, String> roles;
 
-	private StatusDef status;
+	private UserStatusEnum status;
 
-	public StatusDef getStatus() {
+	public UserStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(StatusDef status) {
+	public void setStatus(UserStatusEnum status) {
 		this.status = status;
 	}
 

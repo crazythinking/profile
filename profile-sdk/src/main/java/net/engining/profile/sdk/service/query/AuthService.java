@@ -23,8 +23,10 @@ import net.engining.profile.entity.model.QProfileMenuInterf;
 import net.engining.profile.entity.model.QProfileRoleAuth;
 import net.engining.profile.entity.model.QProfileUser;
 import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.enums.SystemEnum;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
+import net.engining.profile.sdk.service.util.ServiceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,12 +144,13 @@ public class AuthService implements InitializingBean {
     /**
      * 获得全部的菜单接口权限树(不分Roleid,但分appcd，只能分配当前appcd下的权限)
      *
-     * @param appCd 应用代码
+     * @param system 所属系统
      * @return
      */
-    public String getAuthorityData(String appCd) {
+    public String getAuthorityData(SystemEnum system) {
+        String appId = ServiceUtils.getAppIdBySystem(system);
         //检查appcd
-        boolean isAuth = checkAppCd(appCd);
+        boolean isAuth = checkAppCd(appId);
 
         Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
         try {
@@ -158,7 +161,7 @@ public class AuthService implements InitializingBean {
         }
 
         //转换树为jsonStr
-        String treeJsonStr = getTreeJsonString(appCd, isAuth, treeParentNode);
+        String treeJsonStr = getTreeJsonString(appId, isAuth, treeParentNode);
 
         return treeJsonStr;
     }
@@ -303,11 +306,21 @@ public class AuthService implements InitializingBean {
                 MenuOrAuthBean menu2 = JSONObject.parseObject(b.get("data").toString(), MenuOrAuthBean.class);
                 Integer id1;
                 Integer id2;
+
+                String mId1 = menu1.getId();
+                String mId2 = menu2.getId();
+                boolean b1 = mId1.startsWith("C");
+                boolean b2 = mId2.startsWith("C");
+
                 // 接口级菜单id C+序号
-                if (3 == level) {
+                // 菜单下有可能既有接口也有下级菜单，沿用原
+                if (b1 && !b2) {
+                    return -1;
+                } else if (!b1 && b2) {
+                    return 1;
+                } else if (b1) {
                     id1 = Integer.valueOf(menu1.getId().substring(1));
                     id2 = Integer.valueOf(menu2.getId().substring(1));
-
                 } else {
                     id1 = Integer.valueOf(menu1.getId());
                     id2 = Integer.valueOf(menu2.getId());

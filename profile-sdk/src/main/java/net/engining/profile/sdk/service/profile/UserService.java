@@ -5,7 +5,7 @@ import net.engining.pg.support.core.context.Provider4Organization;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.model.ProfileUser;
-import net.engining.profile.sdk.service.ProfileUserService;
+import net.engining.profile.sdk.service.UserManagementService;
 import net.engining.profile.sdk.service.bean.profile.MgmWebUser;
 import net.engining.profile.sdk.service.bean.profile.ProfileUserUpdateForm;
 import net.engining.profile.security.service.ProfileSecurityService;
@@ -26,7 +26,7 @@ public class UserService {
 	private ProfileSecurityService profileSecurityService;
 	
 	@Autowired
-	private ProfileUserService profileUserService;
+	private UserManagementService userManagementService;
 	public MgmWebUser mgmWebUser(ProfileUser profileUser){
 		MgmWebUser mgmWebUser = new MgmWebUser();
 		BeanUtils.copyProperties(profileUser, mgmWebUser, "password");
@@ -46,12 +46,12 @@ public class UserService {
 	}
 	
 	public ProfileUser profileUser(ProfileUserUpdateForm user){
-		ProfileUser profileUser = profileUserService.updateProfileUser(user);
+		ProfileUser profileUser = userManagementService.updateProfileUser(user);
 		return profileUser;
 	}
 	
 	public void validateUser(String userId){
-		ProfileUser userInfo = profileUserService.findProfileUserInfoByUserId(userId);
+		ProfileUser userInfo = userManagementService.findProfileUserInfoByUserId(userId);
 		if(null!=userInfo){
 			throw new ErrorMessageException(ErrorCode.CheckError, "该用户已被添加，不能再次添加");
 		}

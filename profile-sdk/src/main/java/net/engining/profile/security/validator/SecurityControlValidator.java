@@ -1,7 +1,6 @@
 package net.engining.profile.security.validator;
 
 import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.param.SecurityControl;
 
@@ -17,7 +16,7 @@ public interface SecurityControlValidator {
 	/**
 	 * 对用户登录和修改密码等操作进行安全性验证，如不符合安全要求则抛出{@link ErrorMessageException}
 	 * 
-	 * @param user {@link ProfileUser}用户的实体对象，validator可能对用户的{@link StatusDef}等状态做一些修改，需要持久化到数据库，如果实体是游离态的，需要在调用后保存。
+	 * @param user {@link ProfileUser}用户的实体对象，validator可能对用户的{@link net.engining.profile.enums.UserStatusEnum}等状态做一些修改，需要持久化到数据库，如果实体是游离态的，需要在调用后保存。
 	 * @param inputPassword 接受用户输入的明文密码
 	 * @param securityControl 安全控制参数{@link SecurityControl}
 	 * @throws ErrorMessageException 安全验证失败则抛出此异常

@@ -2,8 +2,8 @@ package net.engining.profile.sdk.service.query;
 
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.enums.OperationType;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.sdk.service.bean.param.UserRegistryDetailsRes;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public class UserRegistryExcelService {
             }
           }
           String status ="";
-          for(StatusDef statusDef:StatusDef.values()){
+          for(UserStatusEnum statusDef:UserStatusEnum.values()){
             if(statusDef.getValue().equals(e.getStatus())){
               status=statusDef.getLabel();
             }

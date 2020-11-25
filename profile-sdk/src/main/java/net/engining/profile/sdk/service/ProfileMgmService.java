@@ -4,7 +4,6 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.impl.JPAUpdateClause;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.DbConstants;
@@ -12,9 +11,25 @@ import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
 import net.engining.pg.support.utils.ValidateUtilExt;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.dto.ProfileBranchDto;
+import net.engining.profile.entity.dto.ProfileRoleDto;
+import net.engining.profile.entity.model.ProfileMenu;
+import net.engining.profile.entity.model.ProfileRole;
+import net.engining.profile.entity.model.ProfileUserRole;
+import net.engining.profile.entity.model.QProfileBranch;
+import net.engining.profile.entity.model.QProfileMenu;
+import net.engining.profile.entity.model.QProfileRole;
+import net.engining.profile.entity.model.QProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
 import net.engining.profile.enums.DefaultRoleID;
 import net.engining.profile.enums.RoleIdEnum;
+import net.engining.profile.enums.SystemEnum;
+import net.engining.profile.sdk.service.bean.dto.DepartmentSimpleDto;
+import net.engining.profile.sdk.service.bean.dto.RoleSimpleDto;
+import net.engining.profile.sdk.service.bean.dto.SystemSimpleDto;
+import net.engining.profile.sdk.service.db.ProfileBranchService;
+import net.engining.profile.sdk.service.db.ProfileRoleService;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,13 +40,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Profile 后台管理服务
+ * 其它服务
  *
- * @author
+ * @author zhujunbing
  */
 @Service
 public class ProfileMgmService {
@@ -45,6 +62,26 @@ public class ProfileMgmService {
 	@Autowired
 	AuthService authService;
 
+	/**
+     * 获取所有的系统信息
+     *
+     * @return 系统信息
+     */
+	public List<SystemSimpleDto> getAllSystem() {
+        SystemEnum[] values = SystemEnum.values();
+        List<SystemSimpleDto> result = new ArrayList<>(values.length);
+        for (SystemEnum system : values) {
+        	if (SystemEnum.OAUTH2.equals(system)) {
+        		continue;
+			}
+            SystemSimpleDto systemSimpleDto = new SystemSimpleDto();
+            systemSimpleDto.setSystemId(system.getValue());
+            systemSimpleDto.setSystemName(system.getLabel());
+            result.add(systemSimpleDto);
+        }
+        return result;
+    }
+	// ———————————————————— 原方法 ————————————————————
 	/**
 	 * 根据用户信息查询其角色
 	 *
