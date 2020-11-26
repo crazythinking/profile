@@ -18,6 +18,10 @@ import net.engining.pg.support.meta.EnumInfo;
 })
 public enum SystemEnum implements BaseEnum<String> {
     /**
+     * OAUTH2
+     */
+    OAUTH2("OAUTH2", "授权中心"),
+    /**
      * SCAC
      */
     SCAC("SCAC", "账户中心"),
@@ -25,10 +29,6 @@ public enum SystemEnum implements BaseEnum<String> {
      * SCPC
      */
     SCPC("SCPC", "产品中心"),
-    /**
-     * OAUTH2
-     */
-    OAUTH2("OAUTH2", "授权中心"),
     /**
      * SCUCCUST
      */

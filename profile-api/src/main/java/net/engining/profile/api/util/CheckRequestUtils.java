@@ -23,7 +23,14 @@ public class CheckRequestUtils {
      * 分页参数范围
      */
     private static final List<Long> PAGE_SIZE_RANGE = Arrays.asList(10L, 15L, 20L);
+    /**
+     * 正则匹配 数字或短横线
+     */
     private static final Pattern NUMBER_OR_LINE = Pattern.compile("^[0-9-]+$");
+    /**
+     * 正则匹配 数字、字母或短横线
+     */
+    private static final Pattern NUMBER_OR_LETTER_LINE = Pattern.compile("^[0-9A-Za-z-]+$");
 
 
     /**
@@ -126,7 +133,7 @@ public class CheckRequestUtils {
     public static void checkIsNumberOrLine(String source, String name) {
         Matcher matcher = NUMBER_OR_LINE.matcher(source);
         if (ValidateUtilExt.isNotNullOrEmpty(source) && !matcher.matches()) {
-            throw new ErrorMessageException(ErrorCode.BadRequest, name + "只能由数字、字母或下划线组成");
+            throw new ErrorMessageException(ErrorCode.BadRequest, name + "只能由数字或短横线组成");
         }
     }
 
