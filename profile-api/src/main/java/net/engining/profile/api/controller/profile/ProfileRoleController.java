@@ -38,6 +38,7 @@ import net.engining.profile.sdk.service.bean.query.RolePagingQuery;
 import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,7 +84,7 @@ public class ProfileRoleController {
      * @param request 请求
      * @return 结果
      */
-//    @PreAuthorize("hasAuthority('ProfileRole')")
+    @PreAuthorize("hasAuthority('listRole')")
     @RequestMapping(value = "/listRole", method = RequestMethod.GET)
     @ApiOperation(value = "角色列表查询", notes = "分页查询角色表")
     public CommonWithHeaderResponse<Void, ListRoleResponse<RoleListVo>> listRole(@Validated ListRoleRequest request) {
@@ -118,7 +119,7 @@ public class ProfileRoleController {
      * @param request            请求
      * @return 结果
      */
-//	@PreAuthorize("hasAuthority('SaveProfileRole')")
+	@PreAuthorize("hasAuthority('addRole')")
     @RequestMapping(value = "/addRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色新增", notes = "新增角色表记录")
     public CommonWithHeaderResponse<DefaultResponseHeader, AddRoleResponse>
@@ -168,7 +169,7 @@ public class ProfileRoleController {
      * @param request            请求
      * @return 结果
      */
-//	@PreAuthorize("hasAuthority('UpdateProfileRole')")
+	@PreAuthorize("hasAuthority('updateRole')")
     @RequestMapping(value = "/updateRole", method = RequestMethod.POST)
     @ApiOperation(value = "角色修改", notes = "修改角色表记录")
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -217,7 +218,7 @@ public class ProfileRoleController {
      * @param request            请求
      * @return 结果
      */
-//    @PreAuthorize("hasAuthority('DistributionProfileRole')")
+    @PreAuthorize("hasAuthority('distributeAuthority')")
     @RequestMapping(value = "/distributeAuthority", method = RequestMethod.POST)
     @ApiOperation(value = "分配权限", notes = "新增角色和权限对应关系记录")
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -272,7 +273,7 @@ public class ProfileRoleController {
      * @param request            请求
      * @return 结果
      */
-    @RequestMapping(value = "/listRoleAuth", method = RequestMethod.GET)
+    @RequestMapping(value = "/Menu_RoleManagement", method = RequestMethod.GET)
     @ApiOperation(value = "角色拥有的权限查询", notes = "根据角色ID查询角色拥有的权限")
     public CommonWithHeaderResponse<Void, ListRoleAuthResponse> listRoleAuthByRoleId(ListRoleAuthRequest request) {
         String roleId = request.getRoleId();

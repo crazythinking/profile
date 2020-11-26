@@ -26,6 +26,7 @@ import net.engining.profile.sdk.service.UserManagementService;
 import net.engining.profile.security.service.ProfileSecurityLoggerService;
 import net.engining.profile.security.service.ProfileSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -84,10 +85,10 @@ public class ProfilePasswordController {
      * @param request            请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('resetPassword')")
     @ApiOperation(value = "重置密码", notes = "重置密码")
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public @ResponseBody
-    CommonWithHeaderResponse<DefaultResponseHeader, Void>
+    public CommonWithHeaderResponse<DefaultResponseHeader, Void>
     resetPasswordByAdmin(HttpServletRequest httpServletRequest,
                          @Valid @RequestBody CommonWithHeaderRequest<DefaultRequestHeader, ResetPasswordRequest> request) {
         ResetPasswordRequest requestData = request.getRequestData();

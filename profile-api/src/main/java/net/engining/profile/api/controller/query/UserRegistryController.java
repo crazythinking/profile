@@ -23,6 +23,7 @@ import net.engining.profile.sdk.service.bean.query.OperationLogPagingQuery;
 import net.engining.profile.sdk.service.query.UserRegistryService;
 import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +60,7 @@ public class UserRegistryController {
      * @param request 请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('listOperationLog')")
     @ApiOperation(value = "用户操作日志列表查询", notes = "分页查询用户安全操作日志表")
     @RequestMapping(value = "/listOperationLog", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, ListOperationLogResponse<OperationLogListVo>>

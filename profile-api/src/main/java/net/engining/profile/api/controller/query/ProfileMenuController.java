@@ -8,7 +8,6 @@ import net.engining.pg.web.bean.CommonWithHeaderResponse;
 import net.engining.profile.sdk.service.bean.param.MenuQueryRequest;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,7 +33,6 @@ public class ProfileMenuController {
     @Autowired
     private AuthService authService;
 
-//    @PreAuthorize("hasAuthority('menuQurey')")
     @RequestMapping(value = "/menuQuery", method = RequestMethod.GET)
     @ApiOperation(value = "主菜单信息查询", notes = "主菜单信息查询")
     public CommonWithHeaderResponse

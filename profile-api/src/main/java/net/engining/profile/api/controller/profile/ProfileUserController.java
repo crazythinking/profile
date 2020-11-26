@@ -43,6 +43,7 @@ import net.engining.profile.sdk.service.bean.dto.UserListDto;
 import net.engining.profile.sdk.service.bean.query.UserPagingQuery;
 import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,7 +86,7 @@ public class ProfileUserController {
      * @param request 请求
      * @return 返回结果
      */
-//    @PreAuthorize("hasAuthority('users')")
+    @PreAuthorize("hasAuthority('listUser')")
     @ApiOperation(value = "用户列表查询", notes = "分页查询用户表")
     @RequestMapping(value = "/listUser", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, ListUserResponse<UserListVo>> getUsers(@Validated ListUserRequest request) {
@@ -128,7 +129,7 @@ public class ProfileUserController {
      * @param request            请求
      * @return 结果
      */
-    //    @PreAuthorize("hasAuthority('AddUser')")
+    @PreAuthorize("hasAuthority('addUser')")
     @ApiOperation(value = "用户新增", notes = "新增用户表记录")
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -178,7 +179,7 @@ public class ProfileUserController {
      * @param request            请求
      * @return 结果
      */
-//    @PreAuthorize("hasAuthority('UpdateUser')")
+    @PreAuthorize("hasAuthority('updateUser')")
     @ApiOperation(value = "用户修改", notes = "修改用户表记录")
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -228,7 +229,7 @@ public class ProfileUserController {
      * @param request            请求
      * @return 结果
      */
-    //@PreAuthorize("hasAuthority('RemoveUserByPuId')")
+    @PreAuthorize("hasAuthority('deleteUser')")
     @ApiOperation(value = "用户删除", notes = "修改用户表记录逻辑删除标识")
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -272,6 +273,7 @@ public class ProfileUserController {
      * @param request            请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('updateUserStatus')")
     @ApiOperation(value = "修改用户状态", notes = "修改用户表记录的用户状态字段")
     @RequestMapping(value = "/updateUserStatus", method = RequestMethod.POST)
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -319,8 +321,8 @@ public class ProfileUserController {
      * @param request 请求
      * @return 结果
      */
-//    @PreAuthorize("hasAuthority('ProfileUser')")
-    @RequestMapping(value = "/listUserRole", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('ProfileUser')")
+    @RequestMapping(value = "/Menu_UserManagement", method = RequestMethod.GET)
     @ApiOperation(value = "用户拥有角色查询", notes = "根据用户ID查询用户拥有的角色ID")
     public CommonWithHeaderResponse<Void, ListUserRoleResponse> listUserRole(@Validated ListUserRoleRequest request) {
         String userId = request.getUserId();
@@ -340,9 +342,9 @@ public class ProfileUserController {
      * @param request            请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('distributeRoles')")
     @RequestMapping(value = "/distributeRoles", method = RequestMethod.POST)
     @ApiOperation(value = "分配角色", notes = "新增用户和角色对应关系记录")
-//    @PreAuthorize("hasAuthority('SaveProfileUserAndRole')")
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
     distributeRoles(HttpServletRequest httpServletRequest,
                     @RequestBody @Validated CommonWithHeaderRequest<DefaultRequestHeader, DistributeRolesRequest> request) {

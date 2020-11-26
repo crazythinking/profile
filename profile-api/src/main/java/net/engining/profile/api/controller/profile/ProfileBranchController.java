@@ -33,6 +33,7 @@ import net.engining.profile.sdk.service.bean.dto.DepartmentListDto;
 import net.engining.profile.sdk.service.bean.query.DepartmentPagingQuery;
 import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,6 +77,7 @@ public class ProfileBranchController {
      * @param request 请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('listDepartment')")
     @ApiOperation(value = "部门列表查询", notes = "分页查询部门表")
     @RequestMapping(value = "/listDepartment", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, ListDepartmentResponse<DepartmentListVo>>
@@ -107,6 +109,7 @@ public class ProfileBranchController {
      * @param request 请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('addDepartment')")
     @RequestMapping(value = "/addDepartment", method = RequestMethod.POST)
     @ApiOperation(value = "新增部门", notes = "新增部门表记录")
     public CommonWithHeaderResponse<DefaultResponseHeader, AddDepartmentResponse>
@@ -152,6 +155,7 @@ public class ProfileBranchController {
      * @param request 请求
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('updateDepartment')")
     @RequestMapping(value = "/updateDepartment", method = RequestMethod.POST)
     @ApiOperation(value = "修改部门", notes = "修改部门表记录")
     public CommonWithHeaderResponse<DefaultResponseHeader, Void>
@@ -198,41 +202,41 @@ public class ProfileBranchController {
      * @param request 请求
      * @return 结果
      */
-    @RequestMapping(value = "/deleteDepartment", method = RequestMethod.POST)
-    @ApiOperation(value = "删除部门", notes = "删除部门表记录")
-    public CommonWithHeaderResponse<DefaultResponseHeader, Void>
-    deleteDepartment(HttpServletRequest httpServletRequest,
-                     @Valid @RequestBody CommonWithHeaderRequest<DefaultRequestHeader, DeleteDepartmentRequest> request) {
-        DeleteDepartmentRequest requestData = request.getRequestData();
-        DefaultRequestHeader requestHead = request.getRequestHead();
-
-        String txnSerialNo = requestHead.getTxnSerialNo();
-        Date timestamp = requestHead.getTimestamp();
-
-        String departmentId = requestData.getDepartmentId();
-        CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
-        String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
-
-        DeleteDepartmentFlowRequest flowRequest = new DeleteDepartmentFlowRequest();
-        flowRequest.setChannelRequestSeq(txnSerialNo);
-        flowRequest.setTxnDateTime(timestamp);
-        flowRequest.setChannel(requestHead.getChannelId());
-        flowRequest.setOnlineData(JSON.toJSONString(request));
-        flowRequest.setDepartmentId(departmentId);
-        flowRequest.setOperatorId(operatorId);
-        flowRequest.setOperationIp(WebCommonUtils.getIpAddress(httpServletRequest));
-        flowRequest.setOperationDate(new Date());
-        flowRequest.setOperationType(OperationType.DB);
-        flowRequest.setOperationObject(departmentId);
-
-        DeleteDepartmentFlowResponse flowResponse = flowTransProcessorTemplate.process(flowRequest,
-                DeleteDepartmentFlowResponse.class);
-        ControllerUtils.checkFlowResponse(flowResponse);
-
-        return ControllerUtils.returnSuccessResponseWithDefualtHead(flowResponse.getTransId(), txnSerialNo,
-                timestamp);
-    }
+//    @RequestMapping(value = "/deleteDepartment", method = RequestMethod.POST)
+//    @ApiOperation(value = "删除部门", notes = "删除部门表记录")
+//    public CommonWithHeaderResponse<DefaultResponseHeader, Void>
+//    deleteDepartment(HttpServletRequest httpServletRequest,
+//                     @Valid @RequestBody CommonWithHeaderRequest<DefaultRequestHeader, DeleteDepartmentRequest> request) {
+//        DeleteDepartmentRequest requestData = request.getRequestData();
+//        DefaultRequestHeader requestHead = request.getRequestHead();
+//
+//        String txnSerialNo = requestHead.getTxnSerialNo();
+//        Date timestamp = requestHead.getTimestamp();
+//
+//        String departmentId = requestData.getDepartmentId();
+//        CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
+//        String operatorId = requestData.getOperatorId();
+//        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+//
+//        DeleteDepartmentFlowRequest flowRequest = new DeleteDepartmentFlowRequest();
+//        flowRequest.setChannelRequestSeq(txnSerialNo);
+//        flowRequest.setTxnDateTime(timestamp);
+//        flowRequest.setChannel(requestHead.getChannelId());
+//        flowRequest.setOnlineData(JSON.toJSONString(request));
+//        flowRequest.setDepartmentId(departmentId);
+//        flowRequest.setOperatorId(operatorId);
+//        flowRequest.setOperationIp(WebCommonUtils.getIpAddress(httpServletRequest));
+//        flowRequest.setOperationDate(new Date());
+//        flowRequest.setOperationType(OperationType.DB);
+//        flowRequest.setOperationObject(departmentId);
+//
+//        DeleteDepartmentFlowResponse flowResponse = flowTransProcessorTemplate.process(flowRequest,
+//                DeleteDepartmentFlowResponse.class);
+//        ControllerUtils.checkFlowResponse(flowResponse);
+//
+//        return ControllerUtils.returnSuccessResponseWithDefualtHead(flowResponse.getTransId(), txnSerialNo,
+//                timestamp);
+//    }
 
 //	/**
 //	 * 通过上级分支id查询机构分支信息

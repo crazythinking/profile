@@ -21,6 +21,7 @@ import net.engining.profile.sdk.service.bean.dto.RoleSimpleDto;
 import net.engining.profile.sdk.service.bean.dto.SystemSimpleDto;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,7 +64,7 @@ public class ProfileMgmController {
      * @param request 请求
      * @return 结果
      */
-    //    @PreAuthorize("hasAuthority('menuQurey')")
+    @PreAuthorize("hasAuthority('Menu_RoleManagement')")
     @RequestMapping(value = "/listAuthority", method = RequestMethod.GET)
     @ApiOperation(value = "可分配权限查询", notes = "根据所属系统查询旗下所有权限")
     public CommonWithHeaderResponse<Void, ListAuthorityResponse>
@@ -110,6 +111,7 @@ public class ProfileMgmController {
      *
      * @return 结果
      */
+    @PreAuthorize("hasAuthority('Menu_UserManagement')")
     @ApiOperation(value = "角色下拉框查询", notes = "查询所有角色信息")
     @RequestMapping(value = "/getAllRole", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, DropdownResponse<RoleSimpleVo>> getAllRoleForDropdown() {
@@ -127,6 +129,7 @@ public class ProfileMgmController {
      *
      * @return 结果
      */
+    @PreAuthorize("hasAnyAuthority('Menu_RoleManagement', 'Menu_UserManagement', 'Menu_DepartmentManagement')")
     @ApiOperation(value = "部门下拉框查询", notes = "查询所有部门信息")
     @RequestMapping(value = "/getAllDepartment", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, DropdownResponse<DepartmentSimpleVo>> getAllDepartmentForDropdown() {
