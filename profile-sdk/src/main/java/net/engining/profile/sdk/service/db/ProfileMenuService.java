@@ -41,7 +41,7 @@ public class ProfileMenuService {
         return new JPAQueryFactory(entityManager)
                 .select(qProfileMenu.menuCd)
                 .from(qProfileMenu)
-                .where(qProfileMenu.menuCd.in(menuIdList), qProfileMenu.appCd.eq(appCd))
+                .where(qProfileMenu.menuCd.in(menuIdList), qProfileMenu.appCd.eq(appCd), qProfileMenu.delFlg.eq(false))
                 .fetch();
     }
 
@@ -55,7 +55,7 @@ public class ProfileMenuService {
         QProfileMenu qProfileMenu = QProfileMenu.profileMenu;
         List<ProfileMenu> profileMenuList = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileMenu)
-                .where(qProfileMenu.appCd.eq(appCd))
+                .where(qProfileMenu.appCd.eq(appCd), qProfileMenu.delFlg.eq(false))
                 .fetch();
         return ValidateUtilExt.isNullOrEmpty(profileMenuList) ? null
                 : profileMenuList.stream().map(ProfileMenu::transform2Dto).collect(Collectors.toList());

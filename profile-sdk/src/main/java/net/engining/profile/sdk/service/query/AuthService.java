@@ -429,7 +429,7 @@ public class AuthService implements InitializingBean {
                 .select(profileMenu.id, profileMenu.mname, profileMenu.menuCd,
                         profileMenu.parentId, profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
-                .where(profileMenu.menuCd.in(authoritys))
+                .where(profileMenu.menuCd.in(authoritys), profileMenu.delFlg.eq(false))
                 .orderBy(profileMenu.id.asc())
                 .fetch();
         List<MenuOrAuthBean> rootAllList = getMenuBeans(profileMenu, jpaQuery);
@@ -627,6 +627,7 @@ public class AuthService implements InitializingBean {
                 profileMenu.menuCd, profileMenu.parentId,
                 profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
+                .where(profileMenu.delFlg.eq(false))
                 .orderBy(profileMenu.sortn.asc())
                 .fetch();
         return getMenuBeans(profileMenu, jpaQuery);
@@ -644,7 +645,7 @@ public class AuthService implements InitializingBean {
                 profileMenuInterf.appCd, profileMenuInterf.interfCd, profileMenuInterf.menuId,
                 profileMenuInterf.iname)
                 .from(profileMenuInterf)
-                .where(profileMenuInterf.menuId.isNotNull())
+                .where(profileMenuInterf.menuId.isNotNull(), profileMenuInterf.delFlg.eq(false))
                 .orderBy(profileMenuInterf.id.asc())
                 .fetch();
         return getAuthBeans(profileMenuInterf, jpaQuery);

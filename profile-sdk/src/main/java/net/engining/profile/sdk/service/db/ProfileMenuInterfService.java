@@ -41,7 +41,8 @@ public class ProfileMenuInterfService {
         QProfileMenuInterf qProfileMenuInterf = QProfileMenuInterf.profileMenuInterf;
         List<ProfileMenuInterf> list = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileMenuInterf)
-                .where(qProfileMenuInterf.interfCd.in(interfIdList), qProfileMenuInterf.appCd.eq(appCd))
+                .where(qProfileMenuInterf.interfCd.in(interfIdList), qProfileMenuInterf.appCd.eq(appCd),
+                        qProfileMenuInterf.delFlg.eq(false))
                 .fetch();
         return ValidateUtilExt.isNullOrEmpty(list) ? null
                 : list.stream().map(ProfileMenuInterf::transform2Dto).collect(Collectors.toList());
@@ -57,7 +58,7 @@ public class ProfileMenuInterfService {
         QProfileMenuInterf qProfileMenuInterf = QProfileMenuInterf.profileMenuInterf;
         List<ProfileMenuInterf> list = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileMenuInterf)
-                .where(qProfileMenuInterf.appCd.eq(appCd))
+                .where(qProfileMenuInterf.appCd.eq(appCd), qProfileMenuInterf.delFlg.eq(false))
                 .fetch();
         return ValidateUtilExt.isNullOrEmpty(list) ? null
                 : list.stream().map(ProfileMenuInterf::transform2Dto).collect(Collectors.toList());
