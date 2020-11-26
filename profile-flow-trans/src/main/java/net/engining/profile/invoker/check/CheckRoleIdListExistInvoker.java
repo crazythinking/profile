@@ -1,6 +1,5 @@
 package net.engining.profile.invoker.check;
 
-import com.alibaba.fastjson.JSON;
 import net.engining.control.core.flow.FlowContext;
 import net.engining.control.core.invoker.AbstractSkippableInvoker;
 import net.engining.control.core.invoker.InvokerDefinition;
@@ -13,10 +12,9 @@ import net.engining.profile.sdk.service.db.ProfileRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * 校验角色ID集合对应的角色是否权不存在
+ * 校验角色ID集合对应的角色是否存在
  *
  * @author zhaoyuanmin
  * @version 1.0.0
@@ -43,18 +41,13 @@ public class CheckRoleIdListExistInvoker extends AbstractSkippableInvoker {
         if (ValidateUtilExt.isNotNullOrEmpty(roleIdList)) {
             List<ProfileRoleDto> profileRoleDtoList = profileRoleService.listEffectiveProfileRoleDtoByRoleId(roleIdList);
             for (String roleId : roleIdList) {
-                profileRoleDtoList.removeIf(profileRoleDto -> roleId.equals(profileRoleDto.getRoleId()));
+                boolean success = profileRoleDtoList.removeIf(profileRoleDto ->
+                        profileRoleDto.getRoleId().equals(roleId));
+                if (!success) {
+                    throw new ErrorMessageException(ErrorCode.CheckError, roleId + "不存在");
+                }
             }
-
-            if (ValidateUtilExt.isNotNullOrEmpty(profileRoleDtoList)) {
-                List<String> roleNameList = profileRoleDtoList.stream()
-                        .map(ProfileRoleDto::getRoleName).collect(Collectors.toList());
-                throw new ErrorMessageException(ErrorCode.Null,
-                        "以下有效角色不存在：" + JSON.toJSONString(roleNameList));
-            }
-
         }
-
     }
 
 }
