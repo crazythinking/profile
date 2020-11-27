@@ -273,7 +273,8 @@ public class ProfileRoleController {
      * @param request            请求
      * @return 结果
      */
-    @RequestMapping(value = "/Menu_RoleManagement", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('Menu_RoleManagement')")
+    @RequestMapping(value = "/listRoleAuth", method = RequestMethod.GET)
     @ApiOperation(value = "角色拥有的权限查询", notes = "根据角色ID查询角色拥有的权限")
     public CommonWithHeaderResponse<Void, ListRoleAuthResponse> listRoleAuthByRoleId(ListRoleAuthRequest request) {
         String roleId = request.getRoleId();
