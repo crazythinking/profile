@@ -1,6 +1,7 @@
 package net.engining.profile.api.bean.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
@@ -24,13 +25,15 @@ public class RoleAuthVo implements Serializable {
      * 菜单或者接口cd
      */
     @NotBlank(message = "请输入：菜单或者接口权限标识")
-    @ApiModelProperty(value = "菜单或者接口权限标识", required = true, example="menuCd")
+    @Length(max = 30, message = "菜单或者接口权限标识的字段长度不能超过30个字符")
+    @ApiModelProperty(value = "菜单或者接口权限标识|1-30位的数字、字母或下划线", required = true, example="menuCd")
     private String authority;
     /**
      * 菜单对应"-",接口对应所属菜单id
      */
     @NotBlank(message = "请输入：菜单或者接口权限url")
-    @ApiModelProperty(value = "菜单或者接口权限url", required = true, example="1")
+    @Length(max = 10, message = "菜单或者接口权限url的字段长度不能超过10个字符")
+    @ApiModelProperty(value = "菜单或者接口权限url|1-10位的数字或短横线", required = true, example="1")
     private String autuUri;
 
     public String getAuthority() {

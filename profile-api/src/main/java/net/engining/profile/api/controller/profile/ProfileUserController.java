@@ -59,7 +59,6 @@ import static net.engining.profile.api.constant.ParameterNameConstants.DEPARTMEN
 import static net.engining.profile.api.constant.ParameterNameConstants.OPERATOR_ID;
 import static net.engining.profile.api.constant.ParameterNameConstants.ROLE_ID;
 import static net.engining.profile.api.constant.ParameterNameConstants.USER_ID;
-import static net.engining.profile.api.constant.ParameterNameConstants.USER_NAME;
 
 /**
  * @author yangxing
@@ -93,13 +92,14 @@ public class ProfileUserController {
         String userId = request.getUserId();
         CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
         String userName = request.getUserName();
-        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
+//        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = request.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
+        Long pageSize = request.getPageSize();
+        CheckRequestUtils.checkPageSizeIsWithinRange(pageSize);
 
-        UserPagingQuery query = PagingQueryUtils.initUserPagingQuery(request.getUserId(),
-                request.getUserName(), request.getDepartmentId(),
-                request.getPageNum(), request.getPageSize());
+        UserPagingQuery query = PagingQueryUtils.initUserPagingQuery(userId, userName, departmentId,
+                request.getPageNum(), pageSize);
 
         FetchResponse<UserListDto> fetchResponse = userManagementService.listUser(query);
         ListUserResponse<UserListVo> response = new ListUserResponse<>();
@@ -144,7 +144,7 @@ public class ProfileUserController {
         String userId = requestData.getUserId();
         CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
         String userName = requestData.getUserName();
-        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
+//        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
@@ -194,7 +194,7 @@ public class ProfileUserController {
         String userId = requestData.getUserId();
         CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
         String userName = requestData.getUserName();
-        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
+//        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
@@ -321,8 +321,8 @@ public class ProfileUserController {
      * @param request 请求
      * @return 结果
      */
-    @PreAuthorize("hasAuthority('ProfileUser')")
-    @RequestMapping(value = "/Menu_UserManagement", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('Menu_UserManagement')")
+    @RequestMapping(value = "/listUserRole", method = RequestMethod.GET)
     @ApiOperation(value = "用户拥有角色查询", notes = "根据用户ID查询用户拥有的角色ID")
     public CommonWithHeaderResponse<Void, ListUserRoleResponse> listUserRole(@Validated ListUserRoleRequest request) {
         String userId = request.getUserId();
@@ -358,6 +358,9 @@ public class ProfileUserController {
         CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
         List<String> roleIdList = requestData.getRoleIdList();
         for (String roleId : roleIdList) {
+            if (roleId.length() > 20) {
+                throw new ErrorMessageException(ErrorCode.BadRequest, "角色ID的字段长度不能超过20个字符");
+            }
             CheckRequestUtils.checkIsNumberOrLetter(roleId, ROLE_ID);
         }
         String operatorId = requestData.getOperatorId();

@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,6 +76,9 @@ public class UserManagementService {
             List<UserListDto> data = new ArrayList<>(source.size());
             List<String> puIdList = source.stream().map(ProfileUserDto::getPuId).collect(Collectors.toList());
             Map<String, List<String>> roleNameMap = profileUserRoleService.listRoleNameGroupByPuId(puIdList);
+            if (ValidateUtilExt.isNullOrEmpty(roleNameMap)) {
+                roleNameMap = Collections.emptyMap();
+            }
             for (ProfileUserDto profileUserDto : source) {
                 UserListDto userListDto = new UserListDto();
                 userListDto.setUserId(profileUserDto.getUserId());
