@@ -42,7 +42,7 @@ import org.springframework.stereotype.Service;
                 // 校验操作人是否是自己
                 CheckOperatorIsSelfInvoker.class,
                 // 不能对admin用户进行操作的校验
-                NotModifyAdminUserInvoker.class,
+//                NotModifyAdminUserInvoker.class,
                 // 校验旧密码是否正确
                 CheckOldPasswordIsRightInvoker.class,
                 // 密码校验

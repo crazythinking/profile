@@ -1,5 +1,9 @@
 package net.engining.profile.sdk.service.constant;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 参数常量
  *
@@ -33,6 +37,10 @@ public class ParameterConstants {
      * 超级管理员用户
      */
     public static final String ADMIN = "admin";
+    /**
+     * 超级管理员团队
+     */
+    public static final List<String> ADMIN_LIST = new ArrayList<>(Arrays.asList("admin", "admin1", "admin2", "admin3"));
     /**
      * 横线
      */

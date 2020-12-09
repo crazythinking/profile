@@ -7,7 +7,7 @@ import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.sdk.key.UserIdKey;
 
-import static net.engining.profile.sdk.service.constant.ParameterConstants.ADMIN;
+import static net.engining.profile.sdk.service.constant.ParameterConstants.ADMIN_LIST;
 
 /**
  * @author zhaoyuanmin
@@ -25,7 +25,7 @@ public class NotModifyAdminUserInvoker extends AbstractSkippableInvoker {
 
     @Override
     public void invoke(FlowContext flowContext) {
-        if (ADMIN.equals(flowContext.get(UserIdKey.class))) {
+        if (ADMIN_LIST.contains(flowContext.get(UserIdKey.class))) {
             throw new ErrorMessageException(ErrorCode.CheckError, "不能对超级管理员用户进行该操作");
         }
     }
