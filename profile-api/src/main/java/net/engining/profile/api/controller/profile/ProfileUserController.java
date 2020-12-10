@@ -90,7 +90,7 @@ public class ProfileUserController {
     @RequestMapping(value = "/listUser", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, ListUserResponse<UserListVo>> getUsers(@Validated ListUserRequest request) {
         String userId = request.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String userName = request.getUserName();
 //        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = request.getDepartmentId();
@@ -142,7 +142,7 @@ public class ProfileUserController {
         Date timestamp = requestHead.getTimestamp();
 
         String userId = requestData.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String userName = requestData.getUserName();
 //        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = requestData.getDepartmentId();
@@ -192,7 +192,7 @@ public class ProfileUserController {
         Date timestamp = requestHead.getTimestamp();
 
         String userId = requestData.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String userName = requestData.getUserName();
 //        CheckRequestUtils.checkIsChinese(userName, USER_NAME);
         String departmentId = requestData.getDepartmentId();
@@ -242,7 +242,7 @@ public class ProfileUserController {
         Date timestamp = requestHead.getTimestamp();
 
         String userId = requestData.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String operatorId = requestData.getOperatorId();
         CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
 
@@ -286,7 +286,7 @@ public class ProfileUserController {
         Date timestamp = requestHead.getTimestamp();
 
         String userId = requestData.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String operatorId = requestData.getOperatorId();
         CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
         UserStatusEnum userStatus = requestData.getUserStatus();
@@ -326,7 +326,7 @@ public class ProfileUserController {
     @ApiOperation(value = "用户拥有角色查询", notes = "根据用户ID查询用户拥有的角色ID")
     public CommonWithHeaderResponse<Void, ListUserRoleResponse> listUserRole(@Validated ListUserRoleRequest request) {
         String userId = request.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
 
         List<RoleSimpleDto> dtoList = userManagementService.listRoleSimpleDtoByUserId(userId);
         ListUserRoleResponse response = new ListUserRoleResponse();
@@ -355,7 +355,7 @@ public class ProfileUserController {
         Date timestamp = requestHead.getTimestamp();
 
         String userId = requestData.getUserId();
-        CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         List<String> roleIdList = requestData.getRoleIdList();
         for (String roleId : roleIdList) {
             if (roleId.length() > 20) {
