@@ -109,7 +109,7 @@ public class ProfileUserService {
 
         JPAQuery<ProfileUser> jpaQuery = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileUser)
-                .where(b1, b2, b3, qProfileUser.delFlg.eq(false))
+                .where(b1, b2, b3, qProfileUser.delFlg.eq(false), qProfileUser.userId.notIn(ADMIN_LIST))
                 .orderBy(qProfileUser.mtnTimestamp.desc(), qProfileUser.createTimestamp.desc());
 
         FetchResponse<ProfileUser> fetchResponse = new JPAFetchResponseBuilder<ProfileUser>()
