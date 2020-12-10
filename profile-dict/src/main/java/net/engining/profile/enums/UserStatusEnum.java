@@ -28,7 +28,7 @@ public enum UserStatusEnum implements BaseEnum<String> {
     /**
      * 锁定
      */
-    L("L","用户锁定"),
+    L("L","停用"),
     /**
      * 密码锁定
      */
