@@ -83,25 +83,27 @@ public class CheckRequestUtils {
     /**
      * 校验起始日期和结束日期并补全生成新的结束日期
      *
+     * @param startDateName 起始日期名称
      * @param startDate 起始日期
+     * @param endDateName 结束日期
      * @param endDate 结束日期
      * @return 新的结束日期
      */
-    public static Date checkStartDateAndEndDate(Date startDate, Date endDate) {
+    public static Date checkStartDateAndEndDate(String startDateName, Date startDate, String endDateName, Date endDate) {
         boolean b1 = ValidateUtilExt.isNullOrEmpty(startDate);
         boolean b2 = ValidateUtilExt.isNullOrEmpty(endDate);
 
         // 起始日期和结束日期需要同有同无
         if (b1 && !b2) {
-            throw new ErrorMessageException(ErrorCode.CheckError, "请选择起始日期");
+            throw new ErrorMessageException(ErrorCode.CheckError, "请选择" + startDateName);
         }
         if (!b1 && b2) {
-            throw new ErrorMessageException(ErrorCode.CheckError, "请选择结束日期");
+            throw new ErrorMessageException(ErrorCode.CheckError, "请选择" + endDateName);
         }
 
         if (!b1) {
             if (endDate.compareTo(startDate) < 0) {
-                throw new ErrorMessageException(ErrorCode.CheckError, "起始日期不能大于结束日期");
+                throw new ErrorMessageException(ErrorCode.CheckError, startDateName + "不能大于" + endDateName);
             }
 
             // 默认前端传递的时间格式是年月日，结束时间需要补全到23时59分59秒

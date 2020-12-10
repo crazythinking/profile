@@ -70,7 +70,8 @@ public class UserRegistryController {
         String operatorName = request.getOperatorName();
 //        CheckRequestUtils.checkIsChinese(operatorName, "操作用户姓名");
         Date startDate = request.getStartDate();
-        Date newEndDate = CheckRequestUtils.checkStartDateAndEndDate(startDate, request.getEndDate());
+        Date newEndDate = CheckRequestUtils.checkStartDateAndEndDate("操作日期起始", startDate,
+                "操作日期结束", request.getEndDate());
         Long pageSize = request.getPageSize();
         CheckRequestUtils.checkPageSizeIsWithinRange(pageSize);
 
