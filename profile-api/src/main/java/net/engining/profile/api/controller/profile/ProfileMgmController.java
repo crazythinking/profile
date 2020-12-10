@@ -18,7 +18,6 @@ import net.engining.profile.sdk.service.ProfileMgmService;
 import net.engining.profile.sdk.service.RoleManagementService;
 import net.engining.profile.sdk.service.bean.dto.DepartmentSimpleDto;
 import net.engining.profile.sdk.service.bean.dto.RoleSimpleDto;
-import net.engining.profile.sdk.service.bean.dto.SystemSimpleDto;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -91,17 +91,24 @@ public class ProfileMgmController {
     @RequestMapping(value = "/getAllSystem", method = RequestMethod.GET)
     public CommonWithHeaderResponse<Void, DropdownResponse<SystemSimpleVo>> getAllSystemForDropdown() {
         DropdownResponse<SystemSimpleVo> response = new DropdownResponse<>();
-        List<SystemSimpleDto> systemSimpleDtoList = profileMgmService.getAllSystem();
-        if (ValidateUtilExt.isNotNullOrEmpty(systemSimpleDtoList)) {
-            List<SystemSimpleVo> systemSimpleVoList = new ArrayList<>(systemSimpleDtoList.size());
-            for (SystemSimpleDto dto : systemSimpleDtoList) {
-                SystemSimpleVo vo = new SystemSimpleVo();
-                vo.setSystemId(dto.getSystemId());
-                vo.setSystemName(dto.getSystemName());
-                systemSimpleVoList.add(vo);
-            }
-            response.setData(systemSimpleVoList);
-        }
+//        List<SystemSimpleDto> systemSimpleDtoList = profileMgmService.getAllSystem();
+//        if (ValidateUtilExt.isNotNullOrEmpty(systemSimpleDtoList)) {
+//            List<SystemSimpleVo> systemSimpleVoList = new ArrayList<>(systemSimpleDtoList.size());
+//            for (SystemSimpleDto dto : systemSimpleDtoList) {
+//                SystemSimpleVo vo = new SystemSimpleVo();
+//                vo.setSystemId(dto.getSystemId());
+//                vo.setSystemName(dto.getSystemName());
+//                systemSimpleVoList.add(vo);
+//            }
+//            response.setData(systemSimpleVoList);
+//        }
+
+
+        SystemSimpleVo systemSimpleVo = new SystemSimpleVo();
+        systemSimpleVo.setSystemId("SCAC");
+        systemSimpleVo.setSystemId("账户中心");
+        List<SystemSimpleVo> systemSimpleDtoList = Collections.singletonList(systemSimpleVo);
+        response.setData(systemSimpleDtoList);
 
         return ControllerUtils.returnSuccessResponseWithoutHead(response);
     }
