@@ -97,4 +97,16 @@ public class UserListVo implements Serializable {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
+
+    @Override
+    public String toString() {
+        return "UserListVo{" +
+                "userName='" + userName + '\'' +
+                ", userId='" + userId + '\'' +
+                ", departmentId='" + departmentId + '\'' +
+                ", departmentName='" + departmentName + '\'' +
+                ", userStatus='" + userStatus + '\'' +
+                ", roleNameList=" + roleNameList +
+                '}';
+    }
 }

@@ -27,14 +27,14 @@ public class UpdateUserRequest extends BaseOperateRequest {
      * 用户名称
      */
     @NotBlank(message = "请输入：用户名称")
-    @Length(max = 10, message = "用户名称的字段长度不能超过10个字符")
+    @Length(max = 10, message = "用户名称的字段长度不能超过10个中文字符")
     @ApiModelProperty(value = "用户名称|1-10位的中文字符", example = "张三")
     private String userName;
     /**
      * 部门ID
      */
     @NotBlank(message = "请输入：部门ID")
-    @Length(max = 6, message = "部门ID的字段长度不能超过6个字符")
+    @Length(max = 6, message = "部门ID的字段长度不能超过6个数字")
     @ApiModelProperty(value = "部门ID|1-6位数字", example = "100001")
     private String departmentId;
 
@@ -60,5 +60,15 @@ public class UpdateUserRequest extends BaseOperateRequest {
 
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateUserRequest{" +
+                "userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", departmentId='" + departmentId + '\'' +
+                ", operatorId='" + operatorId + '\'' +
+                '}';
     }
 }

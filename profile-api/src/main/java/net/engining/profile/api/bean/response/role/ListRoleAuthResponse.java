@@ -32,4 +32,11 @@ public class ListRoleAuthResponse implements Serializable {
     public void setData(List<String> data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "ListRoleAuthResponse{" +
+                "data=" + data +
+                '}';
+    }
 }

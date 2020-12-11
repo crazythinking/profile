@@ -9,14 +9,13 @@ import net.engining.control.core.invoker.DetermineFinalResult;
 import net.engining.control.core.invoker.TransactionSeperator;
 import net.engining.control.core.invoker.WriteInboundJournal;
 import net.engining.control.core.invoker.WriteJournalUpdateResult;
-import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
-import net.engining.profile.invoker.check.CheckUserStatusInvoker;
-import net.engining.profile.invoker.check.NotModifyAdminUserInvoker;
-import net.engining.profile.invoker.password.PasswordValidateInvoker;
 import net.engining.profile.invoker.check.CheckOldPasswordIsRightInvoker;
+import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckOperatorIsSelfInvoker;
 import net.engining.profile.invoker.check.CheckPuIdExistsInvoker;
+import net.engining.profile.invoker.check.CheckUserStatusInvoker;
 import net.engining.profile.invoker.password.AddProfilePwdHistInvoker;
+import net.engining.profile.invoker.password.PasswordValidateInvoker;
 import net.engining.profile.invoker.security.AddOperationLogInvoker;
 import net.engining.profile.invoker.user.UpdateProfileUserPasswordInvoker;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,6 @@ import org.springframework.stereotype.Service;
                 CheckUserStatusInvoker.class,
                 // 校验操作人是否是自己
                 CheckOperatorIsSelfInvoker.class,
-                // 不能对admin用户进行操作的校验
-//                NotModifyAdminUserInvoker.class,
                 // 校验旧密码是否正确
                 CheckOldPasswordIsRightInvoker.class,
                 // 密码校验

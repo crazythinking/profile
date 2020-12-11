@@ -30,7 +30,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +99,7 @@ public class ProfilePasswordController {
         String userId = requestData.getUserId();
         CheckRequestUtils.checkIsNumberOrLetter(userId, USER_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         ResetPasswordFlowRequest flowRequest = new ResetPasswordFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -142,6 +141,9 @@ public class ProfilePasswordController {
         // 请求头
         DefaultRequestHeader requestHead = request.getRequestHead();
 
+        String operatorId = requestData.getOperatorId();
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
+
         // 交易流水
         String txnSerialNo = requestHead.getTxnSerialNo();
         // 交易时间
@@ -152,7 +154,7 @@ public class ProfilePasswordController {
         flowRequest.setPuId(requestData.getPuId());
         flowRequest.setOriginalPassword(requestData.getOldPassword());
         flowRequest.setPassword(requestData.getNewPassword());
-        flowRequest.setOperatorId(requestData.getOperatorId());
+        flowRequest.setOperatorId(operatorId);
         // 封装请求头里的参数
         flowRequest.setChannelRequestSeq(txnSerialNo);
         flowRequest.setChannel(requestHead.getChannelId());

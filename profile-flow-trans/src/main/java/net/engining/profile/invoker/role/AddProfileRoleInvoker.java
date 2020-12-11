@@ -10,6 +10,7 @@ import net.engining.profile.sdk.key.OperationObjectKey;
 import net.engining.profile.sdk.key.OperatorIdKey;
 import net.engining.profile.sdk.key.RoleIdKey;
 import net.engining.profile.sdk.key.RoleNameKey;
+import net.engining.profile.sdk.key.SystemIdKey;
 import net.engining.profile.sdk.key.SystemKey;
 import net.engining.profile.sdk.service.db.ProfileRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import java.util.Date;
 @InvokerDefinition(
         name = "新增角色表记录",
         requires = {
-                SystemKey.class,
+                SystemIdKey.class,
                 DepartmentIdKey.class,
                 RoleNameKey.class,
                 OperatorIdKey.class
@@ -56,7 +57,7 @@ public class AddProfileRoleInvoker extends AbstractSkippableInvoker {
 
         String roleId = profileRoleService.addProfileRole(flowContext.get(RoleNameKey.class),
                 flowContext.get(DepartmentIdKey.class),
-                flowContext.get(SystemKey.class),
+                flowContext.get(SystemIdKey.class),
                 flowContext.get(OperatorIdKey.class),
                 operateDate);
 

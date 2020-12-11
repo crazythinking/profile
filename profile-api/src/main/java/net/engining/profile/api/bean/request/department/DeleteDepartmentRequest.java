@@ -19,7 +19,7 @@ public class DeleteDepartmentRequest extends BaseOperateRequest {
      * 部门ID
      */
     @NotBlank(message = "请输入：部门ID")
-    @Length(max = 6, message = "部门ID的字段长度不能超过6个字符")
+    @Length(max = 6, message = "部门ID的字段长度不能超过6个数字")
     @ApiModelProperty(value = "部门ID|1-6位数字", example = "100001", required = true)
     private String departmentId;
 
@@ -29,5 +29,13 @@ public class DeleteDepartmentRequest extends BaseOperateRequest {
 
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteDepartmentRequest{" +
+                "departmentId='" + departmentId + '\'' +
+                ", operatorId='" + operatorId + '\'' +
+                '}';
     }
 }

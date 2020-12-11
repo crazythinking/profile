@@ -31,4 +31,11 @@ public class AddDepartmentResponse implements Serializable {
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
     }
+
+    @Override
+    public String toString() {
+        return "AddDepartmentResponse{" +
+                "departmentId='" + departmentId + '\'' +
+                '}';
+    }
 }

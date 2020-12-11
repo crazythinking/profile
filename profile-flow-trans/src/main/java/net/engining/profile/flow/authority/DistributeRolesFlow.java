@@ -15,7 +15,6 @@ import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckRoleIdListExistInvoker;
 import net.engining.profile.invoker.check.CheckSameUserRoleChangedInvoker;
 import net.engining.profile.invoker.check.CheckUserIdExistsInvoker;
-import net.engining.profile.invoker.check.NotModifyAdminUserInvoker;
 import net.engining.profile.invoker.security.AddOperationLogInvoker;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +33,6 @@ import org.springframework.stereotype.Service;
                 TransactionSeperator.class,
                 // 校验操作员是否存在
                 CheckOperatorIdExistsInvoker.class,
-                // 不能对admin用户进行操作的校验
-                NotModifyAdminUserInvoker.class,
                 // 校验用户ID对应的用户是否存在
                 CheckUserIdExistsInvoker.class,
                 // 校验用户拥有角色是否发生改变

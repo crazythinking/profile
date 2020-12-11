@@ -103,13 +103,13 @@ public class ProfileRoleService {
      *
      * @param roleName 角色名
      * @param departmentId 部门ID
-     * @param system 所属系统
+     * @param systemId 系统ID
      * @param operatorId 操作员
      * @param operateDate 操作时间
      * @return 角色ID
      */
     @Transactional(rollbackFor = Exception.class)
-    public String addProfileRole(String roleName, String departmentId, SystemEnum system,
+    public String addProfileRole(String roleName, String departmentId, String systemId,
                                  String operatorId, Date operateDate) {
         String roleId = parameterSeqenceService.createNewRoleId();
         String orgId = provider4Organization.getCurrentOrganizationId();
@@ -117,8 +117,8 @@ public class ProfileRoleService {
         ProfileRole profileRole = new ProfileRole();
         profileRole.setRoleId(roleId);
         profileRole.setOrgId(orgId);
-        profileRole.setClientId(ServiceUtils.getAppIdBySystem(system));
-        profileRole.setAppCd(ServiceUtils.getSvIdBySystem(system));
+        profileRole.setClientId(ServiceUtils.getAppIdBySystem(systemId));
+        profileRole.setAppCd(ServiceUtils.getSvIdBySystem(systemId));
         profileRole.setBranchId(departmentId);
         profileRole.setRoleName(roleName);
         profileRole.setDelFlg(false);
@@ -192,7 +192,7 @@ public class ProfileRoleService {
         List<Tuple> tupleList = new JPAQueryFactory(entityManager)
                 .select(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
                 .from(qProfileRole)
-                .where(qProfileRole.roleId.ne(SUPERADMIN), qProfileRole.delFlg.eq(false))
+                .where(qProfileRole.delFlg.eq(false))
                 .groupBy(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
                 .orderBy(qProfileRole.createTimestamp.asc(), qProfileRole.roleId.asc())
                 .fetch();

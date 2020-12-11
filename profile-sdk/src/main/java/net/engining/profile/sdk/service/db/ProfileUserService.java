@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static net.engining.profile.sdk.service.constant.ParameterConstants.ADMIN;
-import static net.engining.profile.sdk.service.constant.ParameterConstants.ADMIN_LIST;
 import static net.engining.profile.sdk.service.constant.ParameterConstants.DEFAULT_PASSWORD;
 
 /**
@@ -93,14 +91,8 @@ public class ProfileUserService {
         QProfileUser qProfileUser = QProfileUser.profileUser;
 
         String userId = query.getUserId();
-        if (ADMIN_LIST.contains(userId)) {
-            return getEmptyProfileUserDtoFetchResponse(query.getPageNum());
-        }
         BooleanExpression b1 = ValidateUtilExt.isNullOrEmpty(userId) ? null : qProfileUser.userId.eq(userId);
         String userName = query.getUserName();
-        if (ADMIN_LIST.contains(userName)) {
-            return getEmptyProfileUserDtoFetchResponse(query.getPageNum());
-        }
         BooleanExpression b2 = ValidateUtilExt.isNullOrEmpty(userName)
                 ? null : qProfileUser.name.eq(userName);
         String departmentId = query.getDepartmentId();
@@ -109,7 +101,7 @@ public class ProfileUserService {
 
         JPAQuery<ProfileUser> jpaQuery = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileUser)
-                .where(b1, b2, b3, qProfileUser.delFlg.eq(false), qProfileUser.userId.notIn(ADMIN_LIST))
+                .where(b1, b2, b3, qProfileUser.delFlg.eq(false))
                 .orderBy(qProfileUser.mtnTimestamp.desc(), qProfileUser.createTimestamp.desc());
 
         FetchResponse<ProfileUser> fetchResponse = new JPAFetchResponseBuilder<ProfileUser>()

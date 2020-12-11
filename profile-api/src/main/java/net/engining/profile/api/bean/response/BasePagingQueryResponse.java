@@ -45,4 +45,12 @@ public abstract class BasePagingQueryResponse<T> implements Serializable {
     public void setData(List<T> data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "BasePagingQueryResponse{" +
+                "totalNum=" + totalNum +
+                ", data=" + data +
+                '}';
+    }
 }

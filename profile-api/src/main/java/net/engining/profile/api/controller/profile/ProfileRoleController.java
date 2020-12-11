@@ -37,7 +37,6 @@ import net.engining.profile.sdk.service.bean.dto.RoleListDto;
 import net.engining.profile.sdk.service.bean.query.RolePagingQuery;
 import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,6 +52,7 @@ import java.util.List;
 import static net.engining.profile.api.constant.ParameterNameConstants.DEPARTMENT_ID;
 import static net.engining.profile.api.constant.ParameterNameConstants.OPERATOR_ID;
 import static net.engining.profile.api.constant.ParameterNameConstants.ROLE_ID;
+import static net.engining.profile.api.constant.ParameterNameConstants.SYSTEM;
 
 /**
  * @author yangxing
@@ -95,14 +95,17 @@ public class ProfileRoleController {
 
         RolePagingQuery query = PagingQueryUtils.initRolePagingQuery(roleName, request.getPageNum(), pageSize);
 
-        FetchResponse<RoleListDto> fetchResponse = roleManagementService.listRole(query);
+        FetchResponse<RoleListDto> fetchResponse = roleManagementService.listRoleByPaging(query);
         ListRoleResponse<RoleListVo> response = new ListRoleResponse<>();
         VoTransformationUtils.convertToPagingQueryResponse(fetchResponse, response, source -> {
-            BeanCopier copier = BeanCopier.create(RoleListDto.class, RoleListVo.class, false);
             List<RoleListVo> data = new ArrayList<>(source.size());
             for (RoleListDto dto : source) {
                 RoleListVo vo = new RoleListVo();
-                copier.copy(dto, vo, null);
+                vo.setRoleId(dto.getRoleId());
+                vo.setRoleName(dto.getRoleName());
+                vo.setDepartmentId(dto.getDepartmentId());
+                vo.setDepartmentName(dto.getDepartmentName());
+                vo.setSystem(dto.getSystem());
                 data.add(vo);
             }
             return data;
@@ -136,7 +139,10 @@ public class ProfileRoleController {
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
+        String system = requestData.getSystem();
+        CheckRequestUtils.isLetter(system, SYSTEM);
+
 
         AddRoleFlowRequest flowRequest = new AddRoleFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -145,7 +151,7 @@ public class ProfileRoleController {
         flowRequest.setOnlineData(JSON.toJSONString(request));
         flowRequest.setRoleName(roleName);
         flowRequest.setDepartmentId(departmentId);
-        flowRequest.setSystem(requestData.getSystem());
+        flowRequest.setSystemId(requestData.getSystem());
         flowRequest.setOperatorId(operatorId);
         flowRequest.setOperationIp(WebCommonUtils.getIpAddress(httpServletRequest));
         flowRequest.setOperationDate(new Date());
@@ -188,7 +194,7 @@ public class ProfileRoleController {
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         UpdateRoleFlowRequest flowRequest = new UpdateRoleFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -245,7 +251,7 @@ public class ProfileRoleController {
             profileRoleAuthDtoList.add(profileRoleAuthDto);
         }
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         DistributeAuthoritiesFlowRequest flowRequest = new DistributeAuthoritiesFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);

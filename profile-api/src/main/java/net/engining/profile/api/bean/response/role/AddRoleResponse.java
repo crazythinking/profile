@@ -35,4 +35,11 @@ public class AddRoleResponse implements Serializable {
     public void setRoleId(String roleId) {
         this.roleId = roleId;
     }
+
+    @Override
+    public String toString() {
+        return "AddRoleResponse{" +
+                "roleId='" + roleId + '\'' +
+                '}';
+    }
 }

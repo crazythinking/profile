@@ -24,7 +24,7 @@ public class ListRoleAuthRequest implements Serializable {
      * 角色ID
      */
     @NotBlank(message = "请输入：角色ID")
-    @Length(max = 20, message = "角色ID的字段长度不能20个字符")
+    @Length(max = 20, message = "角色ID的字段长度不能20个字母或数字")
     @ApiModelProperty(value = "角色ID|1-20个字母或数字", example = "000000000", required = true)
     private String roleId;
 
@@ -34,5 +34,12 @@ public class ListRoleAuthRequest implements Serializable {
 
     public void setRoleId(String roleId) {
         this.roleId = roleId;
+    }
+
+    @Override
+    public String toString() {
+        return "ListRoleAuthRequest{" +
+                "roleId='" + roleId + '\'' +
+                '}';
     }
 }

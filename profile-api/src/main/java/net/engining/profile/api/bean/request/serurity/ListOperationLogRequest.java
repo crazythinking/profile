@@ -19,13 +19,13 @@ public class ListOperationLogRequest extends BasePagingQueryRequest {
     /**
      * 操作员ID
      */
-    @Length(max = 10, message = "操作员ID的字符长度不能超过10个字符")
-    @ApiModelProperty(value = "操作员ID|1-10个中文字符", example = "张三")
+    @Length(max = 30, min = 3, message = "操作员ID的字段长度必须在3到30个字母或数字或下划线之间")
+    @ApiModelProperty(value = "操作员ID|3-30个数字或字母或下划线", example = "张三")
     private String operatorId;
     /**
      * 操作员名称
      */
-    @Length(max = 10, message = "操作员名称的字符长度不能超过10个字符")
+    @Length(max = 10, message = "操作员名称的字符长度不能超过10个中文字符")
     @ApiModelProperty(value = "操作员名称|1-10个中文字符", example = "张三")
     private String operatorName;
     /**
@@ -71,5 +71,17 @@ public class ListOperationLogRequest extends BasePagingQueryRequest {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public String toString() {
+        return "ListOperationLogRequest{" +
+                "operatorId='" + operatorId + '\'' +
+                ", operatorName='" + operatorName + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", pageNum=" + pageNum +
+                ", pageSize=" + pageSize +
+                '}';
     }
 }

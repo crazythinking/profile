@@ -24,9 +24,9 @@ public abstract class BaseOperateRequest implements Serializable {
      * 操作员ID
      */
     @NotBlank(message = "请输入：操作员ID")
-    @Length(max = 10, message = "操作员ID字段长度不能超过10个字符")
+    @Length(max = 30, min = 3, message = "用户ID的字段长度必须在3到30个字母或数字或下划线之间")
     @ApiModelProperty(value = "操作员ID|1-10位的任意字符", example = "admin", required = true)
-    private String operatorId;
+    protected String operatorId;
 
     public String getOperatorId() {
         return operatorId;

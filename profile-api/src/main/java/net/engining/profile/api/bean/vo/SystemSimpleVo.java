@@ -44,4 +44,12 @@ public class SystemSimpleVo implements Serializable {
     public void setSystemName(String systemName) {
         this.systemName = systemName;
     }
+
+    @Override
+    public String toString() {
+        return "SystemSimpleVo{" +
+                "systemId='" + systemId + '\'' +
+                ", systemName='" + systemName + '\'' +
+                '}';
+    }
 }

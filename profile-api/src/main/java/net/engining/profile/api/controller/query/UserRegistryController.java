@@ -66,7 +66,7 @@ public class UserRegistryController {
     public CommonWithHeaderResponse<Void, ListOperationLogResponse<OperationLogListVo>>
     listOperationLog(@Valid ListOperationLogRequest request) {
         String operatorId = request.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, "操作用户ID");
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, "操作用户ID");
         String operatorName = request.getOperatorName();
 //        CheckRequestUtils.checkIsChinese(operatorName, "操作用户姓名");
         Date startDate = request.getStartDate();

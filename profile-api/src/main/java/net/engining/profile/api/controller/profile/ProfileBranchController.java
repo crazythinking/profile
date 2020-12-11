@@ -12,7 +12,6 @@ import net.engining.pg.web.bean.CommonWithHeaderResponse;
 import net.engining.pg.web.bean.DefaultRequestHeader;
 import net.engining.pg.web.bean.DefaultResponseHeader;
 import net.engining.profile.api.bean.request.department.AddDepartmentRequest;
-import net.engining.profile.api.bean.request.department.DeleteDepartmentRequest;
 import net.engining.profile.api.bean.request.department.ListDepartmentRequest;
 import net.engining.profile.api.bean.request.department.UpdateDepartmentRequest;
 import net.engining.profile.api.bean.response.department.AddDepartmentResponse;
@@ -24,8 +23,6 @@ import net.engining.profile.api.util.VoTransformationUtils;
 import net.engining.profile.enums.OperationType;
 import net.engining.profile.flow.sdk.department.AddDepartmentFlowRequest;
 import net.engining.profile.flow.sdk.department.AddDepartmentFlowResponse;
-import net.engining.profile.flow.sdk.department.DeleteDepartmentFlowRequest;
-import net.engining.profile.flow.sdk.department.DeleteDepartmentFlowResponse;
 import net.engining.profile.flow.sdk.department.UpdateDepartmentFlowRequest;
 import net.engining.profile.flow.sdk.department.UpdateDepartmentFlowResponse;
 import net.engining.profile.sdk.service.DepartmentManagementService;
@@ -124,7 +121,7 @@ public class ProfileBranchController {
         String departmentName = requestData.getDepartmentName();
         CheckRequestUtils.checkIsChinese(departmentName, DEPARTMENT_NAME);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         AddDepartmentFlowRequest flowRequest = new AddDepartmentFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -172,7 +169,7 @@ public class ProfileBranchController {
         String departmentName = requestData.getDepartmentName();
         CheckRequestUtils.checkIsChinese(departmentName, DEPARTMENT_NAME);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         UpdateDepartmentFlowRequest flowRequest = new UpdateDepartmentFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);

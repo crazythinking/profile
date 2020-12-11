@@ -44,4 +44,12 @@ public class DepartmentSimpleVo implements Serializable {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
+
+    @Override
+    public String toString() {
+        return "DepartmentSimpleVo{" +
+                "departmentId='" + departmentId + '\'' +
+                ", departmentName='" + departmentName + '\'' +
+                '}';
+    }
 }

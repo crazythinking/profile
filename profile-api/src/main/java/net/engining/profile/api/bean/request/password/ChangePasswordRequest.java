@@ -1,20 +1,20 @@
 package net.engining.profile.api.bean.request.password;
 
 import io.swagger.annotations.ApiModelProperty;
+import net.engining.profile.api.bean.request.BaseOperateRequest;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 
 /**
+ * 修改密码请求
+ *
  * @author zhaoyuanmin
  * @version 1.0.0
  * @date 2020/9/14 16:49
  * @since 1.0.0
  */
-public class ChangePasswordRequest implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class ChangePasswordRequest extends BaseOperateRequest {
     /**
      * 用户表Id
      */
@@ -26,23 +26,16 @@ public class ChangePasswordRequest implements Serializable {
      * 原密码
      */
     @NotBlank(message = "请输入：原密码")
-    @Length(max = 40, message = "原密码最大字段长度不能超过40个字符")
+    @Length(max = 40, message = "原密码最大字段长度不能超过40个任意字符")
     @ApiModelProperty(value = "原密码|1-40位的任意字符（具体规则参照授权中心密码管理规则）", example = "A123456", required = true)
     private String oldPassword;
     /**
      * 新密码
      */
     @NotBlank(message = "请输入：新密码")
-    @Length(max = 40, message = "新密码最大字段长度不能超过40个字符")
+    @Length(max = 40, message = "新密码最大字段长度不能超过40个任意字符")
     @ApiModelProperty(value = "新密码|1-40位的任意字符（具体规则参照授权中心密码管理规则）", example = "A123456", required = true)
     private String newPassword;
-    /**
-     * 操作员ID
-     */
-    @NotBlank(message = "请输入：操作员ID")
-    @Length(max = 40, message = "操作员ID最大字段长度不能超过40个字符")
-    @ApiModelProperty(value = "操作员ID|1-40位的字母或数字或下划线", example = "admin", required = true)
-    private String operatorId;
 
     public String getPuId() {
         return puId;
@@ -68,11 +61,13 @@ public class ChangePasswordRequest implements Serializable {
         this.newPassword = newPassword;
     }
 
-    public String getOperatorId() {
-        return operatorId;
-    }
-
-    public void setOperatorId(String operatorId) {
-        this.operatorId = operatorId;
+    @Override
+    public String toString() {
+        return "ChangePasswordRequest{" +
+                "puId='" + puId + '\'' +
+                ", oldPassword='" + oldPassword + '\'' +
+                ", newPassword='" + newPassword + '\'' +
+                ", operatorId='" + operatorId + '\'' +
+                '}';
     }
 }

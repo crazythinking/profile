@@ -42,8 +42,8 @@ public class RoleListVo implements Serializable {
     /**
      * 所属系统
      */
-    @ApiModelProperty(value = "所属系统", example = "SCAC", notes = "net.engining.profile.enums.SystemEnum", required = true)
-    private SystemEnum system;
+    @ApiModelProperty(value = "所属系统", required = true)
+    private String system;
 
     public String getRoleName() {
         return roleName;
@@ -69,11 +69,11 @@ public class RoleListVo implements Serializable {
         this.departmentId = departmentId;
     }
 
-    public SystemEnum getSystem() {
+    public String getSystem() {
         return system;
     }
 
-    public void setSystem(SystemEnum system) {
+    public void setSystem(String system) {
         this.system = system;
     }
 
@@ -83,5 +83,16 @@ public class RoleListVo implements Serializable {
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    @Override
+    public String toString() {
+        return "RoleListVo{" +
+                "roleName='" + roleName + '\'' +
+                ", roleId='" + roleId + '\'' +
+                ", departmentId='" + departmentId + '\'' +
+                ", departmentName='" + departmentName + '\'' +
+                ", system='" + system + '\'' +
+                '}';
     }
 }

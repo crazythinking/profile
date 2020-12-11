@@ -16,7 +16,7 @@ public class ListRoleRequest extends BasePagingQueryRequest {
     /**
      *  角色名称
      */
-    @Length(max = 50, message = "角色名称的字段长度不能超过50个字符")
+    @Length(max = 50, message = "角色名称的字段长度不能超过50个中文字符")
     @ApiModelProperty(value = "角色名称|1-50个中文字符", example = "管理员")
     private String roleName;
 

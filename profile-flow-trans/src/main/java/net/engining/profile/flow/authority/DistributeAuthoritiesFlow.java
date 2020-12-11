@@ -13,6 +13,7 @@ import net.engining.profile.invoker.authority.AddProfileRoleAuthsInvoker;
 import net.engining.profile.invoker.authority.DeleteProfileRoleAuthsInvoker;
 import net.engining.profile.invoker.authority.RefreshCacheInvoker;
 import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
+import net.engining.profile.invoker.check.CheckOperatorIsNotSelfInvoker;
 import net.engining.profile.invoker.check.CheckRoleIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckSameRoleAuthChangedInvoker;
 import net.engining.profile.invoker.check.NotModifyAdminRoleInvoker;

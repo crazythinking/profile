@@ -33,4 +33,11 @@ public class ListUserRoleResponse implements Serializable {
     public void setData(List<RoleSimpleVo> data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "ListUserRoleResponse{" +
+                "data=" + data +
+                '}';
+    }
 }

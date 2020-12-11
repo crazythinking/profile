@@ -112,4 +112,17 @@ public class OperationLogListVo implements Serializable {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
+
+    @Override
+    public String toString() {
+        return "OperationLogListVo{" +
+                "operatorId='" + operatorId + '\'' +
+                ", operatorName='" + operatorName + '\'' +
+                ", operationModle='" + operationModle + '\'' +
+                ", operationTarget='" + operationTarget + '\'' +
+                ", operationType='" + operationType + '\'' +
+                ", operationTimestamp=" + operationTimestamp +
+                ", remarks='" + remarks + '\'' +
+                '}';
+    }
 }

@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
+import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.db.querydsl.Range;
@@ -72,7 +73,7 @@ public class RoleManagementService {
      *
      * @param query 角色分页查询参数
      */
-	public FetchResponse<RoleListDto> listRole(RolePagingQuery query) {
+	public FetchResponse<RoleListDto> listRoleByPaging(RolePagingQuery query) {
         FetchResponse<ProfileRoleDto> fetchResponse = profileRoleService.listProfileRoleDtoByPaging(query);
         Map<String, String> departmentMap = departmentManagementService.mapAllDepartment();
 
@@ -84,7 +85,7 @@ public class RoleManagementService {
                 roleListDto.setRoleName(profileRoleDto.getRoleName());
                 roleListDto.setDepartmentId(profileRoleDto.getBranchId());
                 roleListDto.setDepartmentName(departmentMap.get(roleListDto.getDepartmentId()));
-                roleListDto.setSystem(ServiceUtils.getSystemByClientId(profileRoleDto.getClientId()));
+                roleListDto.setSystem(profileRoleDto.getClientId().split(DbConstants.NULL)[0]);
                 target.add(roleListDto);
             }
             return target;

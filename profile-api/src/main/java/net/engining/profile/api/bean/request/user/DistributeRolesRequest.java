@@ -20,8 +20,7 @@ public class DistributeRolesRequest extends BaseOperateRequest {
      * 用户Id
      */
     @NotBlank(message = "请输入：用户ID")
-    @Length(max = 30, message = "用户ID的字段长度不能超过30个字符")
-    @Length(min = 3, message = "用户ID的字段长度不能少于3个字符")
+    @Length(max = 30, min = 3, message = "用户ID的字段长度必须在3到30个字母或数字或下划线之间")
     @ApiModelProperty(value = "用户ID|3-30位的字母或数字或下划线", example = "000000000")
     private String userId;
     /**
@@ -44,5 +43,14 @@ public class DistributeRolesRequest extends BaseOperateRequest {
 
     public void setRoleIdList(List<String> roleIdList) {
         this.roleIdList = roleIdList;
+    }
+
+    @Override
+    public String toString() {
+        return "DistributeRolesRequest{" +
+                "userId='" + userId + '\'' +
+                ", roleIdList=" + roleIdList +
+                ", operatorId='" + operatorId + '\'' +
+                '}';
     }
 }

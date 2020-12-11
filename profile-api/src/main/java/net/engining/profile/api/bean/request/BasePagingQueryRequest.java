@@ -26,14 +26,14 @@ public abstract class BasePagingQueryRequest implements Serializable {
     @NotNull(message = "请输入：起始数")
     @Min(value = 0L, message = "起始数必须是自然数")
     @ApiModelProperty(value = "起始数|自然数", example = "0", required = true)
-    private Long pageNum;
+    protected Long pageNum;
     /**
      * 查询笔数
      */
     @NotNull(message = "请输入：查询笔数")
     @Min(value = 0L, message = "查询笔数必须是正整数")
     @ApiModelProperty(value = "查询笔数|[10，15，20]", example = "10", required = true)
-    private Long pageSize;
+    protected Long pageSize;
 
     public Long getPageNum() {
         return pageNum;
@@ -49,5 +49,13 @@ public abstract class BasePagingQueryRequest implements Serializable {
 
     public void setPageSize(Long pageSize) {
         this.pageSize = pageSize;
+    }
+
+    @Override
+    public String toString() {
+        return "BasePagingQueryRequest{" +
+                "pageNum=" + pageNum +
+                ", pageSize=" + pageSize +
+                '}';
     }
 }

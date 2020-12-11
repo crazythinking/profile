@@ -38,7 +38,7 @@ public class RoleListDto implements Serializable {
     /**
      * 所属系统
      */
-    private SystemEnum system;
+    private String system;
 
     public String getRoleName() {
         return roleName;
@@ -64,11 +64,11 @@ public class RoleListDto implements Serializable {
         this.departmentId = departmentId;
     }
 
-    public SystemEnum getSystem() {
+    public String getSystem() {
         return system;
     }
 
-    public void setSystem(SystemEnum system) {
+    public void setSystem(String system) {
         this.system = system;
     }
 

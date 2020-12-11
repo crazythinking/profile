@@ -100,9 +100,6 @@ public class UserManagementService {
      * @return 查询结果
      */
     public List<RoleSimpleDto> listRoleSimpleDtoByUserId(String userId) {
-        if (ADMIN.equals(userId)) {
-            return null;
-        }
         ProfileUserDto profileUserDto = profileUserService.getEffectiveProfileUserDtoByUserId(userId);
         if (ValidateUtilExt.isNullOrEmpty(profileUserDto)) {
             throw new ErrorMessageException(ErrorCode.Null, "有效用户不存在");

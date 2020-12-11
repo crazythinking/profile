@@ -81,6 +81,18 @@ public class CheckRequestUtils {
     }
 
     /**
+     * 校验目标字段是否全是母
+     *
+     * @param source 目标字段
+     * @param name 目标字段名称
+     */
+    public static void isLetter(String source, String name) {
+        if (ValidateUtilExt.isNotNullOrEmpty(source) && !ValidateUtilExt.isEnglish(source)) {
+            throw new ErrorMessageException(ErrorCode.BadRequest, name + "只能由字母组成");
+        }
+    }
+
+    /**
      * 校验起始日期和结束日期并补全生成新的结束日期
      *
      * @param startDateName 起始日期名称

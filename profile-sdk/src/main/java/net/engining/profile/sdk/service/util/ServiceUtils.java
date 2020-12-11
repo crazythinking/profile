@@ -37,6 +37,16 @@ public class ServiceUtils {
     }
 
     /**
+     * 根据所属系统获取appId
+     *
+     * @param system 所属系统
+     * @return appId
+     */
+    public static String getAppIdBySystem(String system) {
+        return system + "-mgm-app";
+    }
+
+    /**
      * 根据所属系统获取svId
      *
      * @param system 所属系统
@@ -44,6 +54,16 @@ public class ServiceUtils {
      */
     public static String getSvIdBySystem(SystemEnum system) {
         return system.getValue().toLowerCase() + "-mgm-sv";
+    }
+
+    /**
+     * 根据所属系统获取svId
+     *
+     * @param system 所属系统
+     * @return appId
+     */
+    public static String getSvIdBySystem(String system) {
+        return system + "-mgm-sv";
     }
 
 }

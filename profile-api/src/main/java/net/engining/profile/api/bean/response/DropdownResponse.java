@@ -32,4 +32,11 @@ public class DropdownResponse<T> implements Serializable {
     public void setData(List<T> data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "DropdownResponse{" +
+                "data=" + data +
+                '}';
+    }
 }

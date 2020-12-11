@@ -2,6 +2,7 @@ package net.engining.profile.api.controller.profile;
 
 
 import io.swagger.annotations.ApiOperation;
+import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
 import net.engining.profile.api.bean.request.authority.ListAuthorityRequest;
@@ -9,7 +10,7 @@ import net.engining.profile.api.bean.response.DropdownResponse;
 import net.engining.profile.api.bean.response.authority.ListAuthorityResponse;
 import net.engining.profile.api.bean.vo.DepartmentSimpleVo;
 import net.engining.profile.api.bean.vo.RoleSimpleVo;
-import net.engining.profile.api.bean.vo.SystemSimpleVo;
+import net.engining.profile.api.util.CheckRequestUtils;
 import net.engining.profile.api.util.ControllerUtils;
 import net.engining.profile.api.util.VoTransformationUtils;
 import net.engining.profile.enums.SystemEnum;
@@ -27,8 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static net.engining.profile.api.constant.ParameterNameConstants.SYSTEM;
 
 /**
  * @author liudongjing
@@ -69,9 +71,11 @@ public class ProfileMgmController {
     @ApiOperation(value = "可分配权限查询", notes = "根据所属系统查询旗下所有权限")
     public CommonWithHeaderResponse<Void, ListAuthorityResponse>
     listAuthorityBySystem(@Valid ListAuthorityRequest request) {
-        SystemEnum system = request.getSystem();
+        String system = request.getSystem();
+        CheckRequestUtils.isLetter(system, SYSTEM);
+
         String menuList;
-        if (SystemEnum.OAUTH2.equals(system)) {
+        if (DbConstants.NULL.equals(system)) {
             menuList = null;
         } else {
             //所有角色
@@ -79,37 +83,6 @@ public class ProfileMgmController {
         }
         ListAuthorityResponse response = new ListAuthorityResponse();
         response.setData(menuList);
-        return ControllerUtils.returnSuccessResponseWithoutHead(response);
-    }
-
-    /**
-     * 系统下拉框查询
-     *
-     * @return 结果
-     */
-    @ApiOperation(value = "系统下拉框查询", notes = "查询所有系统信息")
-    @RequestMapping(value = "/getAllSystem", method = RequestMethod.GET)
-    public CommonWithHeaderResponse<Void, DropdownResponse<SystemSimpleVo>> getAllSystemForDropdown() {
-        DropdownResponse<SystemSimpleVo> response = new DropdownResponse<>();
-//        List<SystemSimpleDto> systemSimpleDtoList = profileMgmService.getAllSystem();
-//        if (ValidateUtilExt.isNotNullOrEmpty(systemSimpleDtoList)) {
-//            List<SystemSimpleVo> systemSimpleVoList = new ArrayList<>(systemSimpleDtoList.size());
-//            for (SystemSimpleDto dto : systemSimpleDtoList) {
-//                SystemSimpleVo vo = new SystemSimpleVo();
-//                vo.setSystemId(dto.getSystemId());
-//                vo.setSystemName(dto.getSystemName());
-//                systemSimpleVoList.add(vo);
-//            }
-//            response.setData(systemSimpleVoList);
-//        }
-
-
-        SystemSimpleVo systemSimpleVo = new SystemSimpleVo();
-        systemSimpleVo.setSystemId("SCAC");
-        systemSimpleVo.setSystemId("账户中心");
-        List<SystemSimpleVo> systemSimpleDtoList = Collections.singletonList(systemSimpleVo);
-        response.setData(systemSimpleDtoList);
-
         return ControllerUtils.returnSuccessResponseWithoutHead(response);
     }
 

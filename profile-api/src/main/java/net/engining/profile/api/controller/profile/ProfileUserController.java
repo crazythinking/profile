@@ -148,7 +148,7 @@ public class ProfileUserController {
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         AddUserFlowRequest flowRequest = new AddUserFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -198,7 +198,7 @@ public class ProfileUserController {
         String departmentId = requestData.getDepartmentId();
         CheckRequestUtils.checkIsNumber(departmentId, DEPARTMENT_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         UpdateUserFlowRequest flowRequest = new UpdateUserFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -244,7 +244,7 @@ public class ProfileUserController {
         String userId = requestData.getUserId();
         CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         DeleteUserFlowRequest flowRequest = new DeleteUserFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);
@@ -288,7 +288,7 @@ public class ProfileUserController {
         String userId = requestData.getUserId();
         CheckRequestUtils.checkIsNumberOrLetterOrUnderline(userId, USER_ID);
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
         UserStatusEnum userStatus = requestData.getUserStatus();
         if (!UserStatusEnum.A.equals(userStatus) && !UserStatusEnum.L.equals(userStatus)) {
             throw new ErrorMessageException(ErrorCode.BadRequest, "用户状态类型错误");
@@ -364,7 +364,7 @@ public class ProfileUserController {
             CheckRequestUtils.checkIsNumberOrLetter(roleId, ROLE_ID);
         }
         String operatorId = requestData.getOperatorId();
-        CheckRequestUtils.checkIsNumberOrLetter(operatorId, OPERATOR_ID);
+        CheckRequestUtils.checkIsNumberOrLetterOrUnderline(operatorId, OPERATOR_ID);
 
         DistributeRolesFlowRequest flowRequest = new DistributeRolesFlowRequest();
         flowRequest.setChannelRequestSeq(txnSerialNo);

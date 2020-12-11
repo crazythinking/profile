@@ -14,6 +14,6 @@ public class ParameterNameConstants {
     public static final String OPERATOR_ID = "操作员ID";
     public static final String ROLE_ID = "角色ID";
     public static final String USER_ID = "用户ID";
-    public static final String USER_NAME = "用户名称";
+    public static final String SYSTEM = "所属系统";
 
 }

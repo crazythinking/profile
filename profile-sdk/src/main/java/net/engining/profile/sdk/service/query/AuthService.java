@@ -145,14 +145,14 @@ public class AuthService implements InitializingBean {
      * 获得全部的菜单接口权限树(不分Roleid,但分appcd，只能分配当前appcd下的权限)
      *
      * @param system 所属系统
-     * @return
+     * @return 菜单树的json字符串
      */
-    public String getAuthorityData(SystemEnum system) {
+    public String getAuthorityData(String system) {
         String appId = ServiceUtils.getAppIdBySystem(system);
         //检查appcd
         boolean isAuth = checkAppCd(appId);
 
-        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
+        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode;
         try {
             //从本地缓存获取
             treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
@@ -161,9 +161,7 @@ public class AuthService implements InitializingBean {
         }
 
         //转换树为jsonStr
-        String treeJsonStr = getTreeJsonString(appId, isAuth, treeParentNode);
-
-        return treeJsonStr;
+        return getTreeJsonString(appId, isAuth, treeParentNode);
     }
 
     /**
