@@ -4,12 +4,14 @@ import net.engining.control.core.flow.FlowContext;
 import net.engining.control.core.invoker.AbstractSkippableInvoker;
 import net.engining.control.core.invoker.InvokerDefinition;
 import net.engining.pg.parameter.ParameterFacility;
+import net.engining.pg.support.core.exception.ErrorCode;
+import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.profile.entity.dto.ProfileUserDto;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.param.SecurityControl;
+import net.engining.profile.sdk.key.OriginalPasswordKey;
 import net.engining.profile.sdk.key.PasswordKey;
 import net.engining.profile.sdk.key.ProfileUserDtoKey;
-import net.engining.profile.sdk.key.ProfileUserKey;
 import net.engining.profile.security.validator.PasswordComplexityValidator;
 import net.engining.profile.security.validator.PasswordReuseCountValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         name = "密码校验",
         requires = {
                 ProfileUserDtoKey.class,
-                PasswordKey.class
+                PasswordKey.class,
+                OriginalPasswordKey.class
         }
 )
 public class PasswordValidateInvoker extends AbstractSkippableInvoker {
@@ -48,7 +51,12 @@ public class PasswordValidateInvoker extends AbstractSkippableInvoker {
     @Override
     public void invoke(FlowContext flowContext) {
         String password = flowContext.get(PasswordKey.class);
+        String originalPassword = flowContext.get(OriginalPasswordKey.class);
         ProfileUserDto profileUserDto = flowContext.get(ProfileUserDtoKey.class);
+
+        if (password.equals(originalPassword)) {
+            throw new ErrorMessageException(ErrorCode.CheckError, "新密码不能和原密码相同");
+        }
 
         ProfileUser profileUser = new ProfileUser();
         profileUser.transfrom2Entity(profileUserDto);
