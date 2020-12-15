@@ -12,6 +12,7 @@ import net.engining.control.core.invoker.WriteJournalUpdateResult;
 import net.engining.profile.invoker.check.CheckDepartmentIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckRoleIdExistsInvoker;
+import net.engining.profile.invoker.check.CheckRoleNameRepeatsInvoker;
 import net.engining.profile.invoker.check.CheckSameRoleChangedInvoker;
 import net.engining.profile.invoker.check.NotModifyAdminRoleInvoker;
 import net.engining.profile.invoker.role.UpdateProfileRoleInvoker;
@@ -39,6 +40,8 @@ import org.springframework.stereotype.Service;
                 NotModifyAdminRoleInvoker.class,
                 // 校验角色ID对应的角色是否存在
                 CheckRoleIdExistsInvoker.class,
+                // 校验角色名称是否重复
+                CheckRoleNameRepeatsInvoker.class,
                 // 校验角色信息是否发生修改
                 CheckSameRoleChangedInvoker.class,
                 // 校验部门ID对应的部门是否存在

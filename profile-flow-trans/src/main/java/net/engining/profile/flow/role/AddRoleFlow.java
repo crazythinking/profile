@@ -11,6 +11,7 @@ import net.engining.control.core.invoker.WriteInboundJournal;
 import net.engining.control.core.invoker.WriteJournalUpdateResult;
 import net.engining.profile.invoker.check.CheckDepartmentIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
+import net.engining.profile.invoker.check.CheckRoleNameRepeatsInvoker;
 import net.engining.profile.invoker.role.AddProfileRoleInvoker;
 import net.engining.profile.invoker.security.AddOperationLogInvoker;
 import net.engining.profile.sdk.key.RoleIdKey;
@@ -35,6 +36,8 @@ import org.springframework.stereotype.Service;
                 CheckOperatorIdExistsInvoker.class,
                 // 校验部门ID对应的部门是否存在
                 CheckDepartmentIdExistsInvoker.class,
+                // 校验角色名称是否重复
+                CheckRoleNameRepeatsInvoker.class,
                 // 新增角色表记录
                 AddProfileRoleInvoker.class,
                 // 记录操作日志
