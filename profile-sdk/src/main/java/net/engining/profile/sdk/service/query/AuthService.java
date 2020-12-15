@@ -129,12 +129,12 @@ public class AuthService implements InitializingBean {
         boolean isAuth = checkAppCd(appCd);
 
         Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
-        try {
+//        try {
             //从本地缓存获取
-            treeParentNode = userMenuCache.get(StringUtils.join(userId));
-        } catch (ExecutionException e) {
+//            treeParentNode = userMenuCache.get(StringUtils.join(userId));
+//        } catch (ExecutionException e) {
             treeParentNode = getMenuTreeByUserid(userId);
-        }
+//        }
         //转换树为jsonStr
         String treeJsonStr = getTreeJsonString(appCd, isAuth, treeParentNode);
 
@@ -153,12 +153,12 @@ public class AuthService implements InitializingBean {
         boolean isAuth = checkAppCd(appId);
 
         Map<String, TreeNode<MenuOrAuthBean>> treeParentNode;
-        try {
-            //从本地缓存获取
-            treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
-        } catch (ExecutionException e) {
+//        try {
+//            //从本地缓存获取
+//            treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
+//        } catch (ExecutionException e) {
             treeParentNode = getAllAuthTreeNode();
-        }
+//        }
 
         //转换树为jsonStr
         return getTreeJsonString(appId, isAuth, treeParentNode);
@@ -204,12 +204,12 @@ public class AuthService implements InitializingBean {
      */
     public List<String> fetchRoleAuthByRoleId(String roleId) {
         List<String> authList = null;
-        try {
-            //从本地缓存获取
-            authList = roleAuthCache.get(StringUtils.join(roleId));
-        } catch (ExecutionException e) {
+//        try {
+//            //从本地缓存获取
+//            authList = roleAuthCache.get(StringUtils.join(roleId));
+//        } catch (ExecutionException e) {
             authList = getRoleAuthByRoleId(roleId);
-        }
+//        }
 
         return authList;
     }

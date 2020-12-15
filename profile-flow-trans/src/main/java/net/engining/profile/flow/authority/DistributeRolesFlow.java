@@ -11,6 +11,7 @@ import net.engining.control.core.invoker.WriteInboundJournal;
 import net.engining.control.core.invoker.WriteJournalUpdateResult;
 import net.engining.profile.invoker.authority.AddProfileUserRolesInvoker;
 import net.engining.profile.invoker.authority.DeleteProfileUserRolesInvoker;
+import net.engining.profile.invoker.authority.RefreshCacheInvoker;
 import net.engining.profile.invoker.check.CheckOperatorIdExistsInvoker;
 import net.engining.profile.invoker.check.CheckRoleIdListExistInvoker;
 import net.engining.profile.invoker.check.CheckSameUserRoleChangedInvoker;
@@ -45,6 +46,8 @@ import org.springframework.stereotype.Service;
                 AddProfileUserRolesInvoker.class,
                 // 记录操作日志
                 AddOperationLogInvoker.class,
+                // 刷新本地缓存
+//                RefreshCacheInvoker.class,
                 // 事务分割
                 TransactionSeperator.class,
                 // 结果处理

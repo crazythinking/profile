@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service;
                 // 新增角色权限对应关系
                 AddProfileRoleAuthsInvoker.class,
                 // 更新本地缓存
-                RefreshCacheInvoker.class,
+//                RefreshCacheInvoker.class,
                 // 记录操作日志
                 AddOperationLogInvoker.class,
                 // 事务分割
