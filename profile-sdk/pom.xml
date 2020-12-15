@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>net.engining.profile</groupId>
 		<artifactId>profile-parent</artifactId>
-		<version>BFOR-786</version>
+		<version>4.0.6.RELEASE</version>
 		<relativePath>..</relativePath>
 	</parent>
 

@@ -4,7 +4,7 @@ node("master"){
 <<<<<<< HEAD
 		checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
 =======
-		checkout([$class: 'GitSCM', branches: [[name: '*/BFOR-786']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
+		checkout([$class: 'GitSCM', branches: [[name: '*/4.0.6.RELEASE']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
 >>>>>>> sccc-4.0.4
 	}
     stage('编译') {
