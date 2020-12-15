@@ -24,6 +24,10 @@ public class SystemSimpleDto implements Serializable {
      * 系统名称
      */
     private String systemName;
+    /**
+     * 是否展示
+     */
+    private Boolean shown;
 
     public String getSystemId() {
         return systemId;
@@ -39,5 +43,13 @@ public class SystemSimpleDto implements Serializable {
 
     public void setSystemName(String systemName) {
         this.systemName = systemName;
+    }
+
+    public Boolean getShown() {
+        return shown;
+    }
+
+    public void setShown(Boolean shown) {
+        this.shown = shown;
     }
 }

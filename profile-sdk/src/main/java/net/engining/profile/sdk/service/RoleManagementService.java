@@ -110,8 +110,8 @@ public class RoleManagementService {
 	 *
 	 * @return 查询结果
 	 */
-	public List<RoleSimpleDto> getAllRole() {
-		List<ProfileRoleDto> list = profileRoleService.getAllRoleIdAndRoleName();
+	public List<RoleSimpleDto> listSimpleRoleDtoByAppCd(List<String> appCdList) {
+		List<ProfileRoleDto> list = profileRoleService.listRoleIdAndRoleNameByAppCd(appCdList);
 		if (ValidateUtilExt.isNullOrEmpty(list)) {
 			return null;
 		}

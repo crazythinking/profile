@@ -12,7 +12,9 @@ import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.dto.ProfileUserDto;
 import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.QProfileRole;
 import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
 import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.sdk.service.bean.query.UserPagingQuery;
@@ -100,9 +102,11 @@ public class ProfileUserService {
                 ? null : qProfileUser.branchId.eq(departmentId);
 
         JPAQuery<ProfileUser> jpaQuery = new JPAQueryFactory(entityManager)
-                .selectFrom(qProfileUser)
+                .select(qProfileUser)
+                .from(qProfileUser)
                 .where(b1, b2, b3, qProfileUser.delFlg.eq(false))
-                .orderBy(qProfileUser.mtnTimestamp.desc(), qProfileUser.createTimestamp.desc());
+                .orderBy(qProfileUser.mtnTimestamp.desc(), qProfileUser.createTimestamp.desc())
+                .distinct();
 
         FetchResponse<ProfileUser> fetchResponse = new JPAFetchResponseBuilder<ProfileUser>()
                 .range(query.getRange())

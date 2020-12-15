@@ -41,7 +41,6 @@ import net.engining.profile.sdk.service.UserManagementService;
 import net.engining.profile.sdk.service.bean.dto.RoleSimpleDto;
 import net.engining.profile.sdk.service.bean.dto.UserListDto;
 import net.engining.profile.sdk.service.bean.query.UserPagingQuery;
-import net.engining.profile.sdk.service.util.PagingQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -65,7 +64,7 @@ import static net.engining.profile.api.constant.ParameterNameConstants.USER_ID;
  */
 @RequestMapping("/profile")
 @RestController
-@Api(value = "ProfileUserController", description = "用户服务模块")
+@Api(value = "ProfileUserController")
 public class ProfileUserController {
 
     /**
@@ -98,8 +97,7 @@ public class ProfileUserController {
         Long pageSize = request.getPageSize();
         CheckRequestUtils.checkPageSizeIsWithinRange(pageSize);
 
-        UserPagingQuery query = PagingQueryUtils.initUserPagingQuery(userId, userName, departmentId,
-                request.getPageNum(), pageSize);
+        UserPagingQuery query = new UserPagingQuery(userId, userName, departmentId, request.getPageNum(), pageSize);
 
         FetchResponse<UserListDto> fetchResponse = userManagementService.listUser(query);
         ListUserResponse<UserListVo> response = new ListUserResponse<>();

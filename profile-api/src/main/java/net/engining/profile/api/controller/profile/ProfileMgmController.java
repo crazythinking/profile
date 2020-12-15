@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import net.engining.pg.support.db.DbConstants;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.pg.web.bean.CommonWithHeaderResponse;
+import net.engining.profile.api.bean.request.ListSimpleRoleRequest;
+import net.engining.profile.api.bean.response.ListSimpleRoleResponse;
 import net.engining.profile.api.bean.request.authority.ListAuthorityRequest;
 import net.engining.profile.api.bean.response.DropdownResponse;
 import net.engining.profile.api.bean.response.authority.ListAuthorityResponse;
@@ -13,12 +15,12 @@ import net.engining.profile.api.bean.vo.RoleSimpleVo;
 import net.engining.profile.api.util.CheckRequestUtils;
 import net.engining.profile.api.util.ControllerUtils;
 import net.engining.profile.api.util.VoTransformationUtils;
-import net.engining.profile.enums.SystemEnum;
 import net.engining.profile.sdk.service.DepartmentManagementService;
 import net.engining.profile.sdk.service.ProfileMgmService;
 import net.engining.profile.sdk.service.RoleManagementService;
 import net.engining.profile.sdk.service.bean.dto.DepartmentSimpleDto;
 import net.engining.profile.sdk.service.bean.dto.RoleSimpleDto;
+import net.engining.profile.sdk.service.constant.ParameterConstants;
 import net.engining.profile.sdk.service.query.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.engining.profile.api.constant.ParameterNameConstants.SYSTEM;
 
@@ -94,8 +97,19 @@ public class ProfileMgmController {
     @PreAuthorize("hasAuthority('Menu_UserManagement')")
     @ApiOperation(value = "角色下拉框查询", notes = "查询所有角色信息")
     @RequestMapping(value = "/getAllRole", method = RequestMethod.GET)
-    public CommonWithHeaderResponse<Void, DropdownResponse<RoleSimpleVo>> getAllRoleForDropdown() {
-        List<RoleSimpleDto> roleSimpleDtoList = roleManagementService.getAllRole();
+    public CommonWithHeaderResponse<Void, DropdownResponse<RoleSimpleVo>>
+    listSimpleRoleVoByAppCd(ListSimpleRoleRequest request) {
+        List<String> appCdList = ControllerUtils.getClientIdList(request.getAppCdList());
+        List<RoleSimpleDto> roleSimpleDtoList = roleManagementService.listSimpleRoleDtoByAppCd(appCdList);
+        List<RoleSimpleDto> list = roleSimpleDtoList.stream()
+                .filter(roleSimpleDto -> ParameterConstants.SUPERADMIN.equals(roleSimpleDto.getRoleId()))
+                .collect(Collectors.toList());
+        if (ValidateUtilExt.isNullOrEmpty(list)) {
+            RoleSimpleDto roleSimpleDto = new RoleSimpleDto();
+            roleSimpleDto.setRoleId(ParameterConstants.SUPERADMIN);
+            roleSimpleDto.setRoleName("系统超级管理员");
+            roleSimpleDtoList.add(roleSimpleDto);
+        }
         List<RoleSimpleVo> roleSimpleVoList = VoTransformationUtils.convertToRoleSimpleVoList(roleSimpleDtoList);
 
         DropdownResponse<RoleSimpleVo> response = new DropdownResponse<>();

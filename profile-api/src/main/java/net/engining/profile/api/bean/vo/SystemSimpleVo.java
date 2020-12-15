@@ -28,6 +28,11 @@ public class SystemSimpleVo implements Serializable {
      */
     @ApiModelProperty(value = "系统名称", example = "账户中心", required = true)
     private String systemName;
+    /**
+     * 是否展示
+     */
+    @ApiModelProperty(value = "是否展示", example = "true", required = true)
+    private Boolean shown;
 
     public String getSystemId() {
         return systemId;
@@ -45,11 +50,20 @@ public class SystemSimpleVo implements Serializable {
         this.systemName = systemName;
     }
 
+    public Boolean getShown() {
+        return shown;
+    }
+
+    public void setShown(Boolean shown) {
+        this.shown = shown;
+    }
+
     @Override
     public String toString() {
         return "SystemSimpleVo{" +
                 "systemId='" + systemId + '\'' +
                 ", systemName='" + systemName + '\'' +
+                ", shown=" + shown +
                 '}';
     }
 }

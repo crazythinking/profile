@@ -9,8 +9,10 @@ import net.engining.pg.web.bean.CommonWithHeaderResponse;
 import net.engining.pg.web.bean.DefaultResponseHeader;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * controller层公共方法
@@ -125,6 +127,17 @@ public class ControllerUtils {
         return new CommonWithHeaderResponse<Void, Void>()
                 .setStatusCode(ErrorCode.Success.getValue())
                 .setStatusDesc(ErrorCode.Success.getLabel());
+    }
+
+    /**
+     * 所属系统到客户端ID
+     *
+     * @param source 所属系统
+     * @return 客户端ID
+     */
+    public static List<String> getClientIdList(List<String> source) {
+        return ValidateUtilExt.isNullOrEmpty(source) ? null
+                : source.stream().map(s -> s + "-mgm-sv").collect(Collectors.toList());
     }
 
 }

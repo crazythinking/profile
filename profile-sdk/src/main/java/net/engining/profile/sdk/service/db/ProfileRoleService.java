@@ -11,7 +11,6 @@ import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.entity.dto.ProfileRoleDto;
 import net.engining.profile.entity.model.ProfileRole;
 import net.engining.profile.entity.model.QProfileRole;
-import net.engining.profile.enums.SystemEnum;
 import net.engining.profile.sdk.service.bean.query.RolePagingQuery;
 import net.engining.profile.sdk.service.util.DtoTransformationUtils;
 import net.engining.profile.sdk.service.util.ServiceUtils;
@@ -65,12 +64,14 @@ public class ProfileRoleService {
         QProfileRole qProfileRole = QProfileRole.profileRole;
 
         String roleName = query.getRoleName();
-        BooleanExpression b = ValidateUtilExt.isNullOrEmpty(roleName) ?
+        BooleanExpression b1 = ValidateUtilExt.isNullOrEmpty(roleName) ?
                 null : qProfileRole.roleName.eq(roleName);
-
+        List<String> appCdList = query.getAppCdList();
+        BooleanExpression b2 = ValidateUtilExt.isNullOrEmpty(appCdList) ?
+                null : qProfileRole.appCd.in(appCdList);
         JPAQuery<ProfileRole> jpaQuery = new JPAQueryFactory(entityManager)
                 .selectFrom(qProfileRole)
-                .where(b, qProfileRole.roleId.ne(SUPERADMIN), qProfileRole.delFlg.eq(false))
+                .where(b1, b2, qProfileRole.roleId.ne(SUPERADMIN), qProfileRole.delFlg.eq(false))
                 .orderBy(qProfileRole.mtnTimestamp.desc(), qProfileRole.createTimestamp.desc());
         FetchResponse<ProfileRole> fetchResponse = new JPAFetchResponseBuilder<ProfileRole>()
                 .range(query.getRange())
@@ -193,6 +194,38 @@ public class ProfileRoleService {
                 .select(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
                 .from(qProfileRole)
                 .where(qProfileRole.delFlg.eq(false))
+                .groupBy(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
+                .orderBy(qProfileRole.createTimestamp.asc(), qProfileRole.roleId.asc())
+                .fetch();
+        if (ValidateUtilExt.isNullOrEmpty(tupleList)) {
+            return null;
+        }
+
+        List<ProfileRoleDto> result = new ArrayList<>(tupleList.size());
+        for (Tuple tuple : tupleList) {
+            ProfileRoleDto profileRoleDto = new ProfileRoleDto();
+            profileRoleDto.setRoleId(tuple.get(qProfileRole.roleId));
+            profileRoleDto.setRoleName(tuple.get(qProfileRole.roleName));
+            result.add(profileRoleDto);
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取全部的角色ID、角色名称
+     *
+     * @return 查询结果
+     */
+    public List<ProfileRoleDto> listRoleIdAndRoleNameByAppCd(List<String> appCdList) {
+        QProfileRole qProfileRole = QProfileRole.profileRole;
+
+        BooleanExpression b1 = ValidateUtilExt.isNullOrEmpty(appCdList) ? null : qProfileRole.appCd.in(appCdList);
+
+        List<Tuple> tupleList = new JPAQueryFactory(entityManager)
+                .select(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
+                .from(qProfileRole)
+                .where(b1, qProfileRole.delFlg.eq(false))
                 .groupBy(qProfileRole.appCd, qProfileRole.roleId, qProfileRole.roleName)
                 .orderBy(qProfileRole.createTimestamp.asc(), qProfileRole.roleId.asc())
                 .fetch();

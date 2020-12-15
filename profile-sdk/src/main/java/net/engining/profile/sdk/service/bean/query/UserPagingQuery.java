@@ -1,6 +1,6 @@
 package net.engining.profile.sdk.service.bean.query;
 
-import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 
 /**
  * 用户分页查询参数
@@ -23,6 +23,21 @@ public class UserPagingQuery extends BasePagingQuery {
      * 部门ID
      */
     private String departmentId;
+    /**
+     * 服务端ID
+     */
+    private List<String> appCdList;
+
+    public UserPagingQuery() {
+    }
+
+    public UserPagingQuery(String userId, String userName, String departmentId, Long pageNum, Long pageSize) {
+        this.userId = userId;
+        this.userName = userName;
+        this.departmentId = departmentId;
+        this.pageNum = pageNum;
+        this.pageSize = pageSize;
+    }
 
     public String getUserId() {
         return userId;
@@ -46,5 +61,13 @@ public class UserPagingQuery extends BasePagingQuery {
 
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public List<String> getAppCdList() {
+        return appCdList;
+    }
+
+    public void setAppCdList(List<String> appCdList) {
+        this.appCdList = appCdList;
     }
 }

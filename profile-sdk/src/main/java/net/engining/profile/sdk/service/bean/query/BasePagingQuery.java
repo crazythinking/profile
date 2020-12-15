@@ -21,11 +21,11 @@ public abstract class BasePagingQuery implements Serializable {
     /**
      * 起始数
      */
-    private Long pageNum;
+    protected Long pageNum;
     /**
      * 查询笔数
      */
-    private Long pageSize;
+    protected Long pageSize;
 
     public Long getPageNum() {
         return pageNum;

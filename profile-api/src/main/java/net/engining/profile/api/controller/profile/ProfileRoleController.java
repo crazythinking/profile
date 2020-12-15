@@ -92,8 +92,9 @@ public class ProfileRoleController {
         CheckRequestUtils.checkPageSizeIsWithinRange(pageSize);
         String roleName = request.getRoleName();
         CheckRequestUtils.checkIsChinese(roleName, ROLE_NAME);
+        List<String> appCdList = ControllerUtils.getClientIdList(request.getAppCdList());
 
-        RolePagingQuery query = PagingQueryUtils.initRolePagingQuery(roleName, request.getPageNum(), pageSize);
+        RolePagingQuery query = new RolePagingQuery(roleName, appCdList, request.getPageNum(), pageSize);
 
         FetchResponse<RoleListDto> fetchResponse = roleManagementService.listRoleByPaging(query);
         ListRoleResponse<RoleListVo> response = new ListRoleResponse<>();

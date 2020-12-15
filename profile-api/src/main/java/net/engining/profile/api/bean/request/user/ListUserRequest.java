@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import net.engining.profile.api.bean.request.BasePagingQueryRequest;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * 用户列表查询请求
  *
