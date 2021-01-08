@@ -1,6 +1,6 @@
 package net.engining.profile.sdk.service;
 
-import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.sdk.service.bean.UserRoleBean;
 
 import java.io.Serializable;
@@ -28,7 +28,7 @@ public class UserManagerBean implements Serializable {
 
     private String name;
 
-    private StatusDef status;
+    private UserStatusEnum status;
 
     private String email;
 
@@ -78,11 +78,11 @@ public class UserManagerBean implements Serializable {
         this.name = name;
     }
 
-    public StatusDef getStatus() {
+    public UserStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(StatusDef status) {
+    public void setStatus(UserStatusEnum status) {
         this.status = status;
     }
 

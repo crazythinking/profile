@@ -8,12 +8,20 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.pg.support.db.querydsl.JPAFetchResponseBuilder;
+import net.engining.pg.support.utils.ValidateUtilExt;
+import net.engining.profile.entity.dto.ProfileSecoperLogDto;
+import net.engining.profile.entity.dto.ProfileUserDto;
 import net.engining.profile.entity.model.QProfileBranch;
 import net.engining.profile.entity.model.QProfileSecoperLog;
 import net.engining.profile.entity.model.QProfileUser;
 import net.engining.profile.enums.OperationType;
+import net.engining.profile.sdk.service.bean.dto.OperationLogListDto;
 import net.engining.profile.sdk.service.bean.param.UserRegistryDetailsReq;
 import net.engining.profile.sdk.service.bean.param.UserRegistryDetailsRes;
+import net.engining.profile.sdk.service.bean.query.OperationLogPagingQuery;
+import net.engining.profile.sdk.service.db.ProfileSecoperLogService;
+import net.engining.profile.sdk.service.db.ProfileUserService;
+import net.engining.profile.sdk.service.util.DtoTransformationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +31,19 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static net.engining.profile.sdk.service.constant.ParameterConstants.EMPTY_SIZE;
 
 /**
  * 用户登记薄
  *
  * @author heqingxi
- * @date2019/7/28
+ * @date 2019/7/28
  */
 @Service
 public class UserRegistryService {
@@ -41,6 +55,67 @@ public class UserRegistryService {
 
     @Autowired
     private ParameterFacility parameterFacility;
+
+    /**
+     * ProfileSecoperLog表操作服务
+     */
+    @Autowired
+    private ProfileSecoperLogService profileSecoperLogService;
+    /**
+     * ProfileUser表操作服务
+     */
+    @Autowired
+    private ProfileUserService profileUserService;
+
+    /**
+     * 分页查询操作日志
+     *
+     * @param query 分页查询参数
+     * @return 查询结果
+     */
+    public FetchResponse<OperationLogListDto> listOperationLogByPaging(OperationLogPagingQuery query) {
+        String userId = query.getUserId();
+        String userName = query.getUserName();
+        if (ValidateUtilExt.isNotNullOrEmpty(userId) || ValidateUtilExt.isNotNullOrEmpty(userName)) {
+            String puId = profileUserService.getPuIdByUserIdOrUserName(userId, userName);
+            if (ValidateUtilExt.isNullOrEmpty(puId)) {
+                FetchResponse<OperationLogListDto> result = new FetchResponse<>();
+                result.setStart(query.getPageNum());
+                result.setRowCount(0L);
+                return result;
+            }
+            query.setPuId(puId);
+        }
+
+        FetchResponse<ProfileSecoperLogDto> fetchResponse = profileSecoperLogService
+                .listProfileSecoperLogDtoByPaging(query);
+
+        return DtoTransformationUtils.convertToPagingQueryResult(fetchResponse, source -> {
+            List<String> puIdList = source.stream().map(ProfileSecoperLogDto::getPuId).collect(Collectors.toList());
+            // 这里正常情况一定会有结果，但防止意外（老数据、错误数据或者开放查询系统调用的操作记录可能为空）进行非空判断
+            Map<String, ProfileUserDto> map = profileUserService.mapUserIdAndNameByPuIdList(puIdList);
+            if (ValidateUtilExt.isNullOrEmpty(map)) {
+                map = new HashMap<>(EMPTY_SIZE);
+            }
+
+            List<OperationLogListDto> data = new ArrayList<>(source.size());
+            for (ProfileSecoperLogDto profileSecoperLogDto : source) {
+                OperationLogListDto operationLogListDto = new OperationLogListDto();
+                // 这里如果没有查询到也不许要抛出异常，直接赋值空值
+                ProfileUserDto profileUserDto = map.get(profileSecoperLogDto.getPuId());
+                if (ValidateUtilExt.isNotNullOrEmpty(profileUserDto)) {
+                    operationLogListDto.setOperatorId(profileUserDto.getUserId());
+                    operationLogListDto.setOperatorName(profileUserDto.getName());
+                }
+                operationLogListDto.setOperationTarget(profileSecoperLogDto.getBeoperatedId());
+                operationLogListDto.setOperationType(profileSecoperLogDto.getOperType());
+                operationLogListDto.setOperationTimestamp(profileSecoperLogDto.getOperTime());
+                operationLogListDto.setRemarks(profileSecoperLogDto.getRemarks());
+                data.add(operationLogListDto);
+            }
+            return data;
+        });
+    }
 
     /**
      * 用于为导出用户登记薄数据

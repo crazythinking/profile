@@ -1,11 +1,7 @@
 node("master"){
 	step([$class: 'WsCleanup'])
 	stage('代码下载') {
-<<<<<<< HEAD
-		checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
-=======
-		checkout([$class: 'GitSCM', branches: [[name: '*/sccc-4.0.4']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
->>>>>>> sccc-4.0.4
+		checkout([$class: 'GitSCM', branches: [[name: '*/4.0.6']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'chenbao', url: 'http://172.16.68.11:17888/pass/profile-parent.git']]])
 	}
     stage('编译') {
 		sh label: '', script: 'sh /home/shangc/apache-maven-3.5.4/bin/mvn clean install -Dpmd.skip=true -Dmaven.test.skip'

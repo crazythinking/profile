@@ -21,7 +21,6 @@ public enum OperationType implements BaseEnum<String> {
 	 * 登陆
 	 */
 	LG("LG","登陆"),
-	
 	/**
 	 * 修改密码
 	 */
@@ -45,9 +44,47 @@ public enum OperationType implements BaseEnum<String> {
 	/**
 	 * 修改
 	 */
-	UP("UP","修改用户")
-	
-	;
+	UP("UP","修改用户"),
+	/**
+	 * 新增角色
+	 */
+	AR("AD", "新增角色"),
+	/**
+	 * 修改角色
+	 */
+	UR("UR", "修改角色"),
+	/**
+	 * 修改用户状态
+	 */
+	US("US", "修改用户状态"),
+    /**
+     * 新增部门
+     */
+    AB("AB", "新增部门"),
+    /**
+     * 修改部门
+     */
+    UB("UB", "修改部门"),
+    /**
+     * 删除部门
+     */
+    DB("DB", "删除部门"),
+	/**
+	 * 系统调用
+	 */
+	SC("SC", "系统调用"),
+	/**
+	 * 登出
+	 */
+	LO("LO", "登出"),
+	/**
+	 * 分配权限
+	 */
+	DA("DA", "分配权限"),
+	/**
+	 * 重置密码
+	 */
+	RP("RP", "重置密码");
 
 	private final String value;
 

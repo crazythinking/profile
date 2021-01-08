@@ -5,7 +5,7 @@ package net.engining.profile.sdk.service.bean.profile;
 
 import io.swagger.annotations.ApiModelProperty;
 import net.engining.pg.web.bean.WebLoginUser;
-import net.engining.profile.entity.enums.StatusDef;
+import net.engining.profile.enums.UserStatusEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -46,7 +46,7 @@ public class MgmWebUser extends WebLoginUser {
 
 	@NotNull(message = "用户状态不能为空")
 	@ApiModelProperty(value = "用户状态", required = true, example="A")
-	private StatusDef status;
+	private UserStatusEnum status;
 
 	@NotBlank(message = "电子邮箱不能为空")
 	@ApiModelProperty(value = "email", required = false, example="A")
@@ -121,7 +121,7 @@ public class MgmWebUser extends WebLoginUser {
 	/**
 	 * @return the status
 	 */
-	public StatusDef getStatus() {
+	public UserStatusEnum getStatus() {
 		return status;
 	}
 
@@ -129,7 +129,7 @@ public class MgmWebUser extends WebLoginUser {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(StatusDef status) {
+	public void setStatus(UserStatusEnum status) {
 		this.status = status;
 	}
 

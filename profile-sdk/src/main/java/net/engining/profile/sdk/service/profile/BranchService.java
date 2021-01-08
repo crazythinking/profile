@@ -6,7 +6,7 @@ import net.engining.pg.support.core.exception.ErrorMessageException;
 import net.engining.pg.support.db.querydsl.FetchResponse;
 import net.engining.profile.entity.model.ProfileBranch;
 import net.engining.profile.entity.model.ProfileBranchKey;
-import net.engining.profile.sdk.service.ProfileBranchService;
+import net.engining.profile.sdk.service.DepartmentManagementService;
 import net.engining.profile.sdk.service.bean.profile.ProfileBranchForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class BranchService {
 	@PersistenceContext
 	private EntityManager em;
 	@Autowired
-	ProfileBranchService profileBranchService;
+    DepartmentManagementService departmentManagementService;
 	
 	public ProfileBranch profileBranch(ProfileBranchForm branch){
 		ProfileBranchKey key = new ProfileBranchKey();
@@ -40,7 +40,7 @@ public class BranchService {
 		ProfileBranch profileBranch= new ProfileBranch();
 		BeanUtils.copyProperties(branch, profileBranch);
 		profileBranch.fillDefaultValues();
-		profileBranchService.updateBranch(profileBranch);
+		departmentManagementService.updateBranch(profileBranch);
 		ranch.setSuperiorId(branch.getSuperiorId());
 		return ranch;
 	}

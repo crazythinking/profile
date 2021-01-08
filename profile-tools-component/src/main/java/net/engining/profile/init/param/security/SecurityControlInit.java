@@ -7,6 +7,7 @@ import net.engining.profile.param.PasswordPattern;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.param.UsernamePattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
  * @date 2020/3/20 17:43
  * @since 1.0
  */
+@Service
 public class SecurityControlInit implements ParameterInitializer {
 
     @Autowired

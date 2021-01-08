@@ -1,7 +1,7 @@
 package net.engining.profile.security.service;
 
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileRole;
+import net.engining.profile.enums.UserStatusEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -22,13 +22,13 @@ public class ProfileUserDetails extends User {
 
 	private String branchId;
 
-	private StatusDef status;
+	private UserStatusEnum status;
 
 	public ProfileUserDetails(String puId, String username, String password,
 			boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities,
-			String branchId, StatusDef status) {
+			String branchId, UserStatusEnum status) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.puId = puId;
 		this.branchId = branchId;
@@ -51,11 +51,11 @@ public class ProfileUserDetails extends User {
 		this.branchId = branchId;
 	}
 
-	public StatusDef getStatus() {
+	public UserStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(StatusDef status) {
+	public void setStatus(UserStatusEnum status) {
 		this.status = status;
 	}
 

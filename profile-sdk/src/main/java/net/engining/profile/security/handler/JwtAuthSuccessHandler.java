@@ -66,6 +66,7 @@ public class JwtAuthSuccessHandler implements AuthenticationSuccessHandler {
 				OperationType.LG,
 				WebCommonUtils.getIpAddress(request),
 				new Date(),
+				null,
 				null
 		);
 		

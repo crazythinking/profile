@@ -23,8 +23,10 @@ import net.engining.profile.entity.model.QProfileMenuInterf;
 import net.engining.profile.entity.model.QProfileRoleAuth;
 import net.engining.profile.entity.model.QProfileUser;
 import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.enums.SystemEnum;
 import net.engining.profile.sdk.service.bean.MenuOrAuthBean;
 import net.engining.profile.sdk.service.bean.profile.MenuOrAuthInfo;
+import net.engining.profile.sdk.service.util.ServiceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,12 +129,12 @@ public class AuthService implements InitializingBean {
         boolean isAuth = checkAppCd(appCd);
 
         Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
-        try {
+//        try {
             //从本地缓存获取
-            treeParentNode = userMenuCache.get(StringUtils.join(userId));
-        } catch (ExecutionException e) {
+//            treeParentNode = userMenuCache.get(StringUtils.join(userId));
+//        } catch (ExecutionException e) {
             treeParentNode = getMenuTreeByUserid(userId);
-        }
+//        }
         //转换树为jsonStr
         String treeJsonStr = getTreeJsonString(appCd, isAuth, treeParentNode);
 
@@ -142,25 +144,24 @@ public class AuthService implements InitializingBean {
     /**
      * 获得全部的菜单接口权限树(不分Roleid,但分appcd，只能分配当前appcd下的权限)
      *
-     * @param appCd 应用代码
-     * @return
+     * @param system 所属系统
+     * @return 菜单树的json字符串
      */
-    public String getAuthorityData(String appCd) {
+    public String getAuthorityData(String system) {
+        String appId = ServiceUtils.getAppIdBySystem(system);
         //检查appcd
-        boolean isAuth = checkAppCd(appCd);
+        boolean isAuth = checkAppCd(appId);
 
-        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
-        try {
-            //从本地缓存获取
-            treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
-        } catch (ExecutionException e) {
+        Map<String, TreeNode<MenuOrAuthBean>> treeParentNode;
+//        try {
+//            //从本地缓存获取
+//            treeParentNode = allAuthCache.get(StringUtils.join(ALL_AUTH_KEY));
+//        } catch (ExecutionException e) {
             treeParentNode = getAllAuthTreeNode();
-        }
+//        }
 
         //转换树为jsonStr
-        String treeJsonStr = getTreeJsonString(appCd, isAuth, treeParentNode);
-
-        return treeJsonStr;
+        return getTreeJsonString(appId, isAuth, treeParentNode);
     }
 
     /**
@@ -203,12 +204,12 @@ public class AuthService implements InitializingBean {
      */
     public List<String> fetchRoleAuthByRoleId(String roleId) {
         List<String> authList = null;
-        try {
-            //从本地缓存获取
-            authList = roleAuthCache.get(StringUtils.join(roleId));
-        } catch (ExecutionException e) {
+//        try {
+//            //从本地缓存获取
+//            authList = roleAuthCache.get(StringUtils.join(roleId));
+//        } catch (ExecutionException e) {
             authList = getRoleAuthByRoleId(roleId);
-        }
+//        }
 
         return authList;
     }
@@ -303,11 +304,21 @@ public class AuthService implements InitializingBean {
                 MenuOrAuthBean menu2 = JSONObject.parseObject(b.get("data").toString(), MenuOrAuthBean.class);
                 Integer id1;
                 Integer id2;
+
+                String mId1 = menu1.getId();
+                String mId2 = menu2.getId();
+                boolean b1 = mId1.startsWith("C");
+                boolean b2 = mId2.startsWith("C");
+
                 // 接口级菜单id C+序号
-                if (3 == level) {
+                // 菜单下有可能既有接口也有下级菜单，沿用原
+                if (b1 && !b2) {
+                    return -1;
+                } else if (!b1 && b2) {
+                    return 1;
+                } else if (b1) {
                     id1 = Integer.valueOf(menu1.getId().substring(1));
                     id2 = Integer.valueOf(menu2.getId().substring(1));
-
                 } else {
                     id1 = Integer.valueOf(menu1.getId());
                     id2 = Integer.valueOf(menu2.getId());
@@ -416,7 +427,7 @@ public class AuthService implements InitializingBean {
                 .select(profileMenu.id, profileMenu.mname, profileMenu.menuCd,
                         profileMenu.parentId, profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
-                .where(profileMenu.menuCd.in(authoritys))
+                .where(profileMenu.menuCd.in(authoritys), profileMenu.delFlg.eq(false))
                 .orderBy(profileMenu.id.asc())
                 .fetch();
         List<MenuOrAuthBean> rootAllList = getMenuBeans(profileMenu, jpaQuery);
@@ -614,6 +625,7 @@ public class AuthService implements InitializingBean {
                 profileMenu.menuCd, profileMenu.parentId,
                 profileMenu.sortn, profileMenu.appCd)
                 .from(profileMenu)
+                .where(profileMenu.delFlg.eq(false))
                 .orderBy(profileMenu.sortn.asc())
                 .fetch();
         return getMenuBeans(profileMenu, jpaQuery);
@@ -631,7 +643,7 @@ public class AuthService implements InitializingBean {
                 profileMenuInterf.appCd, profileMenuInterf.interfCd, profileMenuInterf.menuId,
                 profileMenuInterf.iname)
                 .from(profileMenuInterf)
-                .where(profileMenuInterf.menuId.isNotNull())
+                .where(profileMenuInterf.menuId.isNotNull(), profileMenuInterf.delFlg.eq(false))
                 .orderBy(profileMenuInterf.id.asc())
                 .fetch();
         return getAuthBeans(profileMenuInterf, jpaQuery);

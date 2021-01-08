@@ -42,6 +42,7 @@ public class JsonAuthSuccessHandler implements AuthenticationSuccessHandler {
                 OperationType.LG,
                 WebCommonUtils.getIpAddress(request),
                 new Date(),
+                null,
                 null
         );
 

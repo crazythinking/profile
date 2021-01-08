@@ -2,9 +2,9 @@ package net.engining.profile.security.listener;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileUser;
 import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.param.SecurityControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class PasswordTriesListener implements ApplicationListener<Authentication
 			
 			if (user.getPwdTries() >= sc.getPwdTries())
 			{
-				user.setStatus(StatusDef.L);
+				user.setStatus(UserStatusEnum.P);
 				logger.info("[{}] 密码错误次数过多，账号已锁定", user.getUserId());
 			}
 		}

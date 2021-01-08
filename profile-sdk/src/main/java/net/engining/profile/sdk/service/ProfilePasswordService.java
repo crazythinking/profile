@@ -1,8 +1,8 @@
 package net.engining.profile.sdk.service;
 
 import net.engining.pg.parameter.ParameterFacility;
-import net.engining.profile.entity.enums.StatusDef;
 import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.enums.UserStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class ProfilePasswordService {
         user.setMtnUser(operUser);
         user.setPassword(passwordEncoder.encode(resetPwdStr));
         user.setPwdTries(0);
-        user.setStatus(StatusDef.L);
+        user.setStatus(UserStatusEnum.A);
 
         logger.info("操作员：{}，重置了用户：{}的密码！", operUser, user.getUserId());
     }

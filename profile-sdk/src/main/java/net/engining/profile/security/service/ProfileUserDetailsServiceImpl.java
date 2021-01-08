@@ -9,8 +9,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.utils.ValidateUtilExt;
 import net.engining.profile.config.props.ProfileOauthProperties;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.QProfileRole;
+import net.engining.profile.entity.model.QProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.param.SecurityControl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +59,7 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
         ProfileUser profileUser = new JPAQueryFactory(em)
                 .select(qProfileUser)
                 .from(qProfileUser)
-                .where(qProfileUser.userId.eq(username))
+                .where(qProfileUser.userId.eq(username), qProfileUser.delFlg.eq(false))
                 .fetchOne();
         if (!ValidateUtilExt.isNotNullOrEmpty(profileUser)) {
             throw new UsernameNotFoundException(String.format("无法找到用户,%s", username));
@@ -105,20 +109,20 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
         //检查安全控制项内，如果要求首次登录必须修改密码，则不给操作权限
         Optional<SecurityControl> control = facility.getUniqueParameter(SecurityControl.class);
         //新用户只能先改密码
-        if (control.isPresent() && control.get().getPwdFirstLoginChgInd() && profileUser.getStatus().equals(StatusDef.N)) {
+        if (control.isPresent() && control.get().getPwdFirstLoginChgInd() && profileUser.getStatus().equals(UserStatusEnum.N)) {
             grantedAuthorities.clear();
         }
 
         //这里将用户的权限存入了{@link UserDetails}
-        StatusDef status = profileUser.getStatus();
+        UserStatusEnum status = profileUser.getStatus();
         ProfileUserDetails pud = new ProfileUserDetails(
                 profileUser.getPuId(),
                 profileUser.getUserId(),
                 profileUser.getPassword(),
-                status != StatusDef.L,
+                status != UserStatusEnum.L && status != UserStatusEnum.P,
                 true,
                 true,
-                status != StatusDef.L,
+                status != UserStatusEnum.L && status != UserStatusEnum.P,
                 grantedAuthorities,
                 profileUser.getBranchId(),
                 status);

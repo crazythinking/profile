@@ -7,8 +7,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.engining.pg.parameter.ParameterFacility;
 import net.engining.pg.support.core.exception.ErrorCode;
 import net.engining.pg.support.core.exception.ErrorMessageException;
-import net.engining.profile.entity.enums.StatusDef;
-import net.engining.profile.entity.model.*;
+import net.engining.profile.entity.model.ProfilePwdHist;
+import net.engining.profile.entity.model.ProfileRole;
+import net.engining.profile.entity.model.ProfileRoleAuth;
+import net.engining.profile.entity.model.ProfileUser;
+import net.engining.profile.entity.model.QProfileRole;
+import net.engining.profile.entity.model.QProfileRoleAuth;
+import net.engining.profile.entity.model.QProfileUser;
+import net.engining.profile.entity.model.QProfileUserRole;
+import net.engining.profile.enums.UserStatusEnum;
 import net.engining.profile.param.SecurityControl;
 import net.engining.profile.security.validator.PasswordComplexityValidator;
 import net.engining.profile.security.validator.PasswordExpireValidator;
@@ -26,7 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -79,7 +90,7 @@ public class ProfileSecurityService {
 		// 用户所属机构
 		// 用户状态为新用户
 		// TODO 暂时由页面决定用户状态，后续再讨论
-		// userInfo.setStatus(StatusDef.N);
+		// userInfo.setStatus(UserStatusEnum.N);
 		// 加密密码
 		userInfo.setPassword(passwordEncoder.encode(password));
 		// 保存用户
@@ -156,7 +167,7 @@ public class ProfileSecurityService {
 		if (user == null) {
 			throw new ErrorMessageException(ErrorCode.BadRequest, "无效用户:" + username);
 		}
-		user.setStatus(StatusDef.A);
+		user.setStatus(UserStatusEnum.A);
 	}
 
 	/**
@@ -188,7 +199,7 @@ public class ProfileSecurityService {
 		user.setMtnUser(operUser);
 		user.setPassword(passwordEncoder.encode(newPassword));
 		user.setPwdTries(0);
-		user.setStatus(StatusDef.A);
+		user.setStatus(UserStatusEnum.A);
 
 		logger.info("操作员{}，修改了用户{}的密码！", operUser, user.getUserId());
 	}
@@ -216,7 +227,7 @@ public class ProfileSecurityService {
 
 		user.setPassword(passwordEncoder.encode(password));
 		// TODO 在服务中添加了解锁用户方法，当前做法值得商榷
-		user.setStatus(StatusDef.A);
+		user.setStatus(UserStatusEnum.A);
 		// 重新计算密码有效期
 		user.setPwdExpDate(getExpiredDate(Calendar.getInstance().getTime(), securityControl.pwdExpireDays));
 
@@ -254,13 +265,13 @@ public class ProfileSecurityService {
 	/**
 	 * 记录用户的密码历史
 	 * 
-	 * @param userId
+	 * @param puId
 	 *            用户ID
 	 * @param password
 	 *            密码
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	void addPasswordHistory(String puId, String password) {
+	public void addPasswordHistory(String puId, String password) {
 		ProfilePwdHist pwdHist = new ProfilePwdHist();
 		pwdHist.setPuId(puId);
 		pwdHist.setPassword(password);
@@ -268,7 +279,7 @@ public class ProfileSecurityService {
 		em.persist(pwdHist);
 	}
 
-	private Date getExpiredDate(Date date, int days) {
+	public Date getExpiredDate(Date date, int days) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(Calendar.DATE, days);
