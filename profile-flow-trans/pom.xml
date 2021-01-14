@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.engining.profile</groupId>
         <artifactId>profile-parent</artifactId>
-        <version>4.0.6.RELEASE</version>
+        <version>4.1.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
