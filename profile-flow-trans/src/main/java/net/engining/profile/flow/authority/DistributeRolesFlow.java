@@ -47,7 +47,7 @@ import org.springframework.stereotype.Service;
                 // 记录操作日志
                 AddOperationLogInvoker.class,
                 // 刷新本地缓存
-//                RefreshCacheInvoker.class,
+                RefreshCacheInvoker.class,
                 // 事务分割
                 TransactionSeperator.class,
                 // 结果处理

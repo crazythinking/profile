@@ -129,16 +129,15 @@ public class AuthService implements InitializingBean {
         boolean isAuth = checkAppCd(appCd);
 
         Map<String, TreeNode<MenuOrAuthBean>> treeParentNode = null;
-//        try {
+        try {
             //从本地缓存获取
-//            treeParentNode = userMenuCache.get(StringUtils.join(userId));
-//        } catch (ExecutionException e) {
+            treeParentNode = userMenuCache.get(StringUtils.join(userId));
+        } catch (ExecutionException e) {
             treeParentNode = getMenuTreeByUserid(userId);
-//        }
-        //转换树为jsonStr
-        String treeJsonStr = getTreeJsonString(appCd, isAuth, treeParentNode);
+        }
 
-        return treeJsonStr;
+        //转换树为jsonStr
+        return getTreeJsonString(appCd, isAuth, treeParentNode);
     }
 
     /**
