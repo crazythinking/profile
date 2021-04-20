@@ -8,7 +8,7 @@
 		<groupId>net.engining.profile</groupId>
 		<artifactId>profile-parent</artifactId>
 		<version>4.0.6.RELEASE</version>
-		<relativePath>..</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>profile-config</artifactId>
