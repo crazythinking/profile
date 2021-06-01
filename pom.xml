@@ -76,11 +76,6 @@
 			</dependency>
 			<dependency>
 				<groupId>net.engining.profile</groupId>
-				<artifactId>profile-tools</artifactId>
-				<version>${profile.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.engining.profile</groupId>
 				<artifactId>profile-tools-component</artifactId>
 				<version>${profile.version}</version>
 			</dependency>
